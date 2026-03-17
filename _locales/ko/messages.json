@@ -1,0 +1,10 @@
+{
+  "extName": {
+    "message": "My Chrome Handbook",
+    "description": "The name of the extension."
+  },
+  "extDesc": {
+    "message": "크롬의 모든 것을 담은 핸드북. 100여 개의 필수 단축키, 숨겨진 기능, 이스터에그를 한눈에 검색하고, 나만의 메모와 즐겨찾기로 관리하세요.",
+    "description": "The description of the extension."
+  }
+}

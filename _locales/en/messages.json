@@ -1,0 +1,10 @@
+{
+  "extName": {
+    "message": "My Chrome Handbook",
+    "description": "The name of the extension."
+  },
+  "extDesc": {
+    "message": "Your handbook for everything Chrome. Search over 100 essential shortcuts, hidden features, and easter eggs, and manage them with your own notes and favorites.",
+    "description": "The description of the extension."
+  }
+}
