@@ -911,7 +911,7 @@
   <div class="nav">
     <button type="button" id="tab-all" class="active">전체 팁</button>
     <button type="button" id="tab-fav">내 보관함 ⭐</button>
-    <button type="button" id="tab-shortcuts">나의 지름길 🚀</button>
+    <button type="button" id="tab-shortcuts" style="display: none;">나의 지름길 🚀</button>
     <button type="button" id="stats-btn" title="자주 본 팁 통계">📊</button>
   </div>
 
@@ -944,27 +944,64 @@
 
   <!-- 지름길 모달 -->
   <div id="shortcut-modal" class="modal" style="display: none;">
-    <div class="modal-content">
+    <div class="modal-content" style="width: 95%; max-width: 380px;">
       <div class="modal-header">
-        <h3 id="shortcut-modal-title">🚀 나만의 지름길 만들기</h3>
+        <h3 id="shortcut-modal-title">🚀 자동 지름길 설계하기</h3>
         <button class="modal-close shortcut-close">✕</button>
       </div>
-      <div style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+      
+      <!-- 안내 섹션 -->
+      <div style="background: var(--accent-bg); padding: 12px 16px; margin: 10px 20px 0; border-radius: 12px; border: 1px dashed var(--accent);">
+        <p style="margin: 0; font-size: 11px; color: var(--accent-txt); line-height: 1.5;">
+          <strong>💡 지름길이란?</strong><br>
+          단순 접속을 넘어, 복잡한 메뉴 클릭을 자동으로 수행하는 '자율주행 북마크'입니다.
+        </p>
+      </div>
+
+      <div style="padding: 20px; display: flex; flex-direction: column; gap: 20px;">
+        <!-- 1. 이름 -->
         <div>
-          <label style="font-size: 12px; font-weight: 800; margin-bottom: 8px; display: block; color: var(--text-sub);">지름길 이름</label>
-          <input type="text" id="sc-name" placeholder="예: 인천대 학사행정">
+          <label style="font-size: 13px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">
+            <span>🏷️</span> 지름길 이름
+          </label>
+          <input type="text" id="sc-name" placeholder="예: 인천대 학사행정, 네이버 수신확인">
+          <small style="color: var(--text-mute); font-size: 11px; margin-top: 4px; display: block;">목록에 표시될 이름입니다.</small>
         </div>
+
+        <!-- 2. 시작 주소 -->
         <div>
-          <label style="font-size: 12px; font-weight: 800; margin-bottom: 8px; display: block; color: var(--text-sub);">시작 URL</label>
-          <input type="text" id="sc-url" placeholder="https://portal.inu.ac.kr">
+          <label style="font-size: 13px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">
+            <span>🌐</span> 시작 URL
+          </label>
+          <input type="text" id="sc-url" placeholder="https://...">
+          <small style="color: var(--text-mute); font-size: 11px; margin-top: 4px; display: block;">여정이 시작될 홈페이지 주소를 입력하세요.</small>
         </div>
-        <div>
-          <label style="font-size: 12px; font-weight: 800; margin-bottom: 8px; display: block; color: var(--text-sub);">자동 클릭할 텍스트 순서 (쉼표로 구분)</label>
-          <input type="text" id="sc-steps" placeholder="예: 로그인, 학사행정, 성적조회">
-          <small style="display: block; margin-top: 6px; color: var(--text-mute); font-size: 11px;">* 페이지에 보이는 글자를 순서대로 적어주세요.</small>
+
+        <!-- 3. 여정 설계 (자동 클릭 단계) -->
+        <div style="background: var(--bg); padding: 16px; border-radius: 16px; border: 1px solid var(--border);">
+          <label style="font-size: 13px; font-weight: 800; margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
+            <span>🤖</span> 클릭 여정 설계
+          </label>
+          
+          <div id="sc-steps-container" style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- 단계들이 여기에 동적으로 추가됩니다 -->
+          </div>
+
+          <button id="add-step-item-btn" style="width: 100%; padding: 8px; margin-top: 10px; background: none; border: 1px dashed var(--text-mute); border-radius: 10px; color: var(--text-sub); font-size: 11px; cursor: pointer; font-weight: 700;">
+            + 클릭할 버튼 추가 (다음 단계)
+          </button>
+
+          <div style="margin-top: 12px; padding: 10px; background: #fffbe6; border-radius: 8px; border: 1px solid #ffe58f;">
+            <p style="margin: 0; font-size: 10.5px; color: #856404; line-height: 1.4;">
+              <strong>📝 작성 팁:</strong><br>
+              페이지에 보이는 <strong>'글자'</strong>를 정확히 적어주세요. (예: 로그인, 보낸메일함)<br>
+              로그인이 필요한 경우 첫 단계를 '로그인'으로 설정하면 편리합니다.
+            </p>
+          </div>
         </div>
-        <div class="note-buttons">
-          <button id="save-shortcut-btn" class="btn-save">저장하기</button>
+
+        <div class="note-buttons" style="margin-top: 10px;">
+          <button id="save-shortcut-btn" class="btn-save" style="width: 100%; padding: 14px; font-size: 14px;">지름길 저장 및 여정 완성</button>
         </div>
       </div>
     </div>

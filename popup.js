@@ -1020,6 +1020,84 @@ const tips = [
     shortcut: { win: "Ctrl + Shift + M", mac: "Cmd + Shift + M" },
     tags: ["모바일", "반응형", "에뮬레이터", "테스트", "스마트폰", "화면크기"],
     tags_en: ["mobile", "responsive", "emulator", "test", "device", "emulation", "smartphone", "screen size"]
+  },
+  // ── 숨겨진 시스템 / 고급 꿀팁 ──────────────────
+  {
+    id: 110, category: "시스템",
+    title: "크롬 즉시 재시작",
+    title_en: "Restart Chrome Instantly",
+    desc: "브라우저를 닫았다가 현재 탭들을 유지한 채 즉시 다시 엽니다.",
+    desc_en: "Closes and immediately reopens Chrome while preserving your current tabs.",
+    shortcut: { win: "chrome://restart 입력", mac: "chrome://restart 입력" },
+    shortcut_en: { win: "Type chrome://restart", mac: "Type chrome://restart" },
+    link: "chrome://restart",
+    tags: ["재시작", "리스타트", "초기화", "렉", "끄고켜기", "업데이트"],
+    tags_en: ["restart", "reboot", "refresh", "lag", "re-open", "chrome restart"]
+  },
+  {
+    id: 111, category: "시스템",
+    title: "크롬 버전 및 정보 확인",
+    title_en: "Chrome Version & Info",
+    desc: "현재 사용 중인 크롬의 버전, 프로필 경로 등 상세 정보를 확인합니다.",
+    desc_en: "Check detailed information about your Chrome version, profile path, and more.",
+    shortcut: { win: "chrome://version 입력", mac: "chrome://version 입력" },
+    shortcut_en: { win: "Type chrome://version", mac: "Type chrome://version" },
+    link: "chrome://version",
+    tags: ["버전", "정보", "업데이트", "프로필", "빌드", "크롬정보"],
+    tags_en: ["version", "info", "update", "profile", "build", "chrome info"]
+  },
+  {
+    id: 112, category: "주소창/검색",
+    title: "주소창에서 바로 검색하기",
+    title_en: "Quick Search in Address Bar",
+    desc: "어디서든 주소창으로 포커스를 옮기고 검색 모드로 전환합니다.",
+    desc_en: "Moves focus to the address bar and switches to search mode from anywhere.",
+    shortcut: { win: "Ctrl + K 또는 Ctrl + E", mac: "Cmd + K 또는 Cmd + E" },
+    shortcut_en: { win: "Ctrl + K or Ctrl + E", mac: "Cmd + K or Cmd + E" },
+    tags: ["검색", "주소창", "빠른검색", "구글검색", "찾기", "입력"],
+    tags_en: ["search", "address bar", "quick search", "google search", "omnibox"]
+  },
+  {
+    id: 113, category: "탐색",
+    title: "최근 방문한 페이지 목록 보기",
+    title_en: "View Recent History List",
+    desc: "뒤로가기/앞으로가기 버튼을 길게 누르거나 우클릭하여 최근 기록을 봅니다.",
+    desc_en: "Long-press or right-click the back/forward button to see a list of recently visited pages.",
+    shortcut: { win: "뒤로가기 버튼 우클릭", mac: "뒤로가기 버튼 우클릭" },
+    shortcut_en: { win: "Right-click Back button", mac: "Right-click Back button" },
+    tags: ["히스토리", "뒤로가기", "기록", "빠른이동", "방문기록"],
+    tags_en: ["history", "back button", "quick move", "recent sites", "browsing history"]
+  },
+  {
+    id: 114, category: "탭/창",
+    title: "여러 탭 한꺼번에 선택",
+    title_en: "Select Multiple Tabs",
+    desc: "Ctrl 키를 누른 채 탭을 클릭하여 여러 개를 선택하고 한 번에 이동하거나 닫습니다.",
+    desc_en: "Hold the Ctrl key and click tabs to select multiple ones to move or close them all at once.",
+    shortcut: { win: "Ctrl + 탭 클릭", mac: "Cmd + 탭 클릭" },
+    shortcut_en: { win: "Ctrl + Click tabs", mac: "Cmd + Click tabs" },
+    tags: ["다중선택", "탭관리", "정리", "여러탭", "일괄선택"],
+    tags_en: ["multiple selection", "tab management", "organize", "batch select", "multi-tab"]
+  },
+  {
+    id: 115, category: "탐색",
+    title: "홈 페이지로 이동",
+    title_en: "Go to Home Page",
+    desc: "설정된 홈 페이지로 즉시 이동합니다.",
+    desc_en: "Instantly navigate to your designated home page.",
+    shortcut: { win: "Alt + Home", mac: "Cmd + Shift + H" },
+    tags: ["홈", "시작페이지", "홈으로", "첫화면"],
+    tags_en: ["home", "home page", "start page", "go home"]
+  },
+  {
+    id: 116, category: "탐색",
+    title: "툴바의 첫 번째 항목으로 이동",
+    title_en: "Focus on Toolbar",
+    desc: "주소창이나 확장 프로그램 등 툴바 영역으로 포커스를 이동합니다.",
+    desc_en: "Moves focus to the toolbar area, including the address bar and extensions.",
+    shortcut: { win: "Shift + Alt + T", mac: "Ctrl + F2" },
+    tags: ["툴바", "포커스", "단축키", "상단바", "메뉴이동"],
+    tags_en: ["toolbar", "focus", "shortcut", "top bar", "navigation"]
   }
 ];
 
@@ -1121,16 +1199,29 @@ const state = {
   viewCounts: {},
   tipNotes: {},
   currentNoteId: null,
+  editingShortcutId: null, // 수정 중인 지름길 ID 저장
   currentLang: LANG.KO,
   categoryOrder: ["전체", "탭/창", "탐색", "주소창/검색", "화면", "북마크", "편집", "프로필/공간", "개발자", "설정", "이스터에그"]
 };
-
 // ── 초기화 ────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   const data = await chrome.storage.local.get(['favs', 'os', 'dark', 'views', 'notes', 'lang', 'categoryOrder', 'userShortcuts']);
+
+  // 기본 예시 지름길 설정
+  let initialShortcuts = data.userShortcuts || [];
+  if (initialShortcuts.length === 0) {
+    initialShortcuts = [{
+      id: 'example-1',
+      name: '[예시] 네이버 메일 수신확인',
+      url: 'https://www.naver.com',
+      steps: ['메일', '보낸메일함', '수신확인']
+    }];
+    await chrome.storage.local.set({ userShortcuts: initialShortcuts });
+  }
+
   Object.assign(state, {
     favorites: data.favs || [],
-    userShortcuts: data.userShortcuts || [],
+    userShortcuts: initialShortcuts,
     currentOS: data.os || OS.WIN,
     isDark: data.dark || false,
     viewCounts: data.views || {},
@@ -1160,8 +1251,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   $('.shortcut-close').addEventListener('click', closeShortcutModal);
 
   // 지름길 추가 버튼
-  $('#add-shortcut-btn').addEventListener('click', openShortcutModal);
+  $('#add-shortcut-btn').addEventListener('click', () => openShortcutModal());
   $('#save-shortcut-btn').addEventListener('click', saveShortcut);
+  $('#add-step-item-btn').addEventListener('click', () => addStepInput());
 
   // 언어 변경 버튼
   $('#lang-ko').addEventListener('click', () => handleLangChange(LANG.KO));
@@ -1607,10 +1699,19 @@ function renderShortcuts() {
       <div class="tip-title">${sc.name}</div>
       <div class="tip-desc">${sc.url}</div>
       <div class="shortcut">${sc.steps.join(' → ')}</div>
-      <span class="fav-btn delete-sc" data-id="${sc.id}" title="삭제">🗑️</span>
+      <div style="position: absolute; right: 18px; top: 18px; display: flex; gap: 10px;">
+        <span class="edit-sc" data-id="${sc.id}" title="수정" style="cursor:pointer; font-size: 18px;">✏️</span>
+        <span class="delete-sc" data-id="${sc.id}" title="삭제" style="cursor:pointer; font-size: 18px;">🗑️</span>
+      </div>
       <button class="go-btn" style="margin-top: 14px; background: var(--accent);">${strings.runShortcut}</button>
     `;
     
+    // 수정 버튼 이벤트
+    div.querySelector('.edit-sc').onclick = (e) => {
+      e.stopPropagation();
+      openShortcutModal(sc);
+    };
+
     // 삭제 버튼 이벤트
     div.querySelector('.delete-sc').onclick = (e) => {
       e.stopPropagation();
@@ -1630,11 +1731,23 @@ function renderShortcuts() {
   });
 }
 
-// ── 지름길 실행 엔진 (나중에 더 고도화 예정) ──────────
-function runShortcut(sc) {
+// ── 지름길 실행 엔진 ──────────────────────────
+async function runShortcut(sc) {
+  // 1. 자동화 작업 상태 생성
+  const task = {
+    id: sc.id,
+    steps: sc.steps,
+    currentStepIndex: 0,
+    startTime: Date.now()
+  };
+
+  // 2. 저장소에 작업 등록
+  await chrome.storage.local.set({ activeShortcutTask: task });
+
+  // 3. 페이지 이동
   chrome.tabs.create({ url: sc.url });
-  // 현재는 페이지 이동만 구현. 다음 단계에서 자동 클릭 엔진 추가 예정
-  showToast(I18N[state.currentLang].loading);
+  
+  showToast(state.currentLang === LANG.KO ? '지름길 실행 중... 버튼을 자동으로 찾습니다.' : 'Running shortcut... Finding buttons automatically.');
 }
 
 // ── 이벤트 ────────────────────────────────────
@@ -1747,38 +1860,113 @@ function switchTab() {
 }
 
 // ── 지름길 모달 함수 ────────────────────────────────
-function openShortcutModal() {
+function addStepInput(value = "") {
+  const container = $('#sc-steps-container');
+  if (!container) return;
+  const stepCount = container.children.length + 1;
+  
+  const stepDiv = document.createElement('div');
+  stepDiv.className = 'step-item';
+  stepDiv.style.display = 'flex';
+  stepDiv.style.alignItems = 'center';
+  stepDiv.style.gap = '8px';
+  stepDiv.style.marginBottom = '8px';
+  
+  stepDiv.innerHTML = `
+    <span style="font-size: 11px; font-weight: 800; color: var(--accent); min-width: 45px;">${stepCount}단계</span>
+    <input type="text" class="sc-step-input" placeholder="버튼 글자" value="${value}" style="flex: 1; padding: 8px 12px; font-size: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text);">
+    <button class="remove-step-btn" style="background: none; border: none; cursor: pointer; font-size: 14px; padding: 0 5px; color: var(--text-mute);">✕</button>
+  `;
+  
+  stepDiv.querySelector('.remove-step-btn').onclick = () => {
+    stepDiv.remove();
+    reorderSteps();
+  };
+  
+  container.appendChild(stepDiv);
+}
+
+function reorderSteps() {
+  const container = $('#sc-steps-container');
+  Array.from(container.children).forEach((child, idx) => {
+    child.querySelector('span').textContent = `${idx + 1}단계`;
+  });
+}
+
+function openShortcutModal(shortcutToEdit = null) {
+  const modalTitle = $('#shortcut-modal-title');
+  const lang = state.currentLang;
+  const container = $('#sc-steps-container');
+  container.innerHTML = ''; // 기존 단계 초기화
+
+  if (shortcutToEdit && shortcutToEdit.id) {
+    // 수정 모드
+    state.editingShortcutId = shortcutToEdit.id;
+    modalTitle.textContent = lang === LANG.KO ? '🚀 지름길 수정하기' : '🚀 Edit Shortcut';
+    $('#sc-name').value = shortcutToEdit.name;
+    $('#sc-url').value = shortcutToEdit.url;
+    
+    if (shortcutToEdit.steps && shortcutToEdit.steps.length > 0) {
+      shortcutToEdit.steps.forEach(step => addStepInput(step));
+    } else {
+      addStepInput(); 
+    }
+  } else {
+    // 신규 생성 모드
+    state.editingShortcutId = null;
+    modalTitle.textContent = lang === LANG.KO ? '🚀 자동 지름길 설계하기' : '🚀 Create Journey';
+    $('#sc-name').value = '';
+    $('#sc-url').value = '';
+    addStepInput(); // 첫 단계 입력창 자동 추가
+  }
+  
   $('#shortcut-modal').style.display = 'flex';
 }
 
 function closeShortcutModal() {
   $('#shortcut-modal').style.display = 'none';
+  state.editingShortcutId = null;
 }
 
 async function saveShortcut() {
   const name = $('#sc-name').value.trim();
   const url = $('#sc-url').value.trim();
-  const stepsStr = $('#sc-steps').value.trim();
+  
+  // 모든 단계 입력값 가져오기
+  const stepInputs = document.querySelectorAll('.sc-step-input');
+  const steps = Array.from(stepInputs)
+    .map(input => input.value.trim())
+    .filter(val => val !== "");
   
   if (!name || !url) {
     showToast(state.currentLang === LANG.KO ? '이름과 URL을 입력해주세요.' : 'Please enter name and URL.');
     return;
   }
 
-  const newShortcut = {
-    id: Date.now(),
-    name,
-    url,
-    steps: stepsStr ? stepsStr.split(',').map(s => s.trim()) : []
-  };
+  if (state.editingShortcutId) {
+    // 기존 지름길 업데이트
+    const index = state.userShortcuts.findIndex(s => s.id === state.editingShortcutId);
+    if (index !== -1) {
+      state.userShortcuts[index] = {
+        ...state.userShortcuts[index],
+        name,
+        url,
+        steps
+      };
+    }
+  } else {
+    // 신규 지름길 추가
+    const newShortcut = {
+      id: Date.now(),
+      name,
+      url,
+      steps
+    };
+    state.userShortcuts.push(newShortcut);
+  }
 
-  state.userShortcuts.push(newShortcut);
   await chrome.storage.local.set({ userShortcuts: state.userShortcuts });
   
-  // 입력 필드 초기화 및 모달 닫기
-  $('#sc-name').value = '';
-  $('#sc-url').value = '';
-  $('#sc-steps').value = '';
   closeShortcutModal();
   renderTips();
 }
