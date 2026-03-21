@@ -86,10 +86,10 @@ const tips = [
     id: 9, category: "탭/창",
     title: "탭 그룹화",
     title_en: "Group Tabs",
-    desc: "탭들을 주제별로 묶어 깔끔하게 정리하세요.",
-    desc_en: "Organize your tabs by grouping them by topic.",
-    shortcut: { win: "탭 우클릭 > 그룹 추가", mac: "탭 우클릭 > 그룹 추가" },
-    shortcut_en: { win: "Right-click tab > Add to group", mac: "Right-click tab > Add to group" },
+    desc: "여러 탭을 주제별 색상과 이름으로 묶어 한꺼번에 관리합니다.",
+    desc_en: "Organize multiple tabs with colors and names to manage them together.",
+    shortcut: { win: "탭 우클릭 > 탭을 새 그룹에 추가", mac: "탭 우클릭 > 탭을 새 그룹에 추가" },
+    shortcut_en: { win: "Right-click tab > Add tab to new group", mac: "Right-click tab > Add tab to new group" },
     tags: ["정리", "그룹", "지저분", "복잡", "모으기", "묶기", "정렬", "폴더", "정리정돈", "깔끔하게", "뭉치기"],
     tags_en: ["organize", "group", "messy", "complex", "gather", "clean", "folder", "sort", "tab group"]
   },
@@ -97,12 +97,12 @@ const tips = [
     id: 10, category: "탭/창",
     title: "현재 탭 음소거",
     title_en: "Mute Current Tab",
-    desc: "시끄러운 탭을 클릭 한 번으로 음소거합니다.",
-    desc_en: "Mute a noisy tab with a single click.",
+    desc: "소리가 나는 탭을 우클릭하여 끄거나, 주소창 옆 '음표' 아이콘에서 모든 미디어를 제어하세요.",
+    desc_en: "Right-click a noisy tab to mute, or use the 'Music' icon next to the address bar to control all media.",
     shortcut: { win: "탭 우클릭 > 사이트 음소거", mac: "탭 우클릭 > 사이트 음소거" },
     shortcut_en: { win: "Right-click tab > Mute site", mac: "Right-click tab > Mute site" },
-    tags: ["소리", "시끄러워", "광고", "음소거", "뮤트", "끄기", "조용히", "소리끄기", "조용"],
-    tags_en: ["sound", "noisy", "ad", "mute", "volume", "off", "quiet", "speaker", "no sound", "silent"]
+    tags: ["소리", "시끄러워", "광고", "음소거", "뮤트", "끄기", "조용히", "소리끄기", "조용", "미디어제어"],
+    tags_en: ["sound", "noisy", "ad", "mute", "volume", "off", "quiet", "speaker", "no sound", "silent", "media control"]
   },
   {
     id: 84, category: "탭/창",
@@ -694,8 +694,8 @@ const tips = [
     id: 65, category: "주소창/검색",
     title: "Chrome 작업으로 바로 실행",
     title_en: "Execute Chrome Actions Directly",
-    desc: "주소창에 '비밀번호 관리', '쿠키 삭제'처럼 문장을 치면, 설정 화면으로 바로 이동하는 작업 버튼이 나타납니다.",
-    desc_en: "Type phrases like 'manage passwords' or 'clear cookies' in the address bar, and an action button will appear to take you directly to the settings screen.",
+    desc: "주소창에 '비밀번호', '기록 삭제' 등을 입력하면 설정으로 즉시 이동하는 버튼이 생깁니다.",
+    desc_en: "Type 'pass' or 'clear history' in the address bar to see buttons that jump directly to settings.",
     shortcut: { win: "주소창 명령어 입력", mac: "주소창 명령어 입력" },
     shortcut_en: { win: "Type command in address bar", mac: "Type command in address bar" },
     tags: ["액션", "작업", "주소창", "옴니박스", "비밀번호관리", "쿠키삭제", "설정열기", "명령어", "바로실행"],
@@ -716,8 +716,8 @@ const tips = [
     id: 67, category: "주소창/검색",
     title: "사이트 전용 검색 단축키",
     title_en: "Site-Specific Search Shortcuts",
-    desc: "설정에서 사이트별 키워드(예: yt, so)를 등록하고 주소창에서 바로 특정 사이트를 검색하세요.",
-    desc_en: "Register site-specific keywords (e.g., yt, so) in settings and search specific sites directly from the address bar.",
+    desc: "설정에서 사이트별 키워드(예: yt, so)를 등록하고 주소창에서 [단어 + Tab]으로 바로 검색하세요.",
+    desc_en: "Register keywords (e.g., yt, so) in settings and search by typing [keyword + Tab] in the address bar.",
     shortcut: { win: "[키워드] + Tab", mac: "[키워드] + Tab" },
     shortcut_en: { win: "[keyword] + Tab", mac: "[keyword] + Tab" },
     link: "chrome://settings/searchEngines",
@@ -1098,7 +1098,254 @@ const tips = [
     shortcut: { win: "Shift + Alt + T", mac: "Ctrl + F2" },
     tags: ["툴바", "포커스", "단축키", "상단바", "메뉴이동"],
     tags_en: ["toolbar", "focus", "shortcut", "top bar", "navigation"]
-  }
+  },
+  // ── AI 기능 ──────────────────────────────────
+  {
+    id: 117, category: "AI 기능",
+    title: "AI 기반 탭 정리",
+    title_en: "AI Tab Organizer",
+    desc: "열린 탭이 너무 많을 때 AI가 비슷한 주제끼리 자동으로 그룹을 만들어줍니다.",
+    desc_en: "AI automatically groups similar tabs when you have too many open.",
+    shortcut: { win: "왼쪽 상단 '탭 검색(▼)' 클릭 > 탭 정리", mac: "왼쪽 상단 '탭 검색(▼)' 클릭 > 탭 정리" },
+    shortcut_en: { win: "Click 'Tab Search(▼)' (top-left) > Organize Tabs", mac: "Click 'Tab Search(▼)' (top-left) > Organize Tabs" },
+    tags: ["ai", "탭정리", "그룹", "자동", "정리", "인공지능"],
+    tags_en: ["ai", "tab organize", "group", "auto", "clean", "artificial intelligence"]
+  },
+  {
+    id: 118, category: "AI 기능",
+    title: "글쓰기 도우미 (Help me write)",
+    title_en: "Help me write",
+    desc: "이메일이나 댓글 등 텍스트 입력창에서 AI가 문장을 다듬거나 새로 작성해 줍니다.",
+    desc_en: "AI helps you refine or write new sentences in any text field.",
+    shortcut: { win: "입력창 우클릭 > 글쓰기 도와주기", mac: "입력창 우클릭 > 글쓰기 도와주기" },
+    shortcut_en: { win: "Right-click text field > Help me write", mac: "Right-click text field > Help me write" },
+    tags: ["ai", "글쓰기", "도움", "작성", "교정", "인공지능"],
+    tags_en: ["ai", "writing", "help", "write", "edit", "artificial intelligence"]
+  },
+  {
+    id: 119, category: "AI 기능",
+    title: "Gemini AI와 바로 대화",
+    title_en: "Chat with Gemini AI",
+    desc: "주소창에서 바로 구글의 Gemini AI에게 질문하고 답변을 얻으세요.",
+    desc_en: "Ask questions and get answers from Google's Gemini AI directly from the address bar.",
+    shortcut: { win: "주소창에 @gemini 입력 후 질문", mac: "주소창에 @gemini 입력 후 질문" },
+    shortcut_en: { win: "Type @gemini in address bar", mac: "Type @gemini in address bar" },
+    tags: ["ai", "제미나이", "챗봇", "질문", "검색", "인공지능"],
+    tags_en: ["ai", "gemini", "chatbot", "ask", "search", "artificial intelligence"]
+  },
+  {
+    id: 120, category: "AI 기능",
+    title: "AI 테마 생성",
+    title_en: "Create Theme with AI",
+    desc: "텍스트 설명만으로 나만의 커스텀 크롬 테마를 만듭니다.",
+    desc_en: "Create your own custom Chrome theme with just a text description.",
+    shortcut: { win: "설정 > 디자인 > AI로 테마 생성", mac: "설정 > 디자인 > AI로 테마 생성" },
+    shortcut_en: { win: "Settings > Appearance > Create with AI", mac: "Settings > Appearance > Create with AI" },
+    tags: ["ai", "테마", "디자인", "배경", "커스텀", "인공지능"],
+    tags_en: ["ai", "theme", "design", "background", "custom", "artificial intelligence"]
+  },
+  {
+    id: 121, category: "AI 기능",
+    title: "지능형 방문 기록 검색",
+    title_en: "Intelligent History Search",
+    desc: "기억이 가물가물한 사이트를 '저번에 본 신발 사이트'처럼 자연어로 검색하세요.",
+    desc_en: "Search your browsing history using natural language like 'that shoe site I saw yesterday'.",
+    shortcut: { win: "Ctrl + H > 자연어로 검색", mac: "Cmd + Y > 자연어로 검색" },
+    shortcut_en: { win: "Ctrl + H > Search with natural language", mac: "Cmd + Y > Search with natural language" },
+    tags: ["ai", "기록", "방문기록", "찾기", "검색", "인공지능"],
+    tags_en: ["ai", "history", "visit", "find", "search", "artificial intelligence"]
+  },
+  {
+    id: 122, category: "설정",
+    title: "에너지 절약 모드",
+    title_en: "Energy Saver Mode",
+    desc: "배터리가 부족할 때 백그라운드 활동을 줄여 사용 시간을 늘립니다.",
+    desc_en: "Reduces background activity to extend battery life when low.",
+    link: "chrome://settings/performance",
+    shortcut: { win: "설정 > 성능", mac: "설정 > 성능" },
+    tags: ["배터리", "절약", "노트북", "에너지", "성능", "최적화"],
+    tags_en: ["battery", "save", "laptop", "energy", "performance", "optimization"]
+  },
+  {
+    id: 123, category: "탐색",
+    title: "링크 미리보기 (Link Preview)",
+    title_en: "Link Preview",
+    desc: "클릭 전에 페이지 내용을 작은 팝업으로 미리 확인합니다.",
+    desc_en: "Preview page content in a small popup before clicking.",
+    shortcut: { win: "링크 위에서 우클릭 > 미리보기", mac: "링크 위에서 우클릭 > 미리보기" },
+    shortcut_en: { win: "Right-click link > Preview", mac: "Right-click link > Preview" },
+    tags: ["미리보기", "링크", "팝업", "빠른확인", "탐색"],
+    tags_en: ["preview", "link", "popup", "quick view", "navigation"]
+  },
+  {
+    id: 124, category: "탭/창",
+    title: "탭 그룹 저장 및 동기화",
+    title_en: "Save & Sync Tab Groups",
+    desc: "탭 그룹을 저장하여 나중에 다시 열거나 다른 기기에서 이어서 보세요.",
+    desc_en: "Save tab groups to reopen them later or sync across your devices.",
+    shortcut: { win: "그룹 이름 우클릭 > 그룹 저장", mac: "그룹 이름 우클릭 > 그룹 저장" },
+    shortcut_en: { win: "Right-click group name > Save group", mac: "Right-click group name > Save group" },
+    tags: ["탭그룹", "저장", "동기화", "북마크", "정리"],
+    tags_en: ["tab group", "save", "sync", "bookmark", "organize"]
+  },
+  {
+    id: 125, category: "시스템",
+    title: "다운로드 속도 가속 (Parallel)",
+    title_en: "Parallel Downloading",
+    desc: "숨겨진 기능을 켜서 대용량 파일 다운로드 속도를 대폭 높이세요.",
+    desc_en: "Enable this hidden feature to speed up large file downloads.",
+    link: "chrome://flags/#enable-parallel-downloading",
+    shortcut: { win: "검색창에 'Parallel' 입력 > Enable로 변경", mac: "검색창에 'Parallel' 입력 > Enable로 변경" },
+    shortcut_en: { win: "Search 'Parallel' > Change to 'Enabled'", mac: "Search 'Parallel' > Change to 'Enabled'" },
+    tags: ["다운로드", "속도", "가속", "빨리", "플래그"],
+    tags_en: ["download", "speed", "fast", "parallel", "flags"]
+  },
+  {
+    id: 126, category: "주소창/검색",
+    title: "주소창 @사이트 바로 검색",
+    title_en: "Search Site with @",
+    desc: "주소창에 @를 입력하면 유튜브, 구글 드라이브 등 사이트 내 검색이 바로 가능합니다.",
+    desc_en: "Type @ in the address bar to search directly within YouTube, Drive, and more.",
+    shortcut: { win: "주소창에 @ 입력", mac: "주소창에 @ 입력" },
+    shortcut_en: { win: "Type @ in address bar", mac: "Type @ in address bar" },
+    tags: ["검색", "주소창", "유튜브검색", "바로가기", "골뱅이"],
+    tags_en: ["search", "address bar", "site search", "shortcut", "at sign"]
+  },
+  {
+    id: 127, category: "설정",
+    title: "크롬 안전 확인 (Safety Check)",
+    title_en: "Chrome Safety Check",
+    desc: "해킹된 비밀번호나 위험한 확장 프로그램이 있는지 한 번에 검사합니다.",
+    desc_en: "Check for compromised passwords, bad extensions, and updates all at once.",
+    link: "chrome://settings/safetyCheck",
+    shortcut: { win: "설정 > 개인정보 보호 및 보안", mac: "설정 > 개인정보 보호 및 보안" },
+    shortcut_en: { win: "Settings > Privacy and security", mac: "Settings > Privacy and security" },
+    tags: ["보안", "안전", "비밀번호", "해킹", "검사"],
+    tags_en: ["security", "safety", "password", "hack", "check"]
+  },
+  {
+    id: 128, category: "화면",
+    title: "사이드바에 북마크 고정",
+    title_en: "Pin Bookmarks to Side Panel",
+    desc: "북마크바를 숨기고 사이드바를 활용해 화면을 더 넓게 쓰세요.",
+    desc_en: "Hide the bookmarks bar and use the side panel to gain more vertical space.",
+    shortcut: { win: "주소창 우측 사이드 패널 아이콘", mac: "주소창 우측 사이드 패널 아이콘" },
+    shortcut_en: { win: "Side panel icon next to address bar", mac: "Side panel icon next to address bar" },
+    tags: ["북마크", "사이드바", "화면", "정리", "고정"],
+    tags_en: ["bookmarks", "sidebar", "screen", "organize", "pin"]
+  },
+  {
+    id: 129, category: "편집",
+    title: "텍스트 하이라이트로 링크 복사",
+    title_en: "Copy Link to Highlight",
+    desc: "페이지의 특정 문장을 강조한 상태로 공유할 수 있는 링크를 생성합니다.",
+    desc_en: "Generate a link that shares a specific sentence on a page with a highlight.",
+    shortcut: { win: "문장 드래그 > 우클릭 > 강조표시로 링크 복사", mac: "문장 드래그 > 우클릭 > 강조표시로 링크 복사" },
+    shortcut_en: { win: "Drag text > Right-click > Copy link to highlight", mac: "Drag text > Right-click > Copy link to highlight" },
+    tags: ["하이라이트", "링크공유", "특정문장", "공유", "편집"],
+    tags_en: ["highlight", "link sharing", "specific text", "share", "edit"]
+  },
+  {
+    id: 130, category: "프로필/공간",
+    title: "프로필별 바탕화면 바로가기",
+    title_en: "Desktop Shortcut for Profiles",
+    desc: "특정 프로필로 즉시 실행되는 아이콘을 바탕화면에 만듭니다.",
+    desc_en: "Create a desktop icon that launches Chrome with a specific profile.",
+    shortcut: { win: "설정 > 디자인 > 프로필 바로가기 만들기", mac: "설정 > 디자인 > 프로필 바로가기 만들기" },
+    shortcut_en: { win: "Settings > Appearance > Create desktop shortcut", mac: "Settings > Appearance > Create desktop shortcut" },
+    tags: ["프로필", "바탕화면", "바로가기", "업무분리", "공간"],
+    tags_en: ["profile", "desktop", "shortcut", "work separation", "space"]
+  },
+  {
+    id: 131, category: "화면",
+    title: "사이드 패널에 웹사이트 고정",
+    title_en: "Pin Website to Side Panel",
+    desc: "자주 쓰는 사이트를 사이드 패널에 고정해 메인 화면과 동시에 봅니다.",
+    desc_en: "Pin frequently used sites to the side panel to view them alongside the main window.",
+    shortcut: { win: "사이드 패널 아이콘 > 검색 또는 URL 입력", mac: "사이드 패널 아이콘 > 검색 또는 URL 입력" },
+    shortcut_en: { win: "Side panel icon > Search or enter URL", mac: "Side panel icon > Search or enter URL" },
+    tags: ["사이드패널", "화면분할", "멀티태스킹", "고정", "화면"],
+    tags_en: ["side panel", "split screen", "multitasking", "pin", "screen"]
+  },
+  {
+    id: 132, category: "북마크",
+    title: "북마크 별칭(키워드) 설정",
+    title_en: "Bookmark Keywords",
+    desc: "북마크에 짧은 별칭을 붙여 주소창에 단어만 쳐서 바로 접속하세요.",
+    desc_en: "Assign short keywords to bookmarks to access them by typing the word in the address bar.",
+    shortcut: { win: "북마크 관리자 > 북마크 편집 > 별칭", mac: "북마크 관리자 > 북마크 편집 > 별칭" },
+    shortcut_en: { win: "Bookmark Manager > Edit > Keyword", mac: "Bookmark Manager > Edit > Keyword" },
+    tags: ["북마크", "키워드", "별칭", "빠른접속", "주소창"],
+    tags_en: ["bookmark", "keyword", "alias", "quick access", "omnibox"]
+  },
+  {
+    id: 133, category: "주소창/검색",
+    title: "@gemini AI와 바로 대화",
+    title_en: "Chat with @gemini AI",
+    desc: "주소창에 '@gemini'를 입력하고 스페이스바를 누르면, 별도 페이지 이동 없이 구글 제미나이와 즉시 대화를 시작할 수 있습니다.",
+    desc_en: "Type '@gemini' in the address bar and press space to start chatting with Google Gemini instantly.",
+    shortcut: { win: "주소창에 '@gemini' 입력 후 [Space]", mac: "주소창에 '@gemini' 입력 후 [Space]" },
+    shortcut_en: { win: "Type '@gemini' in address bar > [Space]", mac: "Type '@gemini' in address bar > [Space]" },
+    tags: ["gemini", "ai", "제미나이", "주소창", "검색", "인공지능"],
+    tags_en: ["gemini", "ai", "omnibox", "search", "google", "artificial intelligence"]
+  },
+  {
+    id: 134, category: "AI 기능",
+    title: "AI 페이지 요약 (읽기 모드)",
+    title_en: "AI Page Summarization",
+    desc: "사이드 패널의 '읽기 모드'에서 '요약하기' 버튼을 누르면 AI가 복잡한 기사의 핵심 내용을 3줄로 정리해 줍니다.",
+    desc_en: "In the side panel's 'Reading mode', click 'Summarize' to get a 3-line AI summary of complex articles.",
+    shortcut: { win: "사이드 패널 > 읽기 모드 > '요약하기' 클릭", mac: "사이드 패널 > 읽기 모드 > '요약하기' 클릭" },
+    shortcut_en: { win: "Side panel > Reading mode > Click 'Summarize'", mac: "Side panel > Reading mode > Click 'Summarize'" },
+    tags: ["ai", "요약", "기사", "읽기모드", "생산성", "인공지능"],
+    tags_en: ["ai", "summarize", "article", "reading mode", "productivity", "summary"]
+  },
+  {
+    id: 135, category: "AI 기능",
+    title: "AI 이미지 검색 (Google Lens)",
+    title_en: "AI Image Search (Google Lens)",
+    desc: "이미지 우클릭 후 'Google로 이미지 검색'을 선택하세요. AI가 사진 속 상품을 찾아주거나 텍스트를 즉시 번역합니다.",
+    desc_en: "Right-click an image and select 'Search with Google'. AI finds products or translates text within the image.",
+    shortcut: { win: "이미지 우클릭 > 'Google로 이미지 검색'", mac: "이미지 우클릭 > 'Google로 이미지 검색'" },
+    shortcut_en: { win: "Right-click image > 'Search with Google'", mac: "Right-click image > 'Search with Google'" },
+    tags: ["lens", "렌즈", "이미지검색", "ai", "번역", "쇼핑"],
+    tags_en: ["lens", "google lens", "image search", "ai", "translate", "shopping"]
+  },
+  {
+    id: 136, category: "탐색",
+    title: "사이드 패널에서 검색 결과 유지",
+    title_en: "Side Search Results",
+    desc: "검색 후 링크를 클릭했을 때, 주소창의 'G' 아이콘을 누르면 원래 검색 결과 목록을 옆에 띄워두고 빠르게 탐색할 수 있습니다.",
+    desc_en: "After searching, click the 'G' icon in the address bar to keep your search list in the side panel while browsing.",
+    shortcut: { win: "주소창 왼쪽 'G' 아이콘 클릭", mac: "주소창 왼쪽 'G' 아이콘 클릭" },
+    shortcut_en: { win: "Click 'G' icon in address bar", mac: "Click 'G' icon in address bar" },
+    tags: ["검색", "사이드패널", "탐색", "비교", "멀티태스킹"],
+    tags_en: ["search", "side panel", "navigation", "compare", "multitasking"]
+  },
+  {
+    id: 137, category: "설정",
+    title: "비밀번호 관리자 앱 설치",
+    title_en: "Install Password Manager App",
+    desc: "크롬의 비밀번호 관리자를 독립된 앱처럼 바탕화면에 설치하세요. 브라우저를 켜지 않고도 비밀번호를 빠르게 찾을 수 있습니다.",
+    desc_en: "Install Chrome Password Manager as a standalone app on your desktop for quick access without opening the browser.",
+    shortcut: { win: "설정 > 비밀번호 관리자 > '앱으로 설치'", mac: "설정 > 비밀번호 관리자 > '앱으로 설치'" },
+    shortcut_en: { win: "Settings > Password Manager > 'Install as App'", mac: "Settings > Password Manager > 'Install as App'" },
+    tags: ["비밀번호", "보안", "앱설치", "매니저", "설정"],
+    tags_en: ["password", "security", "install app", "manager", "settings"]
+  },
+
+  {
+    id: 139, category: "화면",
+    title: "읽기 모드로 텍스트만 집중",
+    title_en: "Focus with Reading Mode",
+    desc: "광고나 복잡한 UI를 걷어내고 글자 크기, 배경색을 조절하여 기사를 훨씬 편안하게 읽으세요. 시력 보호에도 좋습니다.",
+    desc_en: "Strip away ads and complex UI. Adjust font size and background color for a comfortable reading experience.",
+    shortcut: { win: "사이드 패널 > 메뉴에서 '읽기 모드' 선택", mac: "사이드 패널 > 메뉴에서 '읽기 모드' 선택" },
+    shortcut_en: { win: "Side panel > Select 'Reading mode' from menu", mac: "Side panel > Select 'Reading mode' from menu" },
+    tags: ["읽기모드", "가독성", "뉴스", "시력보호", "집중"],
+    tags_en: ["reading mode", "readability", "news", "eye care", "focus"]
+  },
+
 ];
 
 const I18N = {
@@ -1124,7 +1371,7 @@ const I18N = {
     darkMode: "다크모드 전환",
     loading: "로딩 중...",
     clearSearchTitle: "검색 초기화",
-    categories: { "전체": "전체", "탭/창": "탭/창", "탐색": "탐색", "주소창/검색": "주소창/검색", "화면": "화면", "북마크": "북마크", "편집": "편집", "프로필/공간": "프로필/공간", "개발자": "개발자", "설정": "설정", "이스터에그": "이스터에그" },
+    categories: { "전체": "전체", "탭/창": "탭/창", "탐색": "탐색", "주소창/검색": "주소창/검색", "화면": "화면", "북마크": "북마크", "편집": "편집", "프로필/공간": "프로필/공간", "AI 기능": "AI 기능", "개발자": "개발자", "설정": "설정", "이스터에그": "이스터에그" },
     emptyFav: "아직 저장된 보관함이 없습니다 ⭐<br><small style=\"font-weight:400; opacity:0.7\">팁에 있는 별표를 눌러보세요.</small>",
     emptySearch: "검색 결과가 없습니다 😅",
     emptyShortcuts: "아직 등록된 지름길이 없습니다 🚀<br><small style=\"font-weight:400; opacity:0.7\">'+ 새 지름길 만들기' 버튼을 눌러보세요.</small>",
@@ -1201,7 +1448,8 @@ const state = {
   currentNoteId: null,
   editingShortcutId: null, // 수정 중인 지름길 ID 저장
   currentLang: LANG.KO,
-  categoryOrder: ["전체", "탭/창", "탐색", "주소창/검색", "화면", "북마크", "편집", "프로필/공간", "개발자", "설정", "이스터에그"]
+  categoryOrder: ["전체", "탭/창", "탐색", "주소창/검색", "화면", "북마크", "편집", "프로필/공간", "AI 기능", "개발자", "설정", "이스터에그"],
+  relatedTipsCache: new Map() // #3 관련 팁 캐시 추가
 };
 // ── 초기화 ────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1234,6 +1482,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   applyTheme();
   applyLanguage();
   setOSBtn(state.currentOS);
+
+  // #3 관련 팁 데이터 캐싱 (O(n^2) 연산을 초기 1회로 제한)
+  tips.forEach(tip => {
+    state.relatedTipsCache.set(tip.id, findRelatedTips(tip.id));
+  });
+
   buildCategoryNav();
   showDailyTip();
   renderTips();
@@ -1261,6 +1515,32 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   initClearButton();
   initCanvas();
+
+  // #6 이벤트 리스너 통일 (DOMContentLoaded 내부로 집결)
+  $('#dark-btn').addEventListener('click', async () => {
+    state.isDark = !state.isDark;
+    applyTheme();
+    await chrome.storage.local.set({ dark: state.isDark });
+  });
+
+  $('#os-win').addEventListener('click', () => handleOSChange(OS.WIN));
+  $('#os-mac').addEventListener('click', () => handleOSChange(OS.MAC));
+
+  $('#tab-all').addEventListener('click', () => {
+    state.currentTab = TABS.ALL;
+    switchTab();
+  });
+  $('#tab-fav').addEventListener('click', () => {
+    state.currentTab = TABS.FAV;
+    switchTab();
+  });
+  $('#tab-shortcuts').addEventListener('click', () => {
+    state.currentTab = TABS.SHORTCUTS;
+    switchTab();
+  });
+
+  $('.btn-save').addEventListener('click', saveNote);
+  $('.btn-delete').addEventListener('click', deleteNote);
 });
 
 
@@ -1272,7 +1552,7 @@ function initCanvas() {
   canvas = $('#effect-canvas');
   ctx = canvas.getContext('2d');
   resizeCanvas();
-  window.onresize = resizeCanvas;
+  window.addEventListener('resize', resizeCanvas);
 }
 
 function createParticleGroupAt(x, y, color = null) {
@@ -1320,10 +1600,10 @@ function resizeCanvas() {
 }
 
 function initClearButton() {
-  $('#clear-btn').onclick = () => {
+  $('#clear-btn').addEventListener('click', () => {
     $('#search').value = "";
     renderTips("");
-  };
+  });
 }
 
 
@@ -1336,23 +1616,16 @@ function applyTheme() {
   document.body.classList.toggle('dark', state.isDark);
   $('#dark-btn').textContent = state.isDark ? '☀️' : '🌙';
 
-  const CHROME_BLUE = '#4285f4';
-  const CHROME_GREEN = '#0f9d58';
-
-  const accentColor = state.isDark ? '#669df6' : CHROME_BLUE;
-  const dailyFrom = state.isDark ? '#669df6' : CHROME_BLUE;
-  const dailyTo = state.isDark ? '#34a853' : CHROME_GREEN;
+  // #10 CSS 변수와 JS 상수 일원화 (CSS 변수 우선 사용)
+  const accentColor = state.isDark ? '#669df6' : '#4285f4'; // Chrome Blue
+  const dailyTo = state.isDark ? '#34a853' : '#0f9d58';    // Chrome Green
 
   document.documentElement.style.setProperty('--accent', accentColor);
-  document.documentElement.style.setProperty('--daily-from', dailyFrom);
+  document.documentElement.style.setProperty('--daily-from', accentColor);
   document.documentElement.style.setProperty('--daily-to', dailyTo);
 }
 
-$('#dark-btn').onclick = async () => {
-  state.isDark = !state.isDark;
-  applyTheme();
-  await chrome.storage.local.set({ dark: state.isDark });
-};
+
 
 // ── 언어 변경 ──────────────────────────────────
 function applyLanguage() {
@@ -1373,8 +1646,8 @@ function applyLanguage() {
 
   $('#stats-modal h3').textContent = strings.statsModalTitle;
   $('#note-input').placeholder = strings.noteInputPlaceholder;
-  document.querySelector('.btn-delete').textContent = strings.noteDelete;
-  document.querySelector('.btn-save').textContent = strings.noteSave;
+  $('.btn-delete').textContent = strings.noteDelete;
+  $('.btn-save').textContent = strings.noteSave;
 }
 
 async function handleLangChange(lang) {
@@ -1404,8 +1677,7 @@ const handleOSChange = async (os) => {
   renderTips($('#search').value);
 };
 
-$('#os-win').onclick = () => handleOSChange(OS.WIN);
-$('#os-mac').onclick = () => handleOSChange(OS.MAC);
+
 
 // ── 카테고리 버튼 동적 생성 ───────────────────
 function buildCategoryNav() {
@@ -1632,7 +1904,6 @@ function renderTips(filter = "") {
     div.className = 'tip-item' + (tip.category === '이스터에그' ? ' actionable' : '');
     div.dataset.id = tip.id;
 
-    const lang = state.currentLang;
     const titleKey = lang === LANG.EN ? 'title_en' : 'title';
     const descKey = lang === LANG.EN ? 'desc_en' : 'desc';
 
@@ -1665,7 +1936,8 @@ function renderTips(filter = "") {
 
     createActionButtons(tip, div);
 
-    const related = findRelatedTips(tip.id);
+    // #3 캐시된 관련 팁 사용 (O(1) 조회)
+    const related = state.relatedTipsCache.get(tip.id) || [];
     if (related.length > 0) {
       const relatedSection = document.createElement('div');
       relatedSection.className = 'related-tips';
@@ -1751,7 +2023,12 @@ async function runShortcut(sc) {
 }
 
 // ── 이벤트 ────────────────────────────────────
-$('#search').addEventListener('input', (e) => renderTips(e.target.value));
+// #2 검색 debounce 300ms 적용
+let debounceTimer;
+$('#search').addEventListener('input', (e) => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => renderTips(e.target.value), 300);
+});
 
 $('#list').addEventListener('click', async (e) => {
   const copyableEl = e.target.closest('.shortcut.copyable');
@@ -1797,7 +2074,7 @@ $('#list').addEventListener('click', async (e) => {
   if (e.target.classList.contains('related-item')) {
     e.stopPropagation();
     const targetId = parseInt(e.target.dataset.id);
-    let targetEl = document.querySelector(`.tip-item[data-id="${targetId}"]`);
+    let targetEl = $(`.tip-item[data-id="${targetId}"]`);
 
     if (targetEl) {
       targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1811,7 +2088,7 @@ $('#list').addEventListener('click', async (e) => {
       $('#tab-fav').classList.remove('active');
       $('#tab-shortcuts').classList.remove('active');
       renderTips();
-      targetEl = document.querySelector(`.tip-item[data-id="${targetId}"]`);
+      targetEl = $(`.tip-item[data-id="${targetId}"]`);
       if (targetEl) {
         targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
         targetEl.classList.add('highlight');
@@ -1832,18 +2109,7 @@ $('#list').addEventListener('click', async (e) => {
   }
 });
 
-$('#tab-all').onclick = () => {
-  state.currentTab = TABS.ALL;
-  switchTab();
-};
-$('#tab-fav').onclick = () => {
-  state.currentTab = TABS.FAV;
-  switchTab();
-};
-$('#tab-shortcuts').onclick = () => {
-  state.currentTab = TABS.SHORTCUTS;
-  switchTab();
-};
+
 
 function switchTab() {
   $('#tab-all').classList.toggle('active', state.currentTab === TABS.ALL);
