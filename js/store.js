@@ -1,0 +1,213 @@
+import { TABS, CATEGORY_ALL, OS, LANG } from './constants.js';
+
+/**
+ * StorageUtility: chrome.storage.local 접근을 래핑하여 에러 핸들링 및 데이터 검증 수행
+ */
+const StorageUtility = {
+  /**
+   * 단일 또는 다수 키의 데이터를 로드하고 유효성 검사 수행
+   * @param {Object} schema { storageKey: { defaultValue, type } }
+   */
+  async load(schema) {
+    const keys = Object.keys(schema);
+    try {
+      const result = await chrome.storage.local.get(keys);
+      const data = {};
+
+      for (const storageKey of keys) {
+        const { defaultValue, type } = schema[storageKey];
+        let value = result[storageKey];
+
+        // 데이터가 없거나 유효하지 않을 경우 기본값 사용
+        if (value === undefined || value === null || !this._isValid(value, type)) {
+          if (value !== undefined && value !== null) {
+            console.warn(`[StorageUtility] Validation failed for "${storageKey}". Expected ${type}, got ${typeof value}. Falling back to default.`);
+          }
+          data[storageKey] = defaultValue;
+        } else {
+          data[storageKey] = value;
+        }
+      }
+      return data;
+    } catch (error) {
+      console.warn('[StorageUtility] Load error:', error);
+      // 에러 발생 시 모든 키에 대해 기본값 반환
+      return Object.keys(schema).reduce((acc, key) => {
+        acc[key] = schema[key].defaultValue;
+        return acc;
+      }, {});
+    }
+  },
+
+  /**
+   * 데이터를 저장소에 업데이트
+   * @param {Object} data { storageKey: value }
+   */
+  async save(data) {
+    try {
+      await chrome.storage.local.set(data);
+    } catch (error) {
+      console.warn('[StorageUtility] Save error:', error);
+    }
+  },
+
+  /**
+   * 데이터 타입 유효성 검사
+   */
+  _isValid(value, type) {
+    if (type === 'array') return Array.isArray(value);
+    if (type === 'object') return typeof value === 'object' && value !== null && !Array.isArray(value);
+    if (type === 'boolean') return typeof value === 'boolean';
+    if (type === 'string') return typeof value === 'string';
+    if (type === 'number') return typeof value === 'number';
+    return true; // type이 정의되지 않은 경우 통과
+  }
+};
+
+/**
+ * AppStore: 프로젝트의 상태(State)와 저장소(Storage)를 관리하는 중앙 모듈
+ */
+class AppStore {
+  constructor() {
+    // 기본 설정값 정의
+    this.defaults = {
+      favorites: [],
+      userShortcuts: [
+        {
+          id: 'naver-mail',
+          name: '네이버 메일',
+          url: 'https://www.naver.com',
+          steps: [
+            { type: 'click', target: '메일' }
+          ]
+        },
+        {
+          id: 'google-images',
+          name: '구글 이미지 검색',
+          url: 'https://www.google.com',
+          steps: [
+            { type: 'click', target: '이미지' }
+          ]
+        },
+        {
+          id: 'youtube-subs',
+          name: '유튜브 구독 목록',
+          url: 'https://www.youtube.com',
+          steps: [
+            { type: 'click', target: '구독' }
+          ]
+        }
+      ],
+      currentTab: TABS.ALL,
+      currentCategory: CATEGORY_ALL,
+      currentOS: navigator.platform.toUpperCase().indexOf('MAC') >= 0 ? OS.MAC : OS.WIN,
+      isDark: false,
+      viewCounts: {},
+      tipNotes: {},
+      currentLang: LANG.KO,
+      categoryOrder: ["전체", "탭/창", "탐색", "주소창/검색", "화면", "북마크", "편집", "프로필/공간", "AI 기능", "개발자", "설정", "이스터에그"]
+    };
+
+    // 상태 초기화
+    this.state = {
+      ...this.defaults,
+      relatedTipsCache: new Map(),
+      debounceTimer: null,
+      currentNoteId: null,
+      editingShortcutId: null
+    };
+
+    // State 키와 Storage 키 간의 매핑 및 스키마 정의
+    this.storageSchema = {
+      'favs': { stateKey: 'favorites', defaultValue: this.defaults.favorites, type: 'array' },
+      'userShortcuts': { stateKey: 'userShortcuts', defaultValue: this.defaults.userShortcuts, type: 'array' },
+      'os': { stateKey: 'currentOS', defaultValue: this.defaults.currentOS, type: 'string' },
+      'dark': { stateKey: 'isDark', defaultValue: this.defaults.isDark, type: 'boolean' },
+      'views': { stateKey: 'viewCounts', defaultValue: this.defaults.viewCounts, type: 'object' },
+      'notes': { stateKey: 'tipNotes', defaultValue: this.defaults.tipNotes, type: 'object' },
+      'lang': { stateKey: 'currentLang', defaultValue: this.defaults.currentLang, type: 'string' },
+      'categoryOrder': { stateKey: 'categoryOrder', defaultValue: this.defaults.categoryOrder, type: 'array' }
+    };
+
+    // State 키 -> Storage 키 역매핑 사전 계산
+    this.reverseMapping = Object.entries(this.storageSchema).reduce((acc, [storageKey, config]) => {
+      acc[config.stateKey] = storageKey;
+      return acc;
+    }, {});
+  }
+
+  /**
+   * 초기 데이터 로드 (Storage -> State)
+   */
+  async load() {
+    // StorageUtility에 전달할 스키마 추출
+    const schema = Object.keys(this.storageSchema).reduce((acc, storageKey) => {
+      acc[storageKey] = {
+        defaultValue: this.storageSchema[storageKey].defaultValue,
+        type: this.storageSchema[storageKey].type
+      };
+      return acc;
+    }, {});
+
+    const loadedData = await StorageUtility.load(schema);
+
+    // 로드된 데이터를 State에 반영
+    const newState = {};
+    for (const [storageKey, value] of Object.entries(loadedData)) {
+      const stateKey = this.storageSchema[storageKey].stateKey;
+      newState[stateKey] = value;
+    }
+
+    // [기능 추가] 누락된 기본 매크로 자동 동기화
+    if (Array.isArray(newState.userShortcuts)) {
+      const existingIds = newState.userShortcuts.map(s => s.id);
+      const missingDefaults = this.defaults.userShortcuts.filter(s => !existingIds.includes(s.id));
+      
+      if (missingDefaults.length > 0) {
+        newState.userShortcuts = [...newState.userShortcuts, ...missingDefaults];
+        // 저장소에도 즉시 반영
+        await chrome.storage.local.set({ userShortcuts: newState.userShortcuts });
+      }
+    }
+
+    Object.assign(this.state, newState);
+
+    // [최적화] 관련 팁 데이터 전처리 (캐싱)
+    const { tips, findRelatedTips } = await import('./data.js');
+    tips.forEach(tip => {
+      this.state.relatedTipsCache.set(tip.id, findRelatedTips(tip.id));
+    });
+
+    return this.state;
+  }
+
+  /**
+   * 상태 업데이트 및 자동 저장
+   * @param {Object} newState 업데이트할 상태 조각
+   * @param {Boolean} persist 저장소 저장 여부
+   */
+  async update(newState, persist = true) {
+    Object.assign(this.state, newState);
+    
+    if (persist) {
+      const toSave = {};
+      
+      for (const [key, value] of Object.entries(newState)) {
+        const storageKey = this.reverseMapping[key];
+        if (storageKey) {
+          toSave[storageKey] = value;
+        }
+      }
+
+      if (Object.keys(toSave).length > 0) {
+        await StorageUtility.save(toSave);
+      }
+    }
+  }
+
+  get(key) {
+    return this.state[key];
+  }
+}
+
+export const store = new AppStore();

@@ -4,12 +4,16 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="popup.css">
+  <script src="js/fouc.js"></script>
 </head>
 
 <body>
   <!-- 헤더 -->
   <div class="header">
-    <h2>📖 My Chrome Handbook</h2>
+    <h2>
+      <span id="header-logo" class="svg-icon" style="color: var(--accent);"></span>
+      <span id="header-title">My Chrome Handbook</span>
+    </h2>
     <div class="header-controls">
       <div class="os-toggle">
         <button type="button" id="os-win">Win</button>
@@ -19,12 +23,12 @@
         <button type="button" id="lang-ko">한</button>
         <button type="button" id="lang-en">Eng</button>
       </div>
-      <button id="dark-btn" class="header-icon-btn" title="다크모드 전환" style="transition-property: transform;">🌙</button>
+      <button id="dark-btn" class="header-icon-btn" title="다크모드 전환" aria-label="다크모드 전환" style="transition-property: transform;"></button>
     </div>
   </div>
 
   <div id="daily-card">
-    <div id="daily-label" class="label">⭐ 오늘의 추천</div>
+    <div id="daily-label" class="label"></div>
     <div id="daily-content">
       <div id="daily-title">로딩 중...</div>
       <div id="daily-shortcut"></div>
@@ -40,9 +44,9 @@
   <!-- 전체 / 보관함 / 지름길 탭 -->
   <div class="nav">
     <button type="button" id="tab-all" class="active">전체 팁</button>
-    <button type="button" id="tab-fav">내 보관함 ⭐</button>
-    <button type="button" id="tab-shortcuts" style="display: none;">나의 지름길 🚀</button>
-    <button type="button" id="stats-btn" title="자주 본 팁 통계">📊</button>
+    <button type="button" id="tab-fav">보관함</button>
+    <button type="button" id="tab-shortcuts">1클릭 매크로</button>
+    <button type="button" id="stats-btn" class="header-icon-btn" style="width: 42px; height: 42px; border-radius: 16px;"></button>
   </div>
 
   <!-- 카테고리 필터 (JS로 생성) -->
@@ -50,7 +54,7 @@
 
   <!-- 추가 버튼 (지름길 탭에서만 보임) -->
   <div id="shortcut-controls" style="display: none; margin-bottom: 16px;">
-    <button id="add-shortcut-btn" class="go-btn" style="margin-top: 0; background: var(--accent-gold);">+ 새 지름길 만들기</button>
+    <button id="add-shortcut-btn" class="go-btn" style="margin-top: 0; background: var(--accent-gold); border-radius: 20px;">+ 새 1클릭 매크로 만들기</button>
   </div>
 
   <!-- 꿀팁 목록 -->
@@ -65,8 +69,11 @@
   <div id="stats-modal" class="modal" style="display: none;">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>📊 자주 본 팁 Top 10</h3>
-        <button class="modal-close stats-close">✕</button>
+        <h3 style="display: flex; align-items: center; gap: 8px;">
+          <span id="stats-icon" class="svg-icon"></span>
+          <span id="stats-modal-title">Top 10</span>
+        </h3>
+        <button class="modal-close stats-close" aria-label="닫기">✕</button>
       </div>
       <div id="stats-list" class="stats-list"></div>
     </div>
@@ -76,15 +83,15 @@
   <div id="shortcut-modal" class="modal" style="display: none;">
     <div class="modal-content" style="width: 95%; max-width: 380px;">
       <div class="modal-header">
-        <h3 id="shortcut-modal-title">🚀 자동 지름길 설계하기</h3>
-        <button class="modal-close shortcut-close">✕</button>
+        <h3 id="shortcut-modal-title"><span class="svg-icon sc-rocket-icon" style="color:var(--accent); margin-right:4px;"></span> 1클릭 매크로 설계</h3>
+        <button class="modal-close shortcut-close" aria-label="닫기">✕</button>
       </div>
       
       <!-- 안내 섹션 -->
       <div style="background: var(--accent-bg); padding: 12px 16px; margin: 10px 20px 0; border-radius: 12px; border: 1px dashed var(--accent);">
         <p style="margin: 0; font-size: 11px; color: var(--accent-txt); line-height: 1.5;">
-          <strong>💡 지름길이란?</strong><br>
-          단순 접속을 넘어, 복잡한 메뉴 클릭을 자동으로 수행하는 '자율주행 북마크'입니다.
+          <strong><span class="svg-icon sc-lightbulb-icon" style="color:var(--accent); margin-right:2px; vertical-align:middle;"></span> 매크로란?</strong><br>
+          복잡한 메뉴 깊숙이 숨겨진 페이지를 버튼 하나로 찾아가는 '자율주행 북마크'입니다.
         </p>
       </div>
 
@@ -92,46 +99,37 @@
         <!-- 1. 이름 -->
         <div>
           <label style="font-size: 13px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">
-            <span>🏷️</span> 지름길 이름
+            <span class="svg-icon sc-tag-icon" style="color:var(--accent);"></span> 매크로 이름
           </label>
-          <input type="text" id="sc-name" placeholder="예: 인천대 학사행정, 네이버 수신확인">
-          <small style="color: var(--text-mute); font-size: 11px; margin-top: 4px; display: block;">목록에 표시될 이름입니다.</small>
+          <input type="text" id="sc-name" placeholder="예: 네이버 메일 수신확인, 학사행정">
         </div>
 
         <!-- 2. 시작 주소 -->
         <div>
           <label style="font-size: 13px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">
-            <span>🌐</span> 시작 URL
+            <span class="svg-icon sc-globe-icon" style="color:var(--accent);"></span> 시작 URL
           </label>
           <input type="text" id="sc-url" placeholder="https://...">
-          <small style="color: var(--text-mute); font-size: 11px; margin-top: 4px; display: block;">여정이 시작될 홈페이지 주소를 입력하세요.</small>
         </div>
 
-        <!-- 3. 여정 설계 (자동 클릭 단계) -->
-        <div style="background: var(--bg); padding: 16px; border-radius: 16px; border: 1px solid var(--border);">
-          <label style="font-size: 13px; font-weight: 800; margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
-            <span>🤖</span> 클릭 여정 설계
+        <!-- 3. 여정 설계 (녹화 중심) -->
+        <div style="background: var(--bg); padding: 20px; border-radius: 16px; border: 1px solid var(--border); text-align: center;">
+          <label style="font-size: 13px; font-weight: 800; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 5px;">
+            <span class="svg-icon sc-bot-icon" style="color:var(--accent);"></span> 매크로 동작 정의
           </label>
           
-          <div id="sc-steps-container" style="display: flex; flex-direction: column; gap: 8px;">
-            <!-- 단계들이 여기에 동적으로 추가됩니다 -->
-          </div>
+          <p style="font-size: 11px; color: var(--text-sub); margin-bottom: 16px; line-height: 1.5;">
+            '녹화 시작' 버튼을 누르면 새 창이 열립니다.<br>
+            그 창에서 클릭하거나 입력하는 모든 동작이<br>
+            자동으로 기록되어 매크로가 생성됩니다.
+          </p>
 
-          <button id="add-step-item-btn" style="width: 100%; padding: 8px; margin-top: 10px; background: none; border: 1px dashed var(--text-mute); border-radius: 10px; color: var(--text-sub); font-size: 11px; cursor: pointer; font-weight: 700;">
-            + 클릭할 버튼 추가 (다음 단계)
+          <button id="record-shortcut-btn" style="width: 100%; padding: 14px; background: var(--accent); border: none; border-radius: 12px; color: white; font-size: 14px; cursor: pointer; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <span class="svg-icon" style="color: #fff; font-size: 18px;">●</span> <span id="record-btn-text">매크로 녹화 시작</span>
           </button>
 
-          <div style="margin-top: 12px; padding: 10px; background: #fffbe6; border-radius: 8px; border: 1px solid #ffe58f;">
-            <p style="margin: 0; font-size: 10.5px; color: #856404; line-height: 1.4;">
-              <strong>📝 작성 팁:</strong><br>
-              페이지에 보이는 <strong>'글자'</strong>를 정확히 적어주세요. (예: 로그인, 보낸메일함)<br>
-              로그인이 필요한 경우 첫 단계를 '로그인'으로 설정하면 편리합니다.
-            </p>
-          </div>
-        </div>
-
-        <div class="note-buttons" style="margin-top: 10px;">
-          <button id="save-shortcut-btn" class="btn-save" style="width: 100%; padding: 14px; font-size: 14px;">지름길 저장 및 여정 완성</button>
+          <div id="sc-steps-container" style="display: none;"></div>
+          <button id="add-step-item-btn" style="display: none;"></button>
         </div>
       </div>
     </div>
@@ -142,13 +140,13 @@
     <div class="modal-content">
       <div class="modal-header">
         <h3 id="note-title">메모</h3>
-        <button class="modal-close note-close">✕</button>
+        <button class="modal-close note-close" aria-label="닫기">✕</button>
       </div>
       <div id="note-form">
         <textarea id="note-input" placeholder="이 팁에 대한 메모나 의견을 입력하세요..."></textarea>
         <div class="note-buttons">
-          <button class="btn-delete"></button>
-          <button class="btn-save"></button>
+          <button id="note-delete-btn" class="btn-delete"></button>
+          <button id="note-save-btn" class="btn-save"></button>
         </div>
       </div>
       <div id="note-list" class="note-list"></div>

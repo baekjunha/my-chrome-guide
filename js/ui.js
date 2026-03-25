@@ -1,65 +1,119 @@
-import { $, TABS, CATEGORY_ALL, LANG } from './constants.js';
-import { state } from './state.js';
+import { $, $$, TABS, CATEGORY_ALL, LANG, OS } from './constants.js';
+import { store } from './store.js';
 import { I18N } from './i18n.js';
-import { tips, findRelatedTips } from './data.js';
+import { tips } from './data.js';
+import { ICONS } from './icons.js';
 
 export function applyTheme() {
-  document.body.classList.toggle('dark', state.isDark);
-  $('#dark-btn').textContent = state.isDark ? '☀️' : '🌙';
-
-  const accentColor = state.isDark ? '#669df6' : '#4285f4';
-  const dailyTo = state.isDark ? '#34a853' : '#0f9d58';
-
-  document.documentElement.style.setProperty('--accent', accentColor);
-  document.documentElement.style.setProperty('--daily-from', accentColor);
-  document.documentElement.style.setProperty('--daily-to', dailyTo);
+  const body = document.body;
+  if (!body) return;
+  body.classList.toggle('dark', store.state.isDark);
+  const darkBtn = $('#dark-btn');
+  if (darkBtn) {
+    darkBtn.innerHTML = store.state.isDark ? ICONS.sun : ICONS.moon;
+  }
 }
 
 export function applyLanguage() {
-  const lang = state.currentLang;
+  const lang = store.state.currentLang;
   const strings = I18N[lang];
+  if (!strings) return;
 
-  $('#lang-ko').classList.toggle('active', lang === LANG.KO);
-  $('#lang-en').classList.toggle('active', lang === LANG.EN);
+  // OS 및 언어 토글 활성 상태
+  $('#os-win')?.classList.toggle('active', store.state.currentOS === 'win');
+  $('#os-mac')?.classList.toggle('active', store.state.currentOS === 'mac');
+  $('#lang-ko')?.classList.toggle('active', lang === LANG.KO);
+  $('#lang-en')?.classList.toggle('active', lang === LANG.EN);
 
-  $('#daily-label').textContent = strings.dailyLabel;
-  $('#tab-all').textContent = strings.allTips;
-  $('#tab-fav').textContent = strings.myLibrary;
-  $('#tab-shortcuts').textContent = strings.myShortcuts;
-  $('#stats-btn').title = strings.statsBtnTitle;
-  $('#dark-btn').title = strings.darkMode;
-  $('#daily-title').textContent = strings.loading;
-  $('#clear-btn').title = strings.clearSearchTitle;
+  // 헤더 및 내비게이션 아이콘
+  if ($('#header-logo')) $('#header-logo').innerHTML = ICONS.logo;
+  
+  const dailyLabel = $('#daily-label');
+  if (dailyLabel) dailyLabel.innerHTML = `<span class="svg-icon">${ICONS.sparkles}</span>${strings.dailyLabel}`;
 
-  $('#stats-modal h3').textContent = strings.statsModalTitle;
-  $('#note-input').placeholder = strings.noteInputPlaceholder;
-  $('.btn-delete').textContent = strings.noteDelete;
-  $('.btn-save').textContent = strings.noteSave;
+  if ($('#tab-all')) $('#tab-all').textContent = strings.allTips;
+  
+  const tabFav = $('#tab-fav');
+  if (tabFav) tabFav.innerHTML = `<span class="svg-icon" style="margin-right: 4px;">${ICONS.star}</span>${strings.myLibrary}`;
+  
+  const tabShortcuts = $('#tab-shortcuts');
+  if (tabShortcuts) tabShortcuts.innerHTML = `<span class="svg-icon">${ICONS.rocket}</span>${strings.myShortcuts}`;
+  
+  const statsBtn = $('#stats-btn');
+  if (statsBtn) {
+    statsBtn.title = strings.statsBtnTitle;
+    statsBtn.setAttribute('aria-label', strings.statsBtnTitle);
+    statsBtn.innerHTML = ICONS.stats;
+  }
+  
+  const darkBtn = $('#dark-btn');
+  if (darkBtn) {
+    darkBtn.title = strings.darkMode;
+    darkBtn.setAttribute('aria-label', strings.darkMode);
+  }
+  if ($('#daily-title')) $('#daily-title').textContent = strings.loading;
+  
+  const clearBtn = $('#clear-btn');
+  if (clearBtn) {
+    clearBtn.title = strings.clearSearchTitle;
+    clearBtn.setAttribute('aria-label', strings.clearSearchTitle);
+    clearBtn.innerHTML = ICONS.close;
+  }
+
+  // 모달 닫기 버튼들 일괄 적용
+  $$('.modal-close').forEach(el => el.innerHTML = ICONS.close);
+
+  // 새 매크로 만들기 버튼 아이콘
+  const addShortcutBtn = $('#add-shortcut-btn');
+  if (addShortcutBtn) {
+    addShortcutBtn.innerHTML = `<span>${strings.addShortcut || '🔴 매크로 녹화하기'}</span>`;
+    addShortcutBtn.style.background = 'var(--accent)';
+    addShortcutBtn.style.color = 'white';
+    addShortcutBtn.style.border = 'none';
+  }
+
+  // 모달 정보 및 아이콘
+  $$('#stats-icon').forEach(el => el.innerHTML = ICONS.stats);
+  if ($('#stats-modal-title')) $('#stats-modal-title').textContent = strings.statsModalTitle;
+  
+  $$('.sc-tag-icon').forEach(el => el.innerHTML = ICONS.tag);
+  $$('.sc-globe-icon').forEach(el => el.innerHTML = ICONS.globe);
+  $$('.sc-bot-icon').forEach(el => el.innerHTML = ICONS.bot);
+  $$('.sc-rocket-icon').forEach(el => el.innerHTML = ICONS.rocket);
+  $$('.sc-lightbulb-icon').forEach(el => el.innerHTML = ICONS.lightbulb);
+  $$('.sc-pencil-icon').forEach(el => el.innerHTML = ICONS.pencil);
+
+  if ($('#note-input')) $('#note-input').placeholder = strings.noteInputPlaceholder;
+  if ($('#note-delete-btn')) $('#note-delete-btn').textContent = strings.noteDelete;
+  if ($('#note-save-btn')) $('#note-save-btn').textContent = strings.noteSave;
 }
 
 export function buildCategoryNav(onCategoryClick) {
   const nav = $('#cat-nav');
   nav.innerHTML = "";
-  const lang = state.currentLang;
+  const lang = store.state.currentLang;
   const categoryStrings = I18N[lang].categories;
 
-  state.categoryOrder.forEach(catKey => {
+  store.state.categoryOrder.forEach(catKey => {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.textContent = categoryStrings[catKey] || catKey;
     btn.dataset.cat = catKey;
     btn.draggable = true;
-    
-    if (catKey === state.currentCategory) btn.classList.add('active');
 
-    btn.onclick = () => onCategoryClick(catKey, btn);
+    if (catKey === store.state.currentCategory) btn.classList.add('active');
+    
+    btn.addEventListener('click', () => onCategoryClick(catKey, btn));
     nav.appendChild(btn);
   });
 
-  addDragDropHandlers(nav, (src, dest) => {
-    state.categoryOrder.splice(state.categoryOrder.indexOf(src), 1);
-    state.categoryOrder.splice(state.categoryOrder.indexOf(dest), 0, src);
-    chrome.storage.local.set({ categoryOrder: state.categoryOrder });
+  addDragDropHandlers(nav, (from, to) => {
+    const newOrder = [...store.state.categoryOrder];
+    const fromIdx = newOrder.indexOf(from);
+    const toIdx = newOrder.indexOf(to);
+    newOrder.splice(fromIdx, 1);
+    newOrder.splice(toIdx, 0, from);
+    store.update({ categoryOrder: newOrder });
     buildCategoryNav(onCategoryClick);
   });
 }
@@ -69,21 +123,27 @@ export function showDailyTip() {
   const titleEl = $('#daily-title');
   const shortcutEl = $('#daily-shortcut');
 
+  if (!contentEl) return;
+
   contentEl.classList.add('fade-out');
   contentEl.classList.remove('fade-in');
 
   setTimeout(() => {
     const now = new Date();
-    const lang = state.currentLang;
+    const lang = store.state.currentLang;
     const titleKey = lang === LANG.EN ? 'title_en' : 'title';
 
     const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
     const pool = tips.filter(tip => tip.category !== '이스터에그');
+    if (pool.length === 0) return;
+
     const t = pool[dayOfYear % pool.length];
-    titleEl.innerText = t[titleKey] || t.title;
+    titleEl.innerText = t[titleKey] || t.title || "";
 
     const shortcutObj = (lang === LANG.EN && t.shortcut_en) ? t.shortcut_en : t.shortcut;
-    shortcutEl.innerText = (shortcutObj && shortcutObj[state.currentOS]) || "";
+    const shortcutText = (shortcutObj && shortcutObj[store.state.currentOS]) || "";
+    shortcutEl.innerText = shortcutText;
+
     contentEl.classList.remove('fade-out');
     contentEl.classList.add('fade-in');
   }, 300);
@@ -91,217 +151,273 @@ export function showDailyTip() {
 
 export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut } = {}) {
   const listEl = $('#list');
+  if (!listEl) return;
   listEl.innerHTML = "";
-  const strings = I18N[state.currentLang];
+  
+  const strings = I18N[store.state.currentLang];
+  const lang = store.state.currentLang;
+  const currentOS = store.state.currentOS;
+  const searchLow = filter.toLowerCase().trim();
 
-  if (state.currentTab === TABS.SHORTCUTS) {
+  if (store.state.currentTab === TABS.SHORTCUTS) {
     renderShortcuts(onShortcutRun, onEditShortcut, onDeleteShortcut);
     return;
   }
 
-  let pool = state.currentTab === TABS.ALL ? tips : tips.filter(t => state.favorites.includes(t.id));
-  if (state.currentCategory !== CATEGORY_ALL) {
-    pool = pool.filter(t => t.category === state.currentCategory);
-  }
+  const fragment = document.createDocumentFragment();
+  let visibleCount = 0;
 
-  const lang = state.currentLang;
-  const searchLow = filter.toLowerCase();
-
-  const filtered = pool.filter(t => {
-    const title = (lang === LANG.EN && t.title_en) ? t.title_en : t.title;
-    const desc = (lang === LANG.EN && t.desc_en) ? t.desc_en : t.desc;
-    const searchTags = (lang === LANG.EN && t.tags_en) ? t.tags_en : t.tags;
-    return (
-      title.toLowerCase().includes(searchLow) ||
-      desc.toLowerCase().includes(searchLow) ||
-      searchTags.some(tag => tag.toLowerCase().includes(searchLow))
-    );
-  });
-
-  if (filtered.length === 0) {
-    listEl.innerHTML = `<div class="empty-msg">${state.currentTab === TABS.FAV ? strings.emptyFav : strings.emptySearch}</div>`;
-    return;
-  }
-
-  filtered.forEach(tip => {
-    const isFav = state.favorites.includes(tip.id);
-    const div = document.createElement('div');
-    div.className = 'tip-item' + (tip.category === '이스터에그' ? ' actionable' : '');
-    div.dataset.id = tip.id;
-
-    const titleKey = lang === LANG.EN ? 'title_en' : 'title';
-    const descKey = lang === LANG.EN ? 'desc_en' : 'desc';
-    const shortcutObj = (lang === LANG.EN && tip.shortcut_en) ? tip.shortcut_en : tip.shortcut;
-    const shortcutText = (shortcutObj && shortcutObj[state.currentOS]) || "";
+  tips.forEach(tip => {
+    const matchesTab = store.state.currentTab === TABS.ALL || store.state.favorites.includes(tip.id);
+    const matchesCat = store.state.currentCategory === CATEGORY_ALL || tip.category === store.state.currentCategory;
     
-    let shortcutHTML;
-    const isSearchableEasterEgg = tip.category === '이스터에그' && (shortcutText.includes('검색') || shortcutText.includes('Search')) && !tip.link;
+    const titleKO = (tip.title || "").toLowerCase();
+    const titleEN = (tip.title_en || "").toLowerCase();
+    const descKO = (tip.desc || "").toLowerCase();
+    const descEN = (tip.desc_en || "").toLowerCase();
+    const tagsKO = (tip.tags || []).join(',').toLowerCase();
+    const tagsEN = (tip.tags_en || []).join(',').toLowerCase();
+    
+    // 공백 없는 버전으로도 검색 가능하게 (예: "새 탭" -> "새탭")
+    const searchLowNoSpace = searchLow.replace(/\s/g, "");
+    const titleKONoSpace = titleKO.replace(/\s/g, "");
+    const titleENNoSpace = titleEN.replace(/\s/g, "");
 
-    if (isSearchableEasterEgg) {
-      const match = shortcutText.match(/'([^']+)'/);
-      const textToCopy = match ? match[1] : '';
-      shortcutHTML = textToCopy 
-        ? `<div class="shortcut copyable" title="${strings.copyShortcutTitle}" data-copy-text="${textToCopy}">${shortcutText}</div>`
-        : `<div class="shortcut">${shortcutText}</div>`;
+    const matchesSearch = !searchLow || 
+      titleKO.includes(searchLow) || titleEN.includes(searchLow) ||
+      titleKONoSpace.includes(searchLowNoSpace) || titleENNoSpace.includes(searchLowNoSpace) ||
+      descKO.includes(searchLow) || descEN.includes(searchLow) ||
+      tagsKO.includes(searchLow) || tagsEN.includes(searchLow);
+
+    const title = (lang === LANG.EN && tip.title_en) ? tip.title_en : (tip.title || "");
+    let desc = (lang === LANG.EN && tip.desc_en) ? tip.desc_en : (tip.desc || "");
+    
+    if (currentOS === OS.MAC) {
+      desc = desc.replace(/Ctrl/g, 'Cmd').replace(/Win/g, 'Cmd').replace(/Alt/g, 'Option');
     } else {
-      shortcutHTML = `<div class="shortcut">${shortcutText}</div>`;
+      desc = desc.replace(/Cmd/g, 'Ctrl').replace(/Option/g, 'Alt');
     }
 
-    div.innerHTML = `
-      <div class="tip-category">${I18N[lang].categories[tip.category] || tip.category}</div>
-      <div class="tip-title">${tip[titleKey] || tip.title}</div>
-      <div class="tip-desc">${tip[descKey] || tip.desc}</div>
-      ${shortcutHTML}
-      <span class="fav-btn" data-id="${tip.id}">${isFav ? '⭐' : '☆'}</span>
-      <button class="note-btn" data-id="${tip.id}" title="${strings.writeNoteTitle}">📝</button>
-    `;
+    if (matchesTab && matchesCat && matchesSearch) {
+      visibleCount++;
+      const isFav = store.state.favorites.includes(tip.id);
+      const div = document.createElement('div');
+      div.className = 'tip-item' + (tip.category === '이스터에그' ? ' actionable' : '');
+      div.dataset.id = tip.id;
+      div.dataset.category = tip.category;
 
-    createActionButtons(tip, div);
+      const shortcutObj = (lang === LANG.EN && tip.shortcut_en) ? tip.shortcut_en : tip.shortcut;
+      let shortcutText = "";
+      if (typeof shortcutObj === 'string') {
+        shortcutText = shortcutObj;
+      } else if (shortcutObj && typeof shortcutObj === 'object') {
+        shortcutText = shortcutObj[currentOS] || shortcutObj['win'] || "";
+      }
 
-    const related = state.relatedTipsCache.get(tip.id) || [];
-    if (related.length > 0) {
-      const relatedSection = document.createElement('div');
-      relatedSection.className = 'related-tips';
-      relatedSection.innerHTML = `
-        <div class="related-label">${strings.relatedTipsLabel}</div>
-        <div class="related-list">
-          ${related.map(r => `<span class="related-item" data-id="${r.id}">${r[titleKey] || r.title}</span>`).join('')}
-        </div>
+      let shortcutHTML = `<div class="shortcut">${shortcutText}</div>`;
+
+
+      div.innerHTML = `
+        <div class="tip-category">${I18N[lang].categories[tip.category] || tip.category}</div>
+        <div class="tip-title">${title}</div>
+        <div class="tip-desc">${desc}</div>
+        ${shortcutHTML}
+        <span class="fav-btn" data-id="${tip.id}" aria-label="즐겨찾기">
+          <span class="svg-icon">${isFav ? ICONS.star : ICONS.starOutline}</span>
+        </span>
+        <button class="note-btn" data-id="${tip.id}" title="${strings.writeNoteTitle}" aria-label="${strings.writeNoteTitle}">
+          <span class="svg-icon">${ICONS.note}</span>
+        </button>
       `;
-      div.appendChild(relatedSection);
+
+      createActionButtons(tip, div);
+
+      // 단계별 가이드 생성
+      let rawSteps = lang === LANG.KO ? tip.steps : (tip.steps_en || tip.steps);
+      let steps = [];
+      if (rawSteps) {
+        if (Array.isArray(rawSteps)) steps = rawSteps;
+        else if (typeof rawSteps === 'object') steps = rawSteps[currentOS] || rawSteps['win'] || [];
+      }
+
+      if (steps && steps.length > 0) {
+        const stepGuide = document.createElement('div');
+        stepGuide.className = 'step-guide';
+        stepGuide.innerHTML = `
+          <div class="step-guide-header">
+            <div class="step-guide-title">
+              <span class="svg-icon">${ICONS.globe}</span>
+              <span>${lang === LANG.KO ? '단계별 스텝 가이드' : 'Step-by-Step Guide'}</span>
+            </div>
+            <div class="step-toggle-icon">${ICONS.chevron}</div>
+          </div>
+          <div class="step-content">
+            ${steps.map((step, idx) => {
+              let p = step;
+              if (currentOS === OS.MAC) {
+                p = p.replace(/Ctrl/g, 'Cmd').replace(/Win/g, 'Cmd').replace(/Alt/g, 'Option').replace(/우클릭/g, '이중 손가락 클릭(Control+클릭)');
+              } else p = p.replace(/Cmd/g, 'Ctrl').replace(/Option/g, 'Alt');
+              return `<div class="step-row"><div class="step-number">${idx+1}</div><div class="step-text">${p}</div></div>`;
+            }).join('')}
+          </div>
+        `;
+        div.appendChild(stepGuide);
+      }
+
+      // 관련 팁 (캐시 사용)
+      const related = store.state.relatedTipsCache.get(tip.id);
+      if (related && related.length > 0) {
+        const relDiv = document.createElement('div');
+        relDiv.className = 'related-tips';
+        relDiv.innerHTML = `<div class="related-label"><span class="svg-icon">${ICONS.link}</span>${strings.relatedTipsLabel}</div>`;
+        const relList = document.createElement('div');
+        relList.className = 'related-list';
+        related.forEach(rt => {
+          const rtTitle = (lang === LANG.EN && rt.title_en) ? rt.title_en : rt.title;
+          const rtBtn = document.createElement('span');
+          rtBtn.className = 'related-item';
+          rtBtn.dataset.id = rt.id;
+          rtBtn.textContent = rtTitle;
+          relList.appendChild(rtBtn);
+        });
+        relDiv.appendChild(relList);
+        div.appendChild(relDiv);
+      }
+
+      fragment.appendChild(div);
     }
-    listEl.appendChild(div);
   });
+
+  if (visibleCount === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'empty-msg';
+    empty.innerHTML = filter ? strings.emptySearch : (store.state.currentTab === TABS.FAV ? strings.emptyFav : "");
+    listEl.appendChild(empty);
+  } else {
+    listEl.appendChild(fragment);
+  }
 }
 
-function renderShortcuts(onShortcutRun, onEditShortcut, onDeleteShortcut) {
+export function renderShortcuts(onRun, onEdit, onDelete) {
   const listEl = $('#list');
-  const strings = I18N[state.currentLang];
-  
-  if (state.userShortcuts.length === 0) {
+  const scs = store.state.userShortcuts;
+  const strings = I18N[store.state.currentLang];
+
+  if (scs.length === 0) {
     listEl.innerHTML = `<div class="empty-msg">${strings.emptyShortcuts}</div>`;
     return;
   }
 
-  state.userShortcuts.forEach(sc => {
-    const div = document.createElement('div');
-    div.className = 'tip-item';
-    div.innerHTML = `
-      <div class="tip-category">USER SHORTCUT</div>
-      <div class="tip-title">${sc.name}</div>
-      <div class="tip-desc">${sc.url}</div>
-      <div class="shortcut">${sc.steps.join(' → ')}</div>
-      <div style="position: absolute; right: 18px; top: 18px; display: flex; gap: 10px;">
-        <span class="edit-sc" data-id="${sc.id}" title="수정" style="cursor:pointer; font-size: 18px;">✏️</span>
-        <span class="delete-sc" data-id="${sc.id}" title="삭제" style="cursor:pointer; font-size: 18px;">🗑️</span>
+  const grid = document.createElement('div');
+  grid.className = 'shortcut-grid';
+
+  scs.forEach(sc => {
+    const card = document.createElement('div');
+    const name = sc.name || "";
+    const stepsCount = (sc.steps && sc.steps.length) || 0;
+
+    card.className = 'widget-card';
+    card.innerHTML = `
+      <div class="widget-icon">${ICONS.rocket}</div>
+      <div class="widget-title">${name}</div>
+      <div class="widget-steps-count">${stepsCount} STEPS</div>
+      <div class="widget-actions">
+        <button class="widget-action-btn edit-sc" title="수정"><span class="svg-icon">${ICONS.edit}</span></button>
+        <button class="widget-action-btn delete-sc" title="삭제"><span class="svg-icon">${ICONS.trash}</span></button>
       </div>
-      <button class="go-btn" style="margin-top: 14px; background: var(--accent);">${strings.runShortcut}</button>
+      <div class="widget-play-icon">${ICONS.play}</div>
     `;
-    
-    div.querySelector('.edit-sc').onclick = (e) => { e.stopPropagation(); onEditShortcut(sc); };
-    div.querySelector('.delete-sc').onclick = (e) => { e.stopPropagation(); onDeleteShortcut(sc); };
-    div.querySelector('.go-btn').onclick = () => onShortcutRun(sc);
-    listEl.appendChild(div);
+
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.edit-sc')) onEdit(sc);
+      else if (e.target.closest('.delete-sc')) onDelete(sc);
+      else onRun(sc);
+    });
+
+    grid.appendChild(card);
   });
+
+  listEl.appendChild(grid);
 }
 
 function createActionButtons(tip, div) {
-  const lang = state.currentLang;
+  const lang = store.state.currentLang;
   const shortcutObj = (lang === LANG.EN && tip.shortcut_en) ? tip.shortcut_en : tip.shortcut;
-  const shortcutText = (shortcutObj && shortcutObj[state.currentOS]) || "";
-  const strings = I18N[state.currentLang];
-  
+  const shortcutText = (shortcutObj && shortcutObj[store.state.currentOS]) || "";
+  const strings = I18N[store.state.currentLang];
+
   const chromeUrlMatch = shortcutText && shortcutText.match(/chrome:\/\/[^\s]+/);
   if (chromeUrlMatch) {
     const url = chromeUrlMatch[0];
     const btn = document.createElement('button');
     btn.className = 'go-btn';
-    btn.innerText = strings.goToAction;
-    btn.onclick = (e) => { e.stopPropagation(); chrome.tabs.create({ url: url }); };
+    btn.innerHTML = `<span class="svg-icon" style="margin-right: 6px;">${ICONS.external}</span>${strings.goToAction}`;
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      chrome.tabs.create({ url });
+    };
     div.appendChild(btn);
-    return;
   }
-
-  if (shortcutText && (shortcutText.includes('[키워드]') || shortcutText.includes('[keyword]'))) {
+  
+  if (tip.link && !chromeUrlMatch) {
     const btn = document.createElement('button');
     btn.className = 'go-btn';
-    btn.innerText = strings.goToSettings;
-    btn.onclick = (e) => { e.stopPropagation(); chrome.tabs.create({ url: 'chrome://settings/searchEngines' }); };
-    div.appendChild(btn);
-    return;
-  }
-
-  if (tip.link) {
-    const btn = document.createElement('button');
-    btn.className = 'go-btn';
-    btn.innerText = strings.goToAction;
-    btn.onclick = (e) => { e.stopPropagation(); chrome.tabs.create({ url: tip.link }); };
+    btn.innerHTML = `<span class="svg-icon" style="margin-right: 6px;">${ICONS.external}</span>${strings.goToSettings}`;
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      chrome.tabs.create({ url: tip.link });
+    };
     div.appendChild(btn);
   }
 }
 
 export function setRandomPlaceholder() {
-  const placeholders = I18N[state.currentLang].searchPlaceholders;
+  const placeholders = I18N[store.state.currentLang].searchPlaceholders;
   const randomText = placeholders[Math.floor(Math.random() * placeholders.length)];
-  $('#search').placeholder = randomText;
+  if ($('#search')) $('#search').placeholder = randomText;
 }
 
 export function switchTab(callbacks) {
-  $('#tab-all').classList.toggle('active', state.currentTab === TABS.ALL);
-  $('#tab-fav').classList.toggle('active', state.currentTab === TABS.FAV);
-  $('#tab-shortcuts').classList.toggle('active', state.currentTab === TABS.SHORTCUTS);
+  // 실제 탭 버튼들만 클래스 정리 (통계 버튼 제외)
+  $$('.nav button[id^="tab-"]').forEach(b => b.classList.remove('active'));
   
-  const isShortcuts = state.currentTab === TABS.SHORTCUTS;
-  $('#cat-nav').style.display = isShortcuts ? 'none' : 'flex';
-  $('#shortcut-controls').style.display = isShortcuts ? 'block' : 'none';
-  $('.search-wrapper').style.display = isShortcuts ? 'none' : 'block';
-  
-  renderTips($('#search').value, callbacks);
+  $('#tab-all')?.classList.toggle('active', store.state.currentTab === TABS.ALL);
+  $('#tab-fav')?.classList.toggle('active', store.state.currentTab === TABS.FAV);
+  $('#tab-shortcuts')?.classList.toggle('active', store.state.currentTab === TABS.SHORTCUTS);
+
+  const isShortcuts = store.state.currentTab === TABS.SHORTCUTS;
+  if ($('#cat-nav')) $('#cat-nav').style.display = isShortcuts ? 'none' : 'flex';
+  if ($('#shortcut-controls')) $('#shortcut-controls').style.display = isShortcuts ? 'block' : 'none';
+
+  renderTips($('#search')?.value || "", callbacks);
 }
 
-export function handleSearchClick(e) {
-  if (e.target.value === "") {
-    setRandomPlaceholder();
-  }
-}
-
-let draggedItem = null;
 export function addDragDropHandlers(container, onDrop) {
-  if (container.dataset.dragInit) return;
-  container.dataset.dragInit = 'true';
+  let draggedItem = null;
 
-  container.addEventListener('dragstart', e => {
-    if (e.target.tagName === 'BUTTON') {
-      draggedItem = e.target;
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', e.target.dataset.cat);
-      setTimeout(() => e.target.classList.add('dragging'), 0);
-    }
+  container.addEventListener('dragstart', (e) => {
+    draggedItem = e.target;
+    e.target.classList.add('dragging');
   });
 
-  container.addEventListener('dragend', e => {
-    if (draggedItem) {
-      draggedItem.classList.remove('dragging');
-      draggedItem = null;
-    }
-    container.querySelectorAll('button').forEach(btn => btn.classList.remove('drag-over'));
+  container.addEventListener('dragend', (e) => {
+    e.target.classList.remove('dragging');
   });
 
-  container.addEventListener('dragover', e => {
+  container.addEventListener('dragover', (e) => {
     e.preventDefault();
     const target = e.target.closest('button');
     if (target && target !== draggedItem) {
-      container.querySelectorAll('button').forEach(btn => btn.classList.remove('drag-over'));
       target.classList.add('drag-over');
     }
   });
-  
-  container.addEventListener('dragleave', e => {
+
+  container.addEventListener('dragleave', (e) => {
     const target = e.target.closest('button');
     if (target) target.classList.remove('drag-over');
   });
 
-  container.addEventListener('drop', async e => {
+  container.addEventListener('drop', (e) => {
     e.preventDefault();
     const target = e.target.closest('button');
     if (target && draggedItem && target !== draggedItem) {

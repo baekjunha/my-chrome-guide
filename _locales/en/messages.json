@@ -6,5 +6,55 @@
   "extDesc": {
     "message": "Your handbook for everything Chrome. Search over 100 essential shortcuts, hidden features, and easter eggs, and manage them with your own notes and favorites.",
     "description": "The description of the extension."
+  },
+  "macroStopped": {
+    "message": "Macro Stopped",
+    "description": "Macro Stopped title"
+  },
+  "buttonNotFound": {
+    "message": "Macro stopped because the button could not be found.",
+    "description": "Button not found message"
+  },
+  "allStepsDone": {
+    "message": "All steps completed",
+    "description": "All steps done message"
+  },
+  "closingSoon": {
+    "message": "Guide will close shortly.",
+    "description": "Closing soon message"
+  },
+  "macroActive": {
+    "message": "Macro automation in progress",
+    "description": "Macro active message"
+  },
+  "stepInProgress": {
+    "message": "Step: \"$STEP$\" in progress...",
+    "description": "Step in progress message",
+    "placeholders": {
+      "step": {
+        "content": "$1"
+      }
+    }
+  },
+  "waitingForButton": {
+    "message": "Waiting for button to appear... ($COUNT$/20)",
+    "description": "Waiting for button message",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "recordingTitle": {
+    "message": "🔴 Recording Macro...",
+    "description": "Macro recording title"
+  },
+  "recordingDesc": {
+    "message": "Actions like clicks and typing are recorded automatically.",
+    "description": "Macro recording description"
+  },
+  "stopRecording": {
+    "message": "Stop & Save",
+    "description": "Stop and save recording button"
   }
 }
