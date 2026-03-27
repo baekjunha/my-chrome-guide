@@ -105,7 +105,7 @@ class AppStore {
       viewCounts: {},
       tipNotes: {},
       currentLang: LANG.KO,
-      categoryOrder: ["전체", "탭/창", "탐색", "주소창/검색", "화면", "북마크", "편집", "프로필/공간", "AI 기능", "개발자", "설정", "이스터에그"]
+      categoryOrder: ["전체", "탭/창", "탐색", "주소창/검색", "화면", "북마크", "편집", "프로필/공간", "AI 기능", "개발자", "설정", "이스터에그", "자동화", "시스템"]
     };
 
     // 상태 초기화
@@ -172,13 +172,34 @@ class AppStore {
 
     Object.assign(this.state, newState);
 
-    // [최적화] 관련 팁 데이터 전처리 (캐싱)
-    const { tips, findRelatedTips } = await import('./data.js');
-    tips.forEach(tip => {
-      this.state.relatedTipsCache.set(tip.id, findRelatedTips(tip.id));
-    });
+    // [최적화] 모듈을 즉시 로드하여 findRelatedTips 함수를 메모리에 확보
+    // (for lazy loading later)
+    try {
+      const dataModule = await import('./data.js');
+      this._findRelatedTips = dataModule.findRelatedTips;
+    } catch (e) {
+      console.warn('[AppStore] Failed to import data.js for related tips');
+    }
 
     return this.state;
+  }
+
+  /**
+   * [최적화] 관련 팁 데이터 지연 로딩 (Lazy Loading)
+   * 필요한 시점에만 계산하고 결과를 캐싱하여 초기 로딩 속도 개선
+   */
+  getRelatedTips(tipId) {
+    if (this.state.relatedTipsCache.has(tipId)) {
+      return this.state.relatedTipsCache.get(tipId);
+    }
+
+    if (typeof this._findRelatedTips === 'function') {
+      const related = this._findRelatedTips(tipId);
+      this.state.relatedTipsCache.set(tipId, related);
+      return related;
+    }
+
+    return [];
   }
 
   /**

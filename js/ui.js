@@ -95,6 +95,9 @@ export function buildCategoryNav(onCategoryClick) {
   const categoryStrings = I18N[lang].categories;
 
   store.state.categoryOrder.forEach(catKey => {
+    // [Smart Hide] "전체" 카테고리 버튼은 내비게이션 바에서 숨김 (상단 탭으로 대체)
+    if (catKey === CATEGORY_ALL) return;
+
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.textContent = categoryStrings[catKey] || catKey;
@@ -107,13 +110,10 @@ export function buildCategoryNav(onCategoryClick) {
     nav.appendChild(btn);
   });
 
-  addDragDropHandlers(nav, (from, to) => {
-    const newOrder = [...store.state.categoryOrder];
-    const fromIdx = newOrder.indexOf(from);
-    const toIdx = newOrder.indexOf(to);
-    newOrder.splice(fromIdx, 1);
-    newOrder.splice(toIdx, 0, from);
+  addDragDropHandlers(nav, (newOrder) => {
     store.update({ categoryOrder: newOrder });
+    // UI를 다시 그리지 않아도 이미 DOM은 정렬된 상태이지만, 
+    // 상태 동기화를 위해 한 번 더 렌더링할 수 있습니다.
     buildCategoryNav(onCategoryClick);
   });
 }
@@ -167,9 +167,16 @@ export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun
   const fragment = document.createDocumentFragment();
   let visibleCount = 0;
 
+  const MAX_RENDER = 200; // [최적화] 전수 조사를 위해 모든 팁(현재 124개)이 렌더링되도록 제한 완화
+  
   tips.forEach(tip => {
+    if (visibleCount >= MAX_RENDER) return; // 제한 도달 시 중단
+    // [Smart Filter] 탭 매칭 (전체보기 탭이거나 즐겨찾기 포함 여부)
     const matchesTab = store.state.currentTab === TABS.ALL || store.state.favorites.includes(tip.id);
-    const matchesCat = store.state.currentCategory === CATEGORY_ALL || tip.category === store.state.currentCategory;
+    
+    // [Smart Filter] 카테고리 매칭 (카테고리가 '전체'이거나, 값이 없거나, 정확히 일치할 때)
+    const currentCat = store.state.currentCategory;
+    const matchesCat = (currentCat === CATEGORY_ALL || !currentCat || tip.category === currentCat);
     
     const titleKO = (tip.title || "").toLowerCase();
     const titleEN = (tip.title_en || "").toLowerCase();
@@ -191,11 +198,13 @@ export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun
 
     const title = (lang === LANG.EN && tip.title_en) ? tip.title_en : (tip.title || "");
     let desc = (lang === LANG.EN && tip.desc_en) ? tip.desc_en : (tip.desc || "");
-    
+    desc = String(desc || "");
+
+    // [최적화] OS별 정규표현식 일괄 치환
     if (currentOS === OS.MAC) {
-      desc = desc.replace(/Ctrl/g, 'Cmd').replace(/Win/g, 'Cmd').replace(/Alt/g, 'Option');
+      desc = desc.replace(/Ctrl|Win|Alt/g, m => ({ 'Ctrl': 'Cmd', 'Win': 'Cmd', 'Alt': 'Option' })[m] || m);
     } else {
-      desc = desc.replace(/Cmd/g, 'Ctrl').replace(/Option/g, 'Alt');
+      desc = desc.replace(/Cmd|Option/g, m => ({ 'Cmd': 'Ctrl', 'Option': 'Alt' })[m] || m);
     }
 
     if (matchesTab && matchesCat && matchesSearch) {
@@ -253,10 +262,20 @@ export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun
           </div>
           <div class="step-content">
             ${steps.map((step, idx) => {
-              let p = step;
+              let p = "";
+              // [Smart Fix] 단계가 객체(매크로)인 경우 텍스트로 변환
+              if (typeof step === 'object' && step !== null) {
+                const actionName = step.type === 'click' ? (lang === LANG.KO ? '클릭' : 'Click') : (lang === LANG.KO ? '입력' : 'Input');
+                p = `[${actionName}] ${step.target}${step.value ? ': ' + step.value : ''}`;
+              } else {
+                p = String(step || "");
+              }
+
               if (currentOS === OS.MAC) {
                 p = p.replace(/Ctrl/g, 'Cmd').replace(/Win/g, 'Cmd').replace(/Alt/g, 'Option').replace(/우클릭/g, '이중 손가락 클릭(Control+클릭)');
-              } else p = p.replace(/Cmd/g, 'Ctrl').replace(/Option/g, 'Alt');
+              } else {
+                p = p.replace(/Cmd/g, 'Ctrl').replace(/Option/g, 'Alt');
+              }
               return `<div class="step-row"><div class="step-number">${idx+1}</div><div class="step-text">${p}</div></div>`;
             }).join('')}
           </div>
@@ -264,8 +283,8 @@ export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun
         div.appendChild(stepGuide);
       }
 
-      // 관련 팁 (캐시 사용)
-      const related = store.state.relatedTipsCache.get(tip.id);
+      // 관련 팁 (Lazy Loading 사용)
+      const related = store.getRelatedTips(tip.id);
       if (related && related.length > 0) {
         const relDiv = document.createElement('div');
         relDiv.className = 'related-tips';
@@ -381,9 +400,17 @@ export function switchTab(callbacks) {
   // 실제 탭 버튼들만 클래스 정리 (통계 버튼 제외)
   $$('.nav button[id^="tab-"]').forEach(b => b.classList.remove('active'));
   
-  $('#tab-all')?.classList.toggle('active', store.state.currentTab === TABS.ALL);
+  const isAllTab = store.state.currentTab === TABS.ALL;
+  $('#tab-all')?.classList.toggle('active', isAllTab);
   $('#tab-fav')?.classList.toggle('active', store.state.currentTab === TABS.FAV);
   $('#tab-shortcuts')?.classList.toggle('active', store.state.currentTab === TABS.SHORTCUTS);
+
+  // [Smart Fix] 상단 "전체 팁" 탭을 눌렀을 때, 하단 카테고리 필터도 "전체"로 초기화
+  if (isAllTab) {
+    store.update({ currentCategory: CATEGORY_ALL }, false);
+    // 하단 모든 카테고리 버튼의 활성 상태 제거 (필터 없음 표시)
+    $$('#cat-nav button').forEach(b => b.classList.remove('active'));
+  }
 
   const isShortcuts = store.state.currentTab === TABS.SHORTCUTS;
   if ($('#cat-nav')) $('#cat-nav').style.display = isShortcuts ? 'none' : 'flex';
@@ -396,18 +423,36 @@ export function addDragDropHandlers(container, onDrop) {
   let draggedItem = null;
 
   container.addEventListener('dragstart', (e) => {
-    draggedItem = e.target;
-    e.target.classList.add('dragging');
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    draggedItem = btn;
+    btn.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    // 드래그 이미지 설정 (필요시)
+    e.dataTransfer.setData('text/plain', btn.dataset.cat);
   });
 
   container.addEventListener('dragend', (e) => {
-    e.target.classList.remove('dragging');
+    if (draggedItem) draggedItem.classList.remove('dragging');
+    container.querySelectorAll('button').forEach(btn => btn.classList.remove('drag-over'));
+    draggedItem = null;
   });
 
   container.addEventListener('dragover', (e) => {
     e.preventDefault();
     const target = e.target.closest('button');
     if (target && target !== draggedItem) {
+      const rect = target.getBoundingClientRect();
+      const midX = rect.left + rect.width / 2;
+      
+      // 마우스가 타겟의 중간 지점을 넘어갔을 때만 DOM을 옮겨서 "비집고 들어가는" 효과 구현
+      if (e.clientX < midX) {
+        container.insertBefore(draggedItem, target);
+      } else {
+        container.insertBefore(draggedItem, target.nextSibling);
+      }
+      
+      container.querySelectorAll('button').forEach(btn => btn.classList.remove('drag-over'));
       target.classList.add('drag-over');
     }
   });
@@ -419,10 +464,13 @@ export function addDragDropHandlers(container, onDrop) {
 
   container.addEventListener('drop', (e) => {
     e.preventDefault();
-    const target = e.target.closest('button');
-    if (target && draggedItem && target !== draggedItem) {
-      onDrop(draggedItem.dataset.cat, target.dataset.cat);
+    const newOrder = Array.from(container.querySelectorAll('button'))
+      .map(btn => btn.dataset.cat);
+    
+    if (!newOrder.includes(CATEGORY_ALL)) {
+      newOrder.unshift(CATEGORY_ALL);
     }
-    container.querySelectorAll('button').forEach(btn => btn.classList.remove('drag-over'));
+
+    onDrop(newOrder);
   });
 }

@@ -396,7 +396,7 @@ input[type="text"]:focus {
 }
 
 #cat-nav button {
-  cursor: pointer;
+  cursor: grab;
   padding: 7px 16px;
   border-radius: 16px;
   background: var(--cat-bg);
@@ -404,18 +404,30 @@ input[type="text"]:focus {
   font-size: 12px;
   font-weight: 700;
   color: var(--text-sub);
-  transition: all 0.3s ease, opacity 0.1s ease;
+  /* 부드러운 위치 이동을 위해 transition 강화 */
+  transition: transform 0.25s cubic-bezier(0.2, 1, 0.3, 1), 
+              background 0.2s, 
+              border-color 0.2s,
+              box-shadow 0.2s;
   backdrop-filter: blur(5px);
+  user-select: none;
 }
 
-#cat-nav button.dragging {
-  opacity: 0.4;
+#cat-nav button:active {
   cursor: grabbing;
 }
 
+#cat-nav button.dragging {
+  opacity: 0.2; /* 자리는 유지하되 연하게 표시 */
+  transform: scale(0.9);
+  /* pointer-events: none; 삭제 - 브라우저 네이티브 드래그 유지 필수 */
+}
+
 #cat-nav button.drag-over {
-  transform: scale(1.1);
-  border-color: var(--accent-gold);
+  border-color: var(--accent);
+  background: var(--bg-high);
+  /* 비집고 들어갈 자리를 시각적으로 암시 (좌우 간격 확보) */
+  margin: 0 4px;
 }
 
 #cat-nav button.active {
@@ -660,9 +672,8 @@ input[type="text"]:focus {
   height: 100%;
   background: rgba(0, 0, 0, 0.6);
   display: none; /* JS에서 flex로 변경 */
-  align-items: flex-start; /* 중앙이 아닌 상단 정렬 */
+  align-items: center; /* [최적화] 중앙 정렬로 변경하여 안정성 확보 */
   justify-content: center;
-  padding-top: 100px; /* 상단 여백을 40px에서 100px로 늘림 */
   z-index: 100000;
   backdrop-filter: blur(8px);
   opacity: 0;
@@ -680,12 +691,12 @@ input[type="text"]:focus {
   border-radius: 28px;
   width: 90%;
   max-width: 380px;
-  max-height: 80vh;
+  max-height: 90%; 
   overflow-y: auto;
   box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.4);
   border: 1px solid var(--border);
-  transform: translateY(-20px); /* 위에서 아래로 내려오는 효과를 위해 -20px */
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform: translateY(-20px);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), margin-top 0.3s ease; /* [최적화] 마진 변동 시에도 부드럽게 이동 */
 }
 
 .modal.show .modal-content {
@@ -1055,6 +1066,7 @@ body.dark .toast {
   margin-bottom: 4px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

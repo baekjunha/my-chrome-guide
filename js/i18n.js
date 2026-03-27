@@ -21,7 +21,7 @@ export const I18N = {
     darkMode: "다크모드 전환",
     loading: "로딩 중...",
     clearSearchTitle: "검색 초기화",
-    categories: { "전체": "전체", "탭/창": "탭/창", "탐색": "탐색", "주소창/검색": "주소창/검색", "화면": "화면", "북마크": "북마크", "편집": "편집", "프로필/공간": "프로필/공간", "AI 기능": "AI 기능", "개발자": "개발자", "설정": "설정", "이스터에그": "이스터에그" },
+    categories: { "전체": "전체", "탭/창": "탭/창", "탐색": "탐색", "주소창/검색": "주소창/검색", "화면": "화면", "북마크": "북마크", "편집": "편집", "프로필/공간": "프로필/공간", "AI 기능": "AI 기능", "개발자": "개발자", "설정": "설정", "이스터에그": "이스터에그", "자동화": "자동화", "시스템": "시스템" },
     emptyFav: "아직 저장된 보관함이 없습니다<br><small style=\"font-weight:400; opacity:0.7\">팁에 있는 아이콘을 눌러보세요.</small>",
     emptySearch: "검색 결과가 없습니다",
     emptyShortcuts: "자주 헤매는 페이지 경로를<br><b>1클릭 매크로</b>로 등록해보세요!",
@@ -29,11 +29,11 @@ export const I18N = {
     copyShortcutTitle: "클릭하여 검색어 복사",
     writeNoteTitle: "메모 작성",
     copiedToast: (text) => `'${text}' 복사 완료!`,
-    emptyStats: "아직 본 팁이 없습니다<br><small>팁을 클릭하면 통계가 기록됩니다.</small>",
-    views: (count) => `${count}회`,
+    emptyStats: "활동 기록이 아직 없습니다<br><small>팁을 활용하여 활동 점수(pt)를 쌓아보세요.</small>",
+    views: (count) => `${count}pt`,
     emptyNote: "작성된 메모가 없습니다",
     confirmDeleteNote: "모든 메모를 삭제하시겠어요? 복구할 수 없습니다.",
-    confirmDeleteShortcut: "이 매크로를 삭제하시겠습니까?",
+    confirmDeleteShortcut: "이 매크로를 삭제하시습니까?",
     addShortcut: "🔴 매크로 녹화하기",
     addStep: "다음 버튼 추가",
     stepTypeClick: "클릭",
@@ -74,7 +74,7 @@ export const I18N = {
     darkMode: "Toggle Dark Mode",
     loading: "Loading...",
     clearSearchTitle: "Clear search",
-    categories: { "전체": "All", "탭/창": "Tab/Window", "탐색": "Navigation", "주소창/검색": "Omnibox", "화면": "Screen", "북마크": "Bookmarks", "편집": "Editing", "프로필/공간": "Profile/Space", "AI 기능": "AI Features", "개발자": "Developer", "설정": "Settings", "이스터에그": "Easter Eggs" },
+    categories: { "전체": "All", "탭/창": "Tab/Window", "탐색": "Navigation", "주소창/검색": "Omnibox", "화면": "Screen", "북마크": "Bookmarks", "편집": "Editing", "프로필/공간": "Profile/Space", "AI 기능": "AI Features", "개발자": "Developer", "설정": "Settings", "이스터에그": "Easter Eggs", "자동화": "Automation", "시스템": "System" },
     emptyFav: "No items saved to your library yet<br><small style=\"font-weight:400; opacity:0.7\">Press the star icon on a tip to save it.</small>",
     emptySearch: "No search results found",
     emptyShortcuts: "Save complex website paths as<br><b>1-Click Macros</b>!",
@@ -82,8 +82,8 @@ export const I18N = {
     copyShortcutTitle: "Click to copy search term",
     writeNoteTitle: "Write a note",
     copiedToast: (text) => `Copied '${text}' to clipboard!`,
-    emptyStats: "No tips viewed yet<br><small>Click on a tip to record statistics.</small>",
-    views: (count) => `${count} views`,
+    emptyStats: "No activity recorded yet<br><small>Use tips to earn engagement points (pt).</small>",
+    views: (count) => `${count}pt`,
     emptyNote: "No notes written yet",
     confirmDeleteNote: "Are you sure you want to delete all notes? This cannot be undone.",
     confirmDeleteShortcut: "Are you sure you want to delete this macro?",
@@ -106,4 +106,3 @@ export const I18N = {
     runningMacro: "Running macro... (Works best in a maximized window)"
   }
 };
-;

@@ -46,10 +46,20 @@ export async function handleLangChange(lang) {
  * 카테고리 클릭 핸들러
  */
 export function handleCategoryClick(cat, btn) {
+  // 카테고리 필터링 적용
   store.update({ currentCategory: cat }, false);
+  
+  // UI 업데이트: 모든 카테고리 버튼의 active 제거 후 클릭된 버튼만 추가
   $('#cat-nav button.active')?.classList.remove('active');
-  btn.classList.add('active');
-  renderTips($('#search').value, getRenderCallbacks());
+  if (btn) btn.classList.add('active');
+
+  // 카테고리를 선택하면 자동으로 상단 탭을 '전체 팁(ALL)'으로 전환 (보관함/매크로 탭 방지)
+  if (store.state.currentTab !== TABS.ALL) {
+    store.update({ currentTab: TABS.ALL }, false);
+    switchTab(getRenderCallbacks());
+  } else {
+    renderTips($('#search').value, getRenderCallbacks());
+  }
 }
 
 /**
@@ -103,12 +113,14 @@ export function runShortcut(sc) {
   chrome.storage.local.set({ activeShortcutTask: task }, () => {
     const macroUrl = sc.url.includes('#') ? `${sc.url}-macro-active` : `${sc.url}#macro-active`;
     
+    // 매크로 실행은 가장 높은 관여도(10점) 부여
+    if (sc.id && !isNaN(sc.id)) recordEngagement(parseInt(sc.id), 10);
+
     // 1. 완전히 새로운 창(New Window)을 생성하여 실행합니다.
-    // 기존의 작은 창 영향에서 완전히 벗어날 수 있습니다.
     chrome.windows.create({ 
       url: macroUrl, 
-      state: 'maximized', // 생성과 동시에 최대화
-      focused: true       // 즉시 포커스
+      state: 'maximized',
+      focused: true
     });
     
     showToast(strings.runningMacro);
@@ -116,14 +128,16 @@ export function runShortcut(sc) {
 }
 
 /**
- * 조회수 기록 (통계용)
+ * 관여도 점수 기록 (통계용)
+ * @param {number} id - 팁 ID
+ * @param {number} score - 가중치 (1: 조회, 3: 가이드 확인, 5: 즐겨찾기, 10: 실행)
  */
-export async function recordView(id) {
+export async function recordEngagement(id, score = 1) {
   if (!id || isNaN(id)) return;
   
   const newViews = { ...store.state.viewCounts };
-  const currentCount = Number(newViews[id] || 0);
-  newViews[id] = currentCount + 1;
+  const currentScore = Number(newViews[id] || 0);
+  newViews[id] = currentScore + score;
   
   await store.update({ viewCounts: newViews });
 }
@@ -140,10 +154,15 @@ export async function handleListClick(e) {
   if (guideHeader) {
     e.preventDefault();
     e.stopPropagation();
-    guideHeader.closest('.step-guide')?.classList.toggle('expanded');
-    // 가이드를 보는 것도 관심이 있는 것이므로 조회수 기록
-    const tipItem = target.closest('.tip-item');
-    if (tipItem) recordView(parseInt(tipItem.dataset.id));
+    const guideEl = guideHeader.closest('.step-guide');
+    const isExpanding = !guideEl.classList.contains('expanded');
+    guideEl.classList.toggle('expanded');
+    
+    // 가이드를 펼칠 때만 점수(3점) 부여
+    if (isExpanding) {
+      const tipItem = target.closest('.tip-item');
+      if (tipItem) recordEngagement(parseInt(tipItem.dataset.id), 3);
+    }
     return;
   }
 
@@ -153,6 +172,8 @@ export async function handleListClick(e) {
     e.stopPropagation();
     const id = parseInt(favBtn.dataset.id);
     const isAdding = !store.state.favorites.includes(id);
+    // 즐겨찾기 추가 시 점수(5점) 부여
+    if (isAdding) recordEngagement(id, 5);
     callbacks.onFavClick(id, isAdding);
     return;
   }
@@ -161,7 +182,10 @@ export async function handleListClick(e) {
   const noteBtn = target.closest('.note-btn');
   if (noteBtn) {
     e.stopPropagation();
-    callbacks.onNoteClick(parseInt(noteBtn.dataset.id));
+    const id = parseInt(noteBtn.dataset.id);
+    // 메모 버튼 클릭 시 점수(2점) 부여
+    recordEngagement(id, 2);
+    callbacks.onNoteClick(id, noteBtn); // [수정] 클릭된 버튼 엘리먼트 전달
     return;
   }
 
@@ -172,14 +196,21 @@ export async function handleListClick(e) {
     handleRelatedItemClick(parseInt(relatedItem.dataset.id));
     return;
   }
+
+  // 6. 설정/링크 이동 버튼 (직접 조작)
+  const goBtn = target.closest('.go-btn');
+  if (goBtn) {
+    const tipItem = target.closest('.tip-item');
+    if (tipItem) recordEngagement(parseInt(tipItem.dataset.id), 10); // 실행 점수 10점
+    return;
+  }
   
-  // 6. 조회수 증가 (팁 아이템 본체 클릭 시)
+  // 7. 조회수 증가 (팁 아이템 본체 단순 클릭 시 - 1점)
   const tipItem = target.closest('.tip-item');
-  // 액션 버튼이 아닌 곳을 클릭했을 때만 기록 (중복 기록 방지)
-  const isActionElement = target.closest('.fav-btn, .note-btn, .go-btn');
+  const isActionElement = target.closest('.fav-btn, .note-btn, .go-btn, .step-guide-header');
   
   if (tipItem && !isActionElement) {
-    recordView(parseInt(tipItem.dataset.id));
+    recordEngagement(parseInt(tipItem.dataset.id), 1);
   }
 }
 
@@ -187,25 +218,34 @@ export async function handleListClick(e) {
  * 관련 팁 클릭 핸들러
  */
 export function handleRelatedItemClick(targetId) {
-  let targetEl = $(`.tip-item[data-id="${targetId}"]`);
+  const targetEl = $(`.tip-item[data-id="${targetId}"]`);
   
   if (!targetEl) {
+    // 팁이 현재 화면에 없으면 브라우저 상태 초기화 (전체보기)
     store.update({ 
       currentTab: TABS.ALL, 
       currentCategory: CATEGORY_ALL 
     }, false);
     $('#search').value = '';
     switchTab(getRenderCallbacks());
-    targetEl = $(`.tip-item[data-id="${targetId}"]`);
-  }
 
-  if (targetEl) {
+    // 필터 초기화 후 렌더링이 완료될 시간을 벌기 위해 requestAnimationFrame 사용
+    requestAnimationFrame(() => {
+      const targetElAfter = $(`.tip-item[data-id="${targetId}"]`);
+      if (targetElAfter) {
+        targetElAfter.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        targetElAfter.classList.add('highlight');
+        setTimeout(() => targetElAfter.classList.remove('highlight'), 600);
+      }
+    });
+  } else {
     targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
     targetEl.classList.add('highlight');
-    // 이동한 팁의 조회수도 기록
-    recordView(targetId);
     setTimeout(() => targetEl.classList.remove('highlight'), 600);
   }
+
+  // 관련 팁으로 이동한 경우도 관심으로 간주 (1점)
+  recordEngagement(targetId, 1);
 }
 
 /**
@@ -217,11 +257,11 @@ export function openStatsModal(e) {
   const lang = store.state.currentLang || LANG.KO;
   const strings = I18N[lang];
   
-  // 조회수 데이터 안전하게 로드
+  // 조회수가 아닌 'Engagement Score' 기준으로 정렬
   const views = store.state.viewCounts || {};
   
   const sorted = Object.entries(views)
-    .filter(([_, count]) => Number(count) > 0)
+    .filter(([_, score]) => Number(score) > 0)
     .sort((a, b) => Number(b[1]) - Number(a[1]))
     .slice(0, 10);
   
@@ -231,14 +271,11 @@ export function openStatsModal(e) {
   if (sorted.length === 0) {
     body.innerHTML = `<div style="text-align:center; padding: 40px 0; color: var(--text-mute);">${strings.emptyStats || "기록된 데이터가 없습니다."}</div>`;
   } else {
-    body.innerHTML = sorted.map(([id, count], index) => {
+    body.innerHTML = sorted.map(([id, score], index) => {
       const tip = tips.find(t => String(t.id) === String(id));
       if (!tip) return "";
-      const isEnglish = lang === LANG.EN;
-      const title = isEnglish ? (tip.title_en || tip.title) : tip.title;
-      // 카테고리 매칭 (영문의 경우 한글 키로 검색)
-      const catKey = tip.category;
-      const catDisplayName = (I18N[lang].categories && I18N[lang].categories[catKey]) || catKey;
+      const title = lang === LANG.EN ? (tip.title_en || tip.title) : tip.title;
+      const catDisplayName = (I18N[lang].categories && I18N[lang].categories[tip.category]) || tip.category;
       
       return `
         <div class="stats-item">
@@ -247,7 +284,7 @@ export function openStatsModal(e) {
             <div class="stats-title">${title}</div>
             <div class="stats-category">${catDisplayName}</div>
           </div>
-          <span class="stats-views">${strings.views(count)}</span>
+          <span class="stats-views">${strings.views(score)}</span>
         </div>
       `;
     }).join("");
@@ -255,10 +292,41 @@ export function openStatsModal(e) {
   openModal($('#stats-modal'));
 }
 
-export function openNoteModal(id) {
+/**
+ * 메모 모달 열기 (위치 동적 계산 추가)
+ */
+export function openNoteModal(id, triggerEl = null) {
   store.update({ currentNoteId: id }, false);
   $('#note-input').value = store.state.tipNotes[id] || "";
-  openModal($('#note-modal'));
+  
+  const modal = $('#note-modal');
+  const modalContent = modal.querySelector('.modal-content');
+
+  // [최적화] 이전 스타일 초기화
+  modal.style.alignItems = 'center';
+  modalContent.style.marginTop = '0';
+
+  if (triggerEl) {
+    const rect = triggerEl.getBoundingClientRect();
+    const popupHeight = document.documentElement.clientHeight;
+    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+    const modalHeight = 260; // 모달 예상 높이
+
+    // 뷰포트 기준 위치 + 스크롤 오프셋 → 페이지 절대 위치
+    let top = rect.top + scrollTop - 20;
+
+    // 화면 하단을 벗어나지 않도록 보정 (뷰포트 기준)
+    const visibleBottom = scrollTop + popupHeight;
+    if (top + modalHeight > visibleBottom - 20) {
+      top = visibleBottom - modalHeight - 20;
+    }
+    if (top < scrollTop + 20) top = scrollTop + 20;
+
+    modal.style.alignItems = 'flex-start';
+    modalContent.style.marginTop = `${top}px`;
+  }
+
+  openModal(modal);
 }
 
 export function openShortcutModal(sc = null) {
@@ -354,7 +422,7 @@ export function getRenderCallbacks() {
       await store.update({ favorites });
       renderTips($('#search').value, getRenderCallbacks());
     },
-    onNoteClick: (id) => openNoteModal(id),
+    onNoteClick: (id, el) => openNoteModal(id, el), // [수정] 트리거 엘리먼트 전달
     onShortcutRun: (sc) => runShortcut(sc),
     onEditShortcut: (sc) => openShortcutModal(sc),
     onDeleteShortcut: async (sc) => {

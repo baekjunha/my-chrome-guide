@@ -275,23 +275,31 @@
       }
     }
 
+    let cachedTask = null; // [최적화] 상태 캐싱을 통한 스토리지 접근 최소화
+
     async function runEngine() {
       if (isProcessing) return;
       try {
-        const { activeShortcutTask } = await chrome.storage.local.get('activeShortcutTask');
-        if (!activeShortcutTask) {
+        // [최적화] 캐시된 작업이 있으면 우선 사용하고, 없으면 스토리지에서 로드
+        if (!cachedTask) {
+          const result = await chrome.storage.local.get('activeShortcutTask');
+          cachedTask = result.activeShortcutTask;
+        }
+
+        if (!cachedTask) {
           removeStatusBadge();
           stopObserver();
           return;
         }
 
         startObserver();
-        const { steps, currentStepIndex } = activeShortcutTask;
+        const { steps, currentStepIndex } = cachedTask;
 
         if (currentStepIndex >= steps.length) {
           if (window === window.top) updateStatusBadge(steps.length + 1, steps.length, "Complete");
           stopObserver();
           setTimeout(async () => {
+            cachedTask = null; // [최적화] 캐시 초기화
             await chrome.storage.local.remove('activeShortcutTask');
             if (window === window.top) removeStatusBadge();
           }, 2500);
@@ -310,10 +318,26 @@
         if (target) {
           isProcessing = true;
           retryCount = 0;
-          const updatedTask = { ...activeShortcutTask, currentStepIndex: currentStepIndex + 1 };
-          await chrome.storage.local.set({ activeShortcutTask: updatedTask });
+          cachedTask = { ...cachedTask, currentStepIndex: currentStepIndex + 1 }; // [최적화] 캐시 즉시 업데이트
+          await chrome.storage.local.set({ activeShortcutTask: cachedTask });
           setTimeout(() => { isProcessing = false; runEngine(); }, 1200);
         } else {
+          // [Smart Skip] Check if the NEXT step is already available (to skip login/redundant steps)
+          if (currentStepIndex + 1 < steps.length) {
+            const nextStep = steps[currentStepIndex + 1];
+            const nextTarget = typeof nextStep === 'string' ? nextStep : nextStep.target;
+            const nextType = typeof nextStep === 'string' ? 'click' : nextStep.type;
+            
+            if (checkElementExists(nextTarget, nextType)) {
+              console.log(`[Shortcut] Skipping step ${currentStepIndex + 1} ("${stepTarget}") because next target "${nextTarget}" is already visible.`);
+              cachedTask = { ...cachedTask, currentStepIndex: currentStepIndex + 1 }; // [최적화] 캐시 즉시 업데이트
+              await chrome.storage.local.set({ activeShortcutTask: cachedTask });
+              retryCount = 0;
+              setTimeout(() => runEngine(), 500);
+              return;
+            }
+          }
+
           if (retryCount < 20) {
             retryCount++;
             if (retryCount === 5 || retryCount === 12) expandHiddenMenus();
@@ -321,6 +345,7 @@
           } else {
             if (window === window.top) updateStatusBadge(currentStepIndex + 1, steps.length, stepTarget, 0, true);
             stopObserver();
+            cachedTask = null; // [최적화] 캐시 초기화
             await chrome.storage.local.remove('activeShortcutTask');
             if (window === window.top) setTimeout(removeStatusBadge, 4000);
           }
@@ -329,6 +354,32 @@
         console.error("[Shortcut] Engine Error:", err);
       } finally {
         isProcessing = false;
+      }
+    }
+
+    function checkElementExists(text, type = 'click') {
+      if (!text) return false;
+      const lowerText = text.toLowerCase().trim();
+      const isVisible = (el) => {
+        const style = window.getComputedStyle(el);
+        return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length) && 
+               style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
+      };
+
+      if (type === 'click') {
+        const clickable = document.querySelectorAll('a, button, [role="button"], input[type="button"], input[type="submit"], .btn, .button');
+        return Array.from(clickable).some(el => {
+          const elText = (el.innerText || el.value || "").trim().toLowerCase();
+          const elAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || "").trim().toLowerCase();
+          return (elText.includes(lowerText) || elAttr.includes(lowerText)) && isVisible(el);
+        });
+      } else {
+        const inputs = document.querySelectorAll('input, textarea, [contenteditable="true"]');
+        return Array.from(inputs).some(el => {
+          const placeholder = (el.getAttribute('placeholder') || "").toLowerCase();
+          const labelAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || el.name || "").toLowerCase();
+          return (placeholder.includes(lowerText) || labelAttr.includes(lowerText)) && el.type !== 'hidden' && isVisible(el);
+        });
       }
     }
 
@@ -417,9 +468,23 @@
       return false;
     }
 
+    function throttle(func, limit) {
+      let inThrottle;
+      return function() {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+          func.apply(context, args);
+          inThrottle = true;
+          setTimeout(() => inThrottle = false, limit);
+        }
+      }
+    }
+
     function startObserver() {
       if (observer) return;
-      observer = new MutationObserver(() => runEngine());
+      const throttledRunEngine = throttle(() => runEngine(), 500);
+      observer = new MutationObserver(throttledRunEngine);
       observer.observe(document.body, { childList: true, subtree: true });
     }
 
@@ -429,7 +494,10 @@
 
     runEngine();
     chrome.storage.onChanged.addListener((changes, area) => {
-      if (area === 'local' && changes.activeShortcutTask) runEngine();
+      if (area === 'local' && changes.activeShortcutTask) {
+        cachedTask = changes.activeShortcutTask.newValue; // [최적화] 외부 변경 시 캐시 동기화
+        runEngine();
+      }
     });
   }
 })();

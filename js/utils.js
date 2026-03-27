@@ -58,7 +58,7 @@ export function createParticleGroupAt(x, y, color = null) {
       vy: (Math.random() - 0.5) * 5 - 2,
       life: 1.0,
       size: Math.random() * 4 + 1,
-      color: color || getComputedStyle(document.body).getPropertyValue('--accent').trim() || (store.state.isDark ? '#669df6' : '#4285f4')
+      color: color || getComputedStyle(document.body).getPropertyValue('--accent').trim() || (store.state.isDark ? '#669df6' : '#1e40af')
     });
   }
   if (!animatingParticles) updateParticles();

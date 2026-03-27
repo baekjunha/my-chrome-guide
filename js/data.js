@@ -1106,7 +1106,7 @@ export const tips = [
   },
   {
     id: 112, category: "주소창/검색",
-    title: "주소창에서 바로 검색하기",
+    title: "Quick Search in Address Bar",
     title_en: "Quick Search in Address Bar",
     desc: "어디서든 주소창으로 포커스를 옮기고 검색 모드로 전환합니다.",
     desc_en: "Moves focus to the address bar and switches to search mode from anywhere.",
@@ -1192,33 +1192,33 @@ export const tips = [
   },
   {
     id: 118, category: "AI 기능",
-    title: "[AI] 글쓰기 도우미 (Help me write)",
-    title_en: "[AI] Help me write",
-    desc: "※ [계정/지역 제한] AI가 문장을 직접 작성하거나 다듬어 줍니다. 리뷰나 설문조사 등 짧은 형식의 글을 작성할 때 유용합니다.",
-    desc_en: "AI helps you write or refine sentences. Useful for short content like reviews or surveys.",
-    shortcut: { win: "입력창 우클릭 > 글쓰기 도와주기", mac: "입력창 우클릭 > 글쓰기 도와주기" },
-    shortcut_en: { win: "Right-click text field > Help me write", mac: "Right-click text field > Help me write" },
-    tags: ["ai", "글쓰기", "도움", "작성", "교정", "인공지능", "리뷰", "설문"],
-    tags_en: ["ai", "writing", "help", "write", "edit", "review", "survey"],
+    title: "[AI] Gemini Compose (글쓰기 비서)",
+    title_en: "[AI] Gemini Compose",
+    desc: "2026 최신 크롬 기능: 입력창에 커서를 두면 나타나는 Gemini 아이콘을 클릭하거나 @를 입력하여 문장을 새로 쓰거나 스타일을 다듬으세요.",
+    desc_en: "Latest 2026 Feature: Click the Gemini icon in text fields or type '@' to compose or refine sentences instantly.",
+    shortcut: { win: "텍스트 영역 클릭 > Gemini 아이콘 클릭", mac: "텍스트 영역 클릭 > Gemini 아이콘 클릭" },
+    shortcut_en: { win: "Click text area > Click Gemini icon", mac: "Click text area > Click Gemini icon" },
+    tags: ["ai", "gemini", "제미나이", "글쓰기", "도움", "작성", "수정", "교정", "인공지능"],
+    tags_en: ["ai", "gemini", "write", "refine", "helper", "compose", "grammar", "artificial intelligence"],
     steps: {
       win: [
-        "미국 거주 중이며 만 18세 이상(성인)인지 확인하세요.",
-        "Chrome 브라우저 언어를 '영어'로 설정하고 다시 시작하세요.",
-        "Google 계정 로그인 및 '검색 및 브라우징 환경 개선' 설정을 켭니다.",
-        "입력창 우클릭 후 'Help me write'를 선택하세요. (chrome://settings/ai 에서 활성화 확인)"
+        "텍스트 입력창(리뷰, 이메일, 게시글 등)에 마우스 커서를 두세요.",
+        "커서 주변에 나타나는 'Gemini(별 모양)' 아이콘을 클릭합니다.",
+        "원하는 글쓰기 주제를 입력하거나 스타일(전문적으로, 간결하게 등)을 선택하세요.",
+        "AI가 제안한 글을 '삽입' 버튼을 눌러 본문에 반영합니다."
       ],
       mac: [
-        "미국 거주 중이며 만 18세 이상(성인)인지 확인하세요.",
-        "Chrome 브라우저 언어를 '영어'로 설정하고 다시 시작하세요.",
-        "Google 계정 로그인 및 '검색 및 브라우징 환경 개선' 설정을 켭니다.",
-        "입력창 이중 손가곽 클릭 후 'Help me write'를 선택하세요. (chrome://settings/ai 에서 활성화 확인)"
+        "텍스트 입력창(리뷰, 이메일, 게시글 등)에 마우스 커서를 두세요.",
+        "커서 주변에 나타나는 'Gemini(별 모양)' 아이콘을 클릭합니다.",
+        "원하는 글쓰기 주제를 입력하거나 스타일(전문적으로, 간결하게 등)을 선택하세요.",
+        "AI가 제안한 글을 '삽입' 버튼을 눌러 본문에 반영합니다."
       ]
     },
     steps_en: [
-      "Ensure you're in the US and 18+.",
-      "Set Chrome's language to English and restart.",
-      "Sign in to your Google account and enable 'Improve search and browsing'.",
-      "Right-click in any text field and select 'Help me write'. (Enable in chrome://settings/ai first)"
+      "Place your cursor in a text field (reviews, emails, posts).",
+      "Click the floating 'Gemini (star)' icon near the cursor.",
+      "Enter a topic or select a style (Professional, Concise, etc.).",
+      "Click 'Insert' to add the AI-generated text to your field."
     ]
   },
   {
@@ -1505,24 +1505,100 @@ export const tips = [
     tags: ["비밀번호", "보안", "앱설치", "매니저", "설정"],
     tags_en: ["password", "security", "install app", "manager", "settings"]
   },
-
+  // ── 자동화 매크로 (실전 예시) ──────────────────
+  {
+    id: 201, category: "자동화",
+    title: "네이버 메일 쓰기 (로그인 체크 포함)",
+    title_en: "Naver Mail - New Message",
+    desc: "로그인이 안 되어 있으면 로그인 후, 되어 있으면 바로 메일 쓰기 창을 엽니다.",
+    desc_en: "Logs in if needed, then opens the New Message window in Naver Mail.",
+    url: "https://nid.naver.com/nidlogin.login",
+    steps: [
+      { type: "input", target: "아이디", value: "your_id" },
+      { type: "input", target: "비밀번호", value: "your_password" },
+      { type: "click", target: "로그인", value: "" },
+      { type: "click", target: "메일쓰기", value: "" }
+    ],
+    tags: ["네이버", "메일", "자동화", "로그인", "스마트스킵"],
+    tags_en: ["naver", "mail", "automation", "login", "smartskip"]
+  },
+  {
+    id: 202, category: "자동화",
+    title: "구글 드라이브 새 파일 업로드",
+    title_en: "Google Drive - Upload File",
+    desc: "구글 로그인 상태를 확인하고 즉시 파일 업로드 메뉴를 실행합니다.",
+    desc_en: "Checks Google login and instantly opens the file upload menu.",
+    url: "https://accounts.google.com/ServiceLogin",
+    steps: [
+      { type: "input", target: "이메일", value: "your_email@gmail.com" },
+      { type: "click", target: "다음", value: "" },
+      { type: "click", target: "신규", value: "" },
+      { type: "click", target: "파일 업로드", value: "" }
+    ],
+    tags: ["구글", "드라이브", "업로드", "자동화", "로그인"],
+    tags_en: ["google", "drive", "upload", "automation", "login"]
+  },
+  {
+    id: 203, category: "자동화",
+    title: "유튜브 내 보관함 바로가기",
+    title_en: "YouTube - My Library",
+    desc: "로그인 여부를 확인하여 내 유튜브 보관함 페이지로 바로 이동합니다.",
+    desc_en: "Checks login status and jumps directly to your YouTube Library.",
+    url: "https://www.youtube.com/",
+    steps: [
+      { type: "click", target: "로그인", value: "" },
+      { type: "click", target: "보관함", value: "" }
+    ],
+    tags: ["유튜브", "보관함", "자동화", "로그인", "나의기록"],
+    tags_en: ["youtube", "library", "automation", "login", "history"]
+  }
 ];
+
+let tagToTipsMap = null;
+
+/**
+ * [최적화] 태그 별 팁 맵 (Inverted Index) 생성
+ * 전체 팁을 순회하지 않고도 관련 팁을 빠르게 찾기 위함
+ */
+function getTagToTipsMap() {
+  if (tagToTipsMap) return tagToTipsMap;
+  tagToTipsMap = new Map();
+  tips.forEach(tip => {
+    const allTags = [...(tip.tags || []), ...(tip.tags_en || [])];
+    allTags.forEach(tag => {
+      const lowerTag = tag.toLowerCase();
+      if (!tagToTipsMap.has(lowerTag)) tagToTipsMap.set(lowerTag, new Set());
+      tagToTipsMap.get(lowerTag).add(tip);
+    });
+  });
+  return tagToTipsMap;
+}
 
 export function findRelatedTips(sourceTipId, count = 3) {
   const sourceTip = tips.find(t => t.id === sourceTipId);
   if (!sourceTip || !sourceTip.tags || sourceTip.tags.length === 0) return [];
 
-  const sourceTags = new Set(sourceTip.tags);
+  const map = getTagToTipsMap();
+  const sourceTags = sourceTip.tags.map(t => t.toLowerCase());
+  const candidates = new Set();
+  
+  // 소스 팁의 태그를 포함하는 팁들만 후보군으로 선택
+  sourceTags.forEach(tag => {
+    if (map.has(tag)) {
+      map.get(tag).forEach(tip => {
+        if (tip.id !== sourceTipId) candidates.add(tip);
+      });
+    }
+  });
 
-  const scores = tips
+  const scores = Array.from(candidates)
     .map(tip => {
-      if (tip.id === sourceTipId || !tip.tags) return { tip, score: 0 };
-      const commonTags = tip.tags.filter(tag => sourceTags.has(tag));
+      const commonTags = (tip.tags || []).filter(tag => sourceTags.includes(tag.toLowerCase()));
       const categoryBonus = tip.category === sourceTip.category ? 1 : 0;
       const score = commonTags.length + categoryBonus;
       return { tip, score };
     })
-    .filter(item => item.score > 1)
+    .filter(item => item.score > 0) // 점수가 있는 경우만 포함
     .sort((a, b) => b.score - a.score);
 
   return scores.slice(0, count).map(item => item.tip);
