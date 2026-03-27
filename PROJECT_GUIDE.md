@@ -1,30 +1,34 @@
-# 🚀 My Chrome Guide: Extension 프로젝트 상세 가이드
+# 🚀 My Chrome Guide: Extension 프로젝트 상세 가이드 (v2.0)
 
-본 프로젝트는 사용자가 크롬 브라우저를 더욱 스마트하게 사용할 수 있도록 돕는 **학습형 팁 큐레이션 및 웹 자동화 확장 프로그램**입니다. 단순한 정보 제공을 넘어, 사용자 활동에 따른 점수 시스템과 복잡한 반복 작업을 줄여주는 매크로 기능을 포함하고 있습니다.
+본 프로젝트는 사용자가 크롬 브라우저를 더욱 스마트하게 사용할 수 있도록 돕는 **학습형 팁 큐레이션 및 웹 자동화 확장 프로그램**입니다. v2.0에서는 대규모 데이터셋(124+ 팁)에 최적화된 성능과 프리미엄 랜딩 페이지를 포함하고 있습니다.
 
 ---
 
 ## 🏗 시스템 아키텍처 (System Architecture)
 
-프로젝트는 모듈형 자바스크립트 구조를 채택하여 유지보수성과 확장성을 극대화했습니다. `AppStore`를 중심으로 모든 상태가 관리되며, 각 모듈은 단일 책임 원칙(SRP)을 따릅니다.
+프로젝트는 모듈형 자바스크립트 구조를 채택하여 유지보수성과 확장성을 극대화했습니다. `AppStore`를 중심으로 모든 상태가 관리되며, 성능 최적화를 위해 **Lazy Loading**과 **State Caching** 기법이 적용되었습니다.
 
 ```mermaid
 graph TD
+    subgraph "Landing & Promo"
+        LP[landing/index.html] --> LC[landing/style.css]
+    end
+
     subgraph "UI Layer (Popup)"
         P[popup.html] --> JS[popup.js]
-        JS --> UI[ui.js: Rendering]
+        JS --> UI[js/ui.js: Rendering Engine]
         UI --> CSS[popup.css: Styling]
     end
 
     subgraph "Logic Layer"
-        JS --> ACT[actions.js: Event Handlers]
-        ACT --> STORE[store.js: State Management]
-        STORE --> UTIL[utils.js: Helpers]
+        JS --> ACT[js/actions.js: Event Handlers]
+        ACT --> STORE[js/store.js: State Management]
+        STORE --> UTIL[js/utils.js: Helpers]
     end
 
     subgraph "Data & Engine"
-        STORE --> DATA[data.js: Tips Database]
-        STORE --> I18N[i18n.js: Multi-lang]
+        STORE --> DATA[js/data.js: 124+ Tips DB]
+        STORE --> I18N[js/i18n.js: Multi-lang]
         ACT --> CS[content_script.js: Macro Engine]
     end
 
@@ -34,70 +38,40 @@ graph TD
     end
 
     classDef primary fill:#f9f,stroke:#333,stroke-width:2px;
-    class P,JS,STORE primary;
+    class P,JS,STORE,DATA,LP primary;
 ```
 
 ---
 
 ## 🌟 핵심 기능 (Core Features)
 
-| 기능 | 설명 | 아이콘 (SVG) |
+| 기능 | 설명 | 상태 |
 | :--- | :--- | :---: |
-| **팁 큐레이션** | 14개의 카테고리로 분류된 120+개의 크롬 활용 팁 제공 | <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2L4.5 20.29l.71.71L12 18l6.79 3l.71-.71z"/></svg> |
-| **활동 점수(pt)** | 조회, 가이드 확인, 즐겨찾기 등 활동 시 점수 누적 | <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2L9.19 8.63L2 9.24l5.46 4.73L5.82 21z"/></svg> |
-| **1클릭 매크로** | 자주 방문하는 사이트의 특정 버튼 클릭/입력을 자동화 | <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M13 10V3L4 13h7v7l9-10z"/></svg> |
-| **스마트 메모** | 각 팁에 대해 사용자만의 메모를 기록하고 보관 | <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> |
+| **팁 큐레이션** | 14개 카테고리로 분류된 **124가지** 크롬 활용 팁 | ✅ Ver 2.0 |
+| **초고속 검색** | 역색인(Inverted Index) 기술로 O(1) 수준의 검색 속도 구현 | ✅ Optimized |
+| **1클릭 매크로** | 네이버 메일, 구글 드라이브 등 반복 작업 자동화 엔진 | ✅ Stable |
+| **스마트 메모** | 각 팁의 선택 위치에 동적으로 나타나는 컨텍스트 기반 메모 | ✅ Improved |
+| **고급 생산성 가이드** | 크롬의 숨겨진 기능과 내장 AI를 스마트하게 활용하는 전문가 노하우 | ✅ Updated |
 
 ---
 
-## ⚡ 매크로 실행 흐름 (Macro Execution Flow)
+## ⚡ 주요 성능 최적화 (Performance)
 
-사용자가 매크로를 실행하면 `content_script.js` 엔진이 웹 페이지의 DOM을 분석하여 정의된 동작을 수행합니다.
-
-```mermaid
-sequenceDiagram
-    participant U as User
-    participant P as Popup (actions.js)
-    participant S as Store (store.js)
-    participant C as Content Script (Engine)
-    participant D as Web Page (DOM)
-
-    U->>P: 매크로 실행 버튼 클릭
-    P->>S: 실행 기록 저장 (+10pt)
-    P->>C: 메시지 전송 (runMacro)
-    Note over C: 엔진 가동 (MutationObserver)
-    loop 각 단계별 반복
-        C->>D: 요소 검색 (findAndClick / findAndFill)
-        alt 요소를 찾음
-            D-->>C: 요소 반환
-            C->>D: 클릭 또는 텍스트 입력 수행
-            C->>U: 상태 배지 업데이트 (Step N/M)
-        else 요소를 못 찾음 (재시도)
-            C->>C: 지수 백오프 대기
-        end
-    end
-    C->>U: 완료 알림 및 배지 제거
-```
+1.  **Memoized Lazy Loading**: `store.js`에서 데이터 로드 시 초기 O(N²) 부하를 제거하여 팝업 실행 속도를 개선했습니다.
+2.  **State Caching**: `content_script.js`에서 빈번한 `chrome.storage` 접근을 줄이기 위해 로컬 캐시를 활용합니다.
+3.  **Render Limit Control**: `ui.js`에서 한 번에 렌더링하는 팁의 수를 조절(MAX_RENDER: 200)하여 대량의 데이터에서도 UI 반응성을 유지합니다.
 
 ---
 
-## 📊 데이터 정합성 검증 로직
+## 📊 데이터 정합성 검증 (`check-data.js`)
 
-`check-data.js`는 배포 전 데이터의 오류를 찾아내는 파수꾼 역할을 합니다.
+배포 전 `node check-data.js`를 실행하여 다음 사항을 자동 검증합니다.
 
-> <svg width="16" height="16" viewBox="0 0 24 24" style="vertical-align:middle"><path fill="#e91e63" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg> **데이터 무결성 원칙**:
-> 1. 모든 `id`는 고유해야 합니다. (중복 금지)
-> 2. `data.js`의 모든 카테고리는 `i18n.js`에 번역이 존재해야 합니다.
-> 3. 모든 자바스크립트 파일은 문법적 결함(Bracket Mismatch)이 없어야 합니다.
-
----
-
-## 🛠 기술 스택 (Tech Stack)
-
-*   **Frontend**: Vanilla JS, CSS3 (Custom Variables), HTML5
-*   **State Management**: Custom `AppStore` (Chrome Storage Local API Wrapper)
-*   **Automation**: MutationObserver, Element Selector Engine
-*   **Tooling**: Node.js (Data Validator)
+1.  **ID 고유성**: 모든 팁의 ID 중복 여부 체크.
+2.  **필수 필드**: `title`, `desc`, `category`, `steps` 등 누락 여부.
+3.  **연관 팁 유효성**: `related`에 지정된 ID가 실제로 존재하는지 검증.
+4.  **다국어 정합성**: 한국어와 영어 데이터의 수량 및 카테고리 일치 여부.
+5.  **Syntax Check**: 정규표현식을 통한 JS 코드 내 브라켓 매칭 검사.
 
 ---
 
@@ -105,33 +79,23 @@ sequenceDiagram
 
 ```text
 /
-├── manifest.json         # 확장 프로그램 메타데이터 및 권한 설정
+├── manifest.json         # 확장 프로그램 메타데이터
 ├── popup.html            # 메인 UI 레이아웃
-├── popup.js              # 엔트리 포인트 및 초기화 로직
-├── content_script.js     # 웹 페이지 제어 자동화 엔진
-├── check-data.js         # 데이터 무결성 검사 도구 (Node.js)
+├── popup.js              # 엔트리 포인트 및 초기화
+├── content_script.js     # 자동화 매크로 엔진
+├── check-data.js         # 데이터 무결성 검사 도구 (Node)
+├── landing/              # [NEW] 화이트 테마 홍보 랜딩 페이지
+│   ├── index.html
+│   └── style.css
 └── js/
-    ├── store.js          # 중앙 상태 관리 (AppStore)
-    ├── actions.js        # 비즈니스 로직 및 이벤트 핸들러
-    ├── ui.js             # DOM 조작 및 렌더링 엔진
-    ├── i18n.js           # 다국어(KO/EN) 및 카테고리 설정
-    ├── data.js           # 120개 이상의 팁 데이터베이스
-    └── constants.js      # 시스템 상수 및 설정값
+    ├── store.js          # 중앙 상태 및 지연 로딩 로직
+    ├── actions.js        # 비즈니스 로직 및 이벤트
+    ├── ui.js             # 렌더링 엔진 (Render Limit 포함)
+    ├── i18n.js           # 14개 카테고리 데이터
+    ├── data.js           # 124개 팁 데이터베이스 (TAG_MAP 포함)
+    └── constants.js      # 시스템 설정 및 상수
 ```
 
 ---
-
-## 📈 활동 점수 시스템 (Engagement Score)
-
-단순 조회가 아닌, 실제 활용도에 따라 가중치를 부여하여 통계를 산출합니다.
-
-| 활동 유형 | 가중치 | 설명 |
-| :--- | :---: | :--- |
-| **단순 클릭** | 1pt | 팁의 요약 내용을 확인했을 때 |
-| **가이드 확인** | 3pt | "상세 단계 보기"를 클릭하여 학습했을 때 |
-| **즐겨찾기** | 5pt | 나중에 보기 위해 보관함에 추가했을 때 |
-| **매크로 실행** | 10pt | 자동화 기능을 실제로 사용하여 시간을 절약했을 때 |
-
----
-최종 업데이트: 2026-03-26  
-제작: Gemini CLI & my-chrome-guide Team
+최종 업데이트: 2026-03-27  
+제작: Antigravity Team
