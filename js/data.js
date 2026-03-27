@@ -410,7 +410,8 @@ export const tips = [
     shortcut: { win: "Ctrl + Shift + C", mac: "Cmd + Shift + C" },
     tags: ["요소", "검사", "HTML", "CSS", "선택", "코드확인", "콕찍기", "피커", "클릭검사"],
     tags_en: ["element", "inspect", "HTML", "CSS", "pick", "select", "check code", "selector", "picker"],
-    steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "단축키를 눌러 요소 선택 모드를 활성화합니다.", "확인하고 싶은 화면 요소를 마우스로 클릭하면 해당 HTML 코드로 즉시 이동합니다."]
+    steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "단축키를 눌러 요소 선택 모드를 활성화합니다.", "확인하고 싶은 화면 요소를 마우스로 클릭하면 해당 HTML 코드로 즉시 이동합니다."],
+    steps_en: ["Press F12 (or Cmd + Option + I) to open Developer Tools first.", "Press the shortcut to activate element selection mode.", "Click on a screen element to jump directly to its HTML code."]
   },
   {
     id: 35, category: "개발자",
@@ -421,7 +422,8 @@ export const tips = [
     shortcut: { win: "Ctrl + Shift + J", mac: "Cmd + Option + J" },
     tags: ["콘솔", "JS", "자바스크립트", "스크립트", "로그", "명령어", "코딩", "터미널", "자바", "js콘솔"],
     tags_en: ["console", "JS", "javascript", "script", "log", "command", "coding", "terminal", "js console", "console log"],
-    steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "단축키를 눌러 Console 탭으로 즉시 이동합니다.", "입력창에 자바스크립트 코드를 입력하고 엔터를 눌러 실행하세요."]
+    steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "단축키를 눌러 Console 탭으로 즉시 이동합니다.", "입력창에 자바스크립트 코드를 입력하고 엔터를 눌러 실행하세요."],
+    steps_en: ["Press F12 (or Cmd + Option + I) to open Developer Tools first.", "Press the shortcut to jump to the Console tab immediately.", "Type your JavaScript code in the input and press Enter to execute."]
   },
   {
     id: 36, category: "개발자",
@@ -443,7 +445,8 @@ export const tips = [
     shortcut_en: { win: "F12 > Network tab", mac: "Cmd + Option + I > Network tab" },
     tags: ["네트워크", "요청", "API", "느려", "통신", "트래픽", "패킷", "데이터", "속도", "응답", "api요청"],
     tags_en: ["network", "request", "API", "slow", "communication", "traffic", "packet", "data", "speed", "response", "api request"],
-    steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "상단 탭에서 'Network'를 선택하세요.", "페이지를 새로고침(F5)하면 발생하는 모든 통신 목록을 확인할 수 있습니다."]
+    steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "상단 탭에서 'Network'를 선택하세요.", "페이지를 새로고침(F5)하면 발생하는 모든 통신 목록을 확인할 수 있습니다."],
+    steps_en: ["Press F12 (or Cmd + Option + I) to open Developer Tools first.", "Select the 'Network' tab from the top.", "Reload the page (F5) to see a list of all network communications."]
   },
   // ── 설정 ──────────────────────────────────────
   {
@@ -1040,7 +1043,8 @@ export const tips = [
     shortcut: { win: "↑ / ↓", mac: "↑ / ↓" },
     tags: ["콘솔", "기록", "명령어", "탐색", "화살표", "이전명령어", "다시쓰기"],
     tags_en: ["console", "history", "command", "navigate", "up", "down", "arrow", "previous command", "rewrite"],
-    steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "Console 탭을 클릭해 활성화합니다.", "키보드의 위(↑) 또는 아래(↓) 화살표 키를 눌러 이전에 입력했던 명령어를 확인하세요."]
+    steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "Console 탭을 클릭해 활성화합니다.", "키보드의 위(↑) 또는 아래(↓) 화살표 키를 눌러 이전에 입력했던 명령어를 확인하세요."],
+    steps_en: ["Press F12 (or Cmd + Option + I) to open Developer Tools first.", "Click the Console tab to activate it.", "Use the Up (↑) or Down (↓) arrow keys to navigate through previously entered commands."]
   },
   {
     id: 75, category: "개발자",
@@ -1052,7 +1056,8 @@ export const tips = [
     shortcut_en: { win: "Ctrl + L (or clear())", mac: "Cmd + K (or Ctrl + L)" },
     tags: ["콘솔비우기", "삭제", "비우기", "지우기", "로그삭제", "깔끔", "정리"],
     tags_en: ["clear console", "delete", "clear", "console", "clean", "empty", "erase", "clear log", "tidy"],
-    steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "Console 탭에서 단축키를 누르거나 clear()를 입력하세요.", "지저분했던 이전 로그들이 모두 사라지고 깨끗해집니다."]
+    steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "Console 탭에서 단축키를 누르거나 clear()를 입력하세요.", "지저분했던 이전 로그들이 모두 사라지고 깨끗해집니다."],
+    steps_en: ["Press F12 (or Cmd + Option + I) to open Developer Tools first.", "Press the shortcut in the Console tab or type clear().", "The previous logs will be cleared, leaving the console clean."]
   },
   {
     id: 76, category: "개발자",
@@ -1063,7 +1068,8 @@ export const tips = [
     shortcut: { win: "Ctrl + [ / Ctrl + ]", mac: "Cmd + [ / Cmd + ]" },
     tags: ["탭이동", "패널이동", "빠른이동", "탭전환", "콘솔에서네트워크로"],
     tags_en: ["tab switch", "panel switch", "devtools", "switch panel", "quick move", "next panel", "previous panel"],
-    steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "개발자 도구가 활성화된 상태에서 단축키를 누르세요.", "Elements, Console, Network 등 상단 패널들이 순서대로 전환됩니다."]
+    steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "개발자 도구가 활성화된 상태에서 단축키를 누르세요.", "Elements, Console, Network 등 상단 패널들이 순서대로 전환됩니다."],
+    steps_en: ["Press F12 (or Cmd + Option + I) to open Developer Tools first.", "While the DevTools window is active, press the shortcut.", "The top panels like Elements, Console, and Network will switch in order."]
   },
   {
     id: 90, category: "개발자",
@@ -1369,6 +1375,11 @@ export const tips = [
       "주소창에 chrome://flags/#enable-parallel-downloading 을 입력해 이동하세요.",
       "'Parallel downloading' 항목을 'Enabled'로 변경하세요.",
       "화면 하단에 나타나는 [Relaunch] 버튼을 눌러 브라우저를 재시작해야 기능이 활성화됩니다."
+    ],
+    steps_en: [
+      "Go to chrome://flags/#enable-parallel-downloading in the address bar.",
+      "Change the 'Parallel downloading' setting to 'Enabled'.",
+      "Click the [Relaunch] button at the bottom to restart Chrome and activate the feature."
     ]
   },
   {
@@ -1519,6 +1530,12 @@ export const tips = [
       { type: "click", target: "로그인", value: "" },
       { type: "click", target: "메일쓰기", value: "" }
     ],
+    steps_en: [
+      { type: "input", target: "ID", value: "your_id" },
+      { type: "input", target: "Password", value: "your_password" },
+      { type: "click", target: "Login", value: "" },
+      { type: "click", target: "Compose", value: "" }
+    ],
     tags: ["네이버", "메일", "자동화", "로그인", "스마트스킵"],
     tags_en: ["naver", "mail", "automation", "login", "smartskip"]
   },
@@ -1535,6 +1552,12 @@ export const tips = [
       { type: "click", target: "신규", value: "" },
       { type: "click", target: "파일 업로드", value: "" }
     ],
+    steps_en: [
+      { type: "input", target: "Email", value: "your_email@gmail.com" },
+      { type: "click", target: "Next", value: "" },
+      { type: "click", target: "New", value: "" },
+      { type: "click", target: "File Upload", value: "" }
+    ],
     tags: ["구글", "드라이브", "업로드", "자동화", "로그인"],
     tags_en: ["google", "drive", "upload", "automation", "login"]
   },
@@ -1548,6 +1571,10 @@ export const tips = [
     steps: [
       { type: "click", target: "로그인", value: "" },
       { type: "click", target: "보관함", value: "" }
+    ],
+    steps_en: [
+      { type: "click", target: "Login", value: "" },
+      { type: "click", target: "Library", value: "" }
     ],
     tags: ["유튜브", "보관함", "자동화", "로그인", "나의기록"],
     tags_en: ["youtube", "library", "automation", "login", "history"]

@@ -170,8 +170,9 @@ tipBlocks.forEach(({ id, block, startLine }) => {
   
   // ── 2d. shortcut 구조 검증 ──
   if (shortcutMatch) {
-    const hasWin = block.match(/shortcut:\s*{[^}]*win:/);
-    const hasMac = block.match(/shortcut:\s*{[^}]*mac:/);
+    // shortcut: { ... } 중첩 구조를 고려하여 키 존재 여부만 체크
+    const hasWin = block.match(/shortcut:\s*{[\s\S]*?\bwin:/);
+    const hasMac = block.match(/shortcut:\s*{[\s\S]*?\bmac:/);
     if (!hasWin) reportWarning(section, `shortcut에 'win' 키 누락`);
     if (!hasMac) reportWarning(section, `shortcut에 'mac' 키 누락`);
   }
