@@ -17,6 +17,7 @@
   --daily-from: #1e40af;
   --daily-to: #2563eb;
   --accent-gold: #f59e0b;
+  --bg-high: #f1f5f9;
 }
 
 body.dark {
@@ -37,6 +38,7 @@ body.dark {
   --daily-from: #1e40af;
   --daily-to: #2563eb;
   --accent-gold: #fbbf24;
+  --bg-high: #334155;
 }
 
 * {
@@ -126,24 +128,57 @@ body.dark mark.highlight {
   100% { background-color: var(--surface); transform: scale(1); }
 }
 
-@keyframes slide-in-stagger {
-  from {
-    opacity: 0;
-    transform: translateY(12px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+/* ── [UX 확장] 프리미엄 스켈레톤 ── */
+.skeleton {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 26px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
 }
 
-/* 요소별 순차적 등장 적용 */
-.header { animation: slide-in-stagger 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.05s backwards; }
-#daily-card { animation: slide-in-stagger 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.1s backwards; }
-.search-wrapper { animation: slide-in-stagger 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.15s backwards; }
-.nav { animation: slide-in-stagger 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.2s backwards; }
-#cat-nav { animation: slide-in-stagger 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.25s backwards; }
-#list { animation: slide-in-stagger 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.3s backwards; }
+.skeleton::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.03), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.skeleton-title { width: 60%; height: 20px; background: var(--border); border-radius: 4px; }
+.skeleton-desc { width: 90%; height: 14px; background: var(--border); border-radius: 4px; }
+.skeleton-btn { width: 80px; height: 30px; background: var(--border); border-radius: 10px; margin-top: 8px; }
+
+/* 키보드 포커스 스타일 */
+.tip-item:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-bg), var(--shadow);
+  transform: translateY(-4px);
+  z-index: 10;
+}
+
+/* 하이라이트 스타일 개선 */
+mark.highlight {
+  background: rgba(37, 99, 235, 0.15);
+  color: var(--accent);
+  font-weight: 700;
+  border-bottom: 2px solid var(--accent);
+  padding: 0 2px;
+  border-radius: 0;
+}
 
 /* ── 전체 페이지 스크롤바 제거 ─────────────── */
 html,
@@ -1275,4 +1310,45 @@ body.dark .toast {
   line-height: 1.5;
   color: var(--text);
   font-weight: 500;
+}
+
+/* ── [최적화] 더보기 버튼 및 진행 표시 스타일 ── */
+.load-more-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 0 40px;
+  animation: slide-in-stagger 0.4s ease-out;
+}
+
+.load-more-status {
+  font-size: 12px;
+  color: var(--text-mute);
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+.load-more-btn {
+  background: var(--surface);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 12px 32px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: var(--shadow);
+}
+
+.load-more-btn:hover {
+  background: var(--accent);
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.2);
+}
+
+.load-more-btn:active {
+  transform: translateY(-1px);
 }

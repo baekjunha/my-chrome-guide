@@ -21,6 +21,44 @@
     return null;
   };
 
+  // [공용] 매크로 UI 스타일 주입 (initRecorder, initEngine 공통 사용)
+  function injectStyles() {
+    if (document.getElementById('macro-ui-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'macro-ui-styles';
+    style.textContent = `
+      .macro-spotlight {
+        position: fixed;
+        pointer-events: none;
+        z-index: 9999998;
+        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+        border-radius: 12px;
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        opacity: 0;
+        border: 3px solid #3b82f6;
+      }
+      .macro-spotlight.show {
+        opacity: 1;
+      }
+      .macro-ripple {
+        position: fixed;
+        width: 20px;
+        height: 20px;
+        background: rgba(37, 99, 235, 0.5);
+        border-radius: 50%;
+        transform: scale(0);
+        pointer-events: none;
+        z-index: 9999999;
+        animation: macro-ripple-anim 0.8s ease-out forwards;
+      }
+      @keyframes macro-ripple-anim {
+        0% { transform: scale(0); opacity: 0.8; }
+        100% { transform: scale(10); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
   // 비동기 체크를 위해 로직 변경
   isMacroActive().then(mode => {
     if (mode === 'active') initEngine();
@@ -114,7 +152,7 @@
       const originalOutline = el.style.outline;
       const originalTransition = el.style.transition;
       el.style.transition = 'outline 0.2s ease';
-      el.style.outline = '4px solid #ef4444';
+      el.style.outline = '4px solid #2563eb'; // [브랜드 컬러] 블루로 변경
       el.style.outlineOffset = '2px';
       setTimeout(() => {
         el.style.outline = originalOutline;
@@ -182,6 +220,48 @@
     let isProcessing = false;
     let retryCount = 0;
     let retryTimer = null;
+
+    let spotlightEl = null;
+
+    function showSpotlight(el) {
+      injectStyles();
+      if (!spotlightEl) {
+        spotlightEl = document.createElement('div');
+        spotlightEl.className = 'macro-spotlight';
+        document.body.appendChild(spotlightEl);
+      }
+
+      const rect = el.getBoundingClientRect();
+      const padding = 6;
+      Object.assign(spotlightEl.style, {
+        width: `${rect.width + padding * 2}px`,
+        height: `${rect.height + padding * 2}px`,
+        top: `${rect.top - padding}px`,
+        left: `${rect.left - padding}px`
+      });
+      
+      spotlightEl.classList.add('show');
+    }
+
+    function removeSpotlight() {
+      if (spotlightEl) {
+        spotlightEl.classList.remove('show');
+        setTimeout(() => {
+          if (spotlightEl && spotlightEl.parentNode) spotlightEl.remove();
+          spotlightEl = null;
+        }, 500);
+      }
+    }
+
+    function triggerRipple(x, y) {
+      injectStyles();
+      const ripple = document.createElement('div');
+      ripple.className = 'macro-ripple';
+      ripple.style.left = `${x - 10}px`;
+      ripple.style.top = `${y - 10}px`;
+      document.body.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 1000);
+    }
 
     function updateStatusBadge(current, total, text, retryCount = 0, isError = false) {
       if (!statusBadge) {
@@ -273,6 +353,7 @@
           }
         }, 400);
       }
+      removeSpotlight();
     }
 
     let cachedTask = null; // [최적화] 상태 캐싱을 통한 스토리지 접근 최소화
@@ -319,19 +400,20 @@
           isProcessing = true;
           retryCount = 0;
           
-          // [시각적 피드백] 현재 조작 중인 요소를 빨간색 테두리로 강조
-          const originalOutline = target.style.outline;
-          target.style.outline = '4px solid #ef4444';
-          target.style.outlineOffset = '2px';
+          // [시각적 피드백] 스포트라이트 및 파동 애니메이션
+          showSpotlight(target);
+          if (stepType === 'click') {
+            const rect = target.getBoundingClientRect();
+            triggerRipple(rect.left + rect.width / 2, rect.top + rect.height / 2);
+          }
           
           cachedTask = { ...cachedTask, currentStepIndex: currentStepIndex + 1 }; // [최적화] 캐시 즉시 업데이트
           await chrome.storage.local.set({ activeShortcutTask: cachedTask });
           
           setTimeout(() => { 
-            target.style.outline = originalOutline;
             isProcessing = false; 
             runEngine(); 
-          }, 1800); // 지연 시간을 1.8초로 늘려 시각적으로 단계를 인지하게 함
+          }, 1800); 
         } else {
           // [Smart Skip] Check if the NEXT step is already available (to skip login/redundant steps)
           if (currentStepIndex + 1 < steps.length) {

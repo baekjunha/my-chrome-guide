@@ -320,6 +320,105 @@ try {
   reportError('에셋', '이미지 디렉토리를 읽을 수 없음');
 }
 
+// 10. 단축키 중복 검증
+console.log('\n📋 10. 단축키 중복 검증 (Shortcut Uniqueness)');
+const winShortcuts = new Map();
+const macShortcuts = new Map();
+
+tips.forEach(tip => {
+  if (tip.shortcut) {
+    if (tip.shortcut.win) {
+      const key = tip.shortcut.win.replace(/\s+/g, '').toLowerCase();
+      if (winShortcuts.has(key)) {
+        reportError('단축키', `중복된 Windows 단축키: "${tip.shortcut.win}"`, `ID: ${tip.id} & ${winShortcuts.get(key)}`);
+      } else {
+        winShortcuts.set(key, tip.id);
+      }
+    }
+    if (tip.shortcut.mac) {
+      const key = tip.shortcut.mac.replace(/\s+/g, '').toLowerCase();
+      if (macShortcuts.has(key)) {
+        reportError('단축키', `중복된 Mac 단축키: "${tip.shortcut.mac}"`, `ID: ${tip.id} & ${macShortcuts.get(key)}`);
+      } else {
+        macShortcuts.set(key, tip.id);
+      }
+    }
+  }
+});
+if (winShortcuts.size > 0 || macShortcuts.size > 0) reportPass('단축키', `총 ${winShortcuts.size + macShortcuts.size}개의 단축키 고유성 확인 완료`);
+
+// 11. 다국어 배열(steps, tags) 일관성 검증
+console.log('\n📋 11. 다국어 배열(steps, tags) 일관성 검증');
+tips.forEach(tip => {
+  const idTag = `ID:${tip.id}`;
+  
+  // steps 검사 (객체 형태 지원: { win: [], mac: [] })
+  if (tip.steps && tip.steps_en) {
+    const getLen = (s) => Array.isArray(s) ? s.length : (s.win ? s.win.length : 0);
+    const koStepLen = getLen(tip.steps);
+    const enStepLen = getLen(tip.steps_en);
+    
+    if (koStepLen !== enStepLen) {
+      reportError('데이터', `${idTag} - steps 배열 길이 불일치 (ko:${koStepLen}, en:${enStepLen})`);
+    }
+  } else if (!tip.steps && tip.steps_en) {
+    reportError('데이터', `${idTag} - 한국어 steps 누락 (영어는 존재함)`);
+  }
+
+  if (tip.tags && tip.tags_en) {
+    if (tip.tags.length !== tip.tags_en.length) {
+      reportWarning('데이터', `${idTag} - tags 배열 길이 불일치 (ko:${tip.tags.length}, en:${tip.tags_en.length})`);
+    }
+  }
+});
+reportPass('데이터', '배열 데이터 일관성 검사 완료');
+
+// 12. CSS 변수 무결성 검증
+console.log('\n📋 12. CSS 변수 무결성 검증');
+const rootVarRegex = /--[\w-]+(?=:)/g;
+const usedVarRegex = /var\((--[\w-]+)\)/g;
+const definedVars = new Set([...css.matchAll(rootVarRegex)].map(m => m[0]));
+const usedVars = [...new Set([...css.matchAll(usedVarRegex)].map(m => m[1]))];
+
+let cssVarErrors = 0;
+usedVars.forEach(v => {
+  if (!definedVars.has(v)) {
+    reportError('CSS', `정의되지 않은 CSS 변수 참조 발견: ${v}`);
+    cssVarErrors++;
+  }
+});
+if (cssVarErrors === 0) reportPass('CSS', `총 ${usedVars.length}개의 변수 참조 무결성 확인`);
+
+// 13. JS-I18N 키 참조 검증 (Coverage)
+console.log('\n📋 13. JS-I18N 키 참조 검증 (Coverage)');
+let i18nObj = null;
+if (i18nRaw) {
+  try {
+    const i18nClean = i18nRaw
+      .replace(/export const I18N =/g, 'return')
+      .replace(/export function [\s\S]*$/g, '');
+    i18nObj = new Function(i18nClean)();
+  } catch (e) {}
+}
+
+if (i18nObj && i18nObj.ko) {
+  const definedKeys = new Set(Object.keys(i18nObj.ko));
+  const jsI18nRegex = /strings\.([\w]+)|strings\[['"](.+?)['"]\]/g;
+  const jsMatches = [...allJsContent.matchAll(jsI18nRegex)];
+  const referencedKeys = new Set(jsMatches.map(m => m[1] || m[2]).filter(k => k && isNaN(k)));
+
+  let i18nRefErrors = 0;
+  referencedKeys.forEach(key => {
+    if (!definedKeys.has(key)) {
+      if (!['categories', 'searchPlaceholders'].includes(key)) {
+        reportError('I18N-REF', `JS에서 참조 중이나 i18n.js에 정의되지 않은 키: "${key}"`);
+        i18nRefErrors++;
+      }
+    }
+  });
+  if (i18nRefErrors === 0) reportPass('I18N-REF', `JS 내 I18N 참조 ${referencedKeys.size}개 검증 완료`);
+}
+
 // ═══════════════════════════════════════════════════
 // 결과 요약
 // ═══════════════════════════════════════════════════

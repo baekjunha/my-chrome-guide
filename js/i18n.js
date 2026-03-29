@@ -22,6 +22,7 @@ export const I18N = {
     categories: { "전체": "전체", "탭/창": "탭/창", "탐색": "탐색", "주소창/검색": "주소창/검색", "화면": "화면", "북마크": "북마크", "편집": "편집", "프로필/공간": "프로필/공간", "AI 기능": "AI 기능", "개발자": "개발자", "설정": "설정", "다른 기기로 Chrome 사용": "다른 기기", "이스터에그": "이스터에그", "자동화": "자동화", "시스템": "시스템" },
     emptyFav: "아직 저장된 보관함이 없습니다<br><small style=\"font-weight:400; opacity:0.7\">팁에 있는 아이콘을 눌러보세요.</small>",
     emptySearch: "검색 결과가 없습니다",
+    clearSearchCTA: "검색 초기화",
     emptyShortcuts: "자주 헤매는 페이지 경로를<br><b>1클릭 매크로</b>로 등록해보세요!",
     relatedTipsLabel: "관련 팁",
     copyShortcutTitle: "클릭하여 검색어 복사",
@@ -46,7 +47,9 @@ export const I18N = {
     recordingTitle: "🔴 매크로 녹화 중...",
     recordingDesc: "웹사이트에서 버튼을 클릭하거나 글자를 입력하면 자동으로 기록됩니다.",
     maximizeRecommendation: "원활한 작동을 위해 브라우저 창을 최대화(전체화면)한 상태에서 실행하는 것을 권장합니다. 실행할까요?",
-    runningMacro: "1클릭 매크로 엔진 가동 중... (창이 클수록 정확합니다)"
+    runningMacro: "1클릭 매크로 엔진 가동 중... (창이 클수록 정확합니다)",
+    loadMore: "더보기",
+    showMoreStatus: (visible, total) => `전체 ${total}개 중 ${visible}개 표시 중`
   },
   en: {
     dailyLabel: "Tip of the Day", 
@@ -71,6 +74,7 @@ export const I18N = {
     categories: { "전체": "All", "탭/창": "Tab/Window", "탐색": "Navigation", "주소창/검색": "Omnibox", "화면": "Screen", "북마크": "Bookmarks", "편집": "Editing", "프로필/공간": "Profile/Space", "AI 기능": "AI Features", "개발자": "Developer", "설정": "Settings", "다른 기기로 Chrome 사용": "Cross-Device", "이스터에그": "Easter Eggs", "자동화": "Automation", "시스템": "System" },
     emptyFav: "No items saved to your library yet<br><small style=\"font-weight:400; opacity:0.7\">Press the star icon on a tip to save it.</small>",
     emptySearch: "No search results found",
+    clearSearchCTA: "Clear search",
     emptyShortcuts: "Save complex website paths as<br><b>1-Click Macros</b>!",
     relatedTipsLabel: "Related Tips",
     copyShortcutTitle: "Click to copy search term",
@@ -95,6 +99,8 @@ export const I18N = {
     recordingTitle: "🔴 Recording Macro...",
     recordingDesc: "Actions like clicks and typing are recorded automatically.",
     maximizeRecommendation: "It is recommended to maximize the browser window for optimal performance. Run now?",
-    runningMacro: "Running macro... (Works best in a maximized window)"
+    runningMacro: "Running macro... (Works best in a maximized window)",
+    loadMore: "Load More",
+    showMoreStatus: (visible, total) => `Showing ${visible} of ${total}`
   }
 };

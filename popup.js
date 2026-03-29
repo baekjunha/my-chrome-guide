@@ -1,4 +1,4 @@
-import { $, TABS, OS, LANG } from './js/constants.js';
+import { $, $$, TABS, OS, LANG } from './js/constants.js';
 import { store } from './js/store.js';
 import { initCanvas } from './js/utils.js';
 import { 
@@ -6,9 +6,10 @@ import {
   applyLanguage, 
   buildCategoryNav, 
   showDailyTip, 
-  renderTips, 
+  renderTips,
   setRandomPlaceholder,
-  switchTab 
+  switchTab,
+  renderSkeletons
 } from './js/ui.js';
 import { 
   handleOSChange, 
@@ -40,6 +41,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       buildCategoryNav((cat, btn) => handleCategoryClick(cat, btn));
       showDailyTip();
       setRandomPlaceholder();
+      
+      // [UX 확장] 초기 로딩 시 스켈레톤 노출
+      renderSkeletons(3);
       
       // 팁 리스트 렌더링을 팝업 애니메이션 완료 후로 미룸 (약 200ms)
       setTimeout(() => {
@@ -120,4 +124,45 @@ function initEventListeners() {
 
   // 리스트 클릭 통합 핸들러 (이벤트 위임)
   $('#list').addEventListener('click', handleListClick);
+
+  // [UX 확장] 키보드 내비게이션 (ArrowUp, ArrowDown, Enter)
+  window.addEventListener('keydown', (e) => {
+    const active = document.activeElement;
+    const isSearchFocused = active.id === 'search';
+    const items = Array.from($$('.tip-item, .widget-card'));
+    
+    if (items.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (isSearchFocused) {
+        items[0].focus();
+      } else {
+        const idx = items.indexOf(active);
+        if (idx < items.length - 1) items[idx + 1].focus();
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      const idx = items.indexOf(active);
+      if (idx === 0) {
+        $('#search').focus();
+      } else if (idx > 0) {
+        items[idx - 1].focus();
+      }
+    } else if (e.key === 'Enter') {
+      const activeItem = active.closest('.tip-item, .widget-card');
+      if (activeItem && !isSearchFocused) {
+        // 엔터 키 입력 시 기본 동작: 클릭 이벤트 시뮬레이션
+        activeItem.click(); 
+        
+        // tip-item의 경우 내부의 shortcut이나 go-btn이 우선순위가 있을 수 있음
+        const shortcut = activeItem.querySelector('.shortcut');
+        if (shortcut) shortcut.click();
+        else if (activeItem.classList.contains('tip-item')) {
+           const goBtn = activeItem.querySelector('.go-btn');
+           if (goBtn) goBtn.click();
+        }
+      }
+    }
+  });
 }

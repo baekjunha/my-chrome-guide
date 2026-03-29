@@ -455,8 +455,8 @@ export const tips = [
     title_en: "Open Chrome Settings",
     desc: "브라우저의 전반적인 설정을 변경하거나 사용자 맞춤 기능을 조절하고 싶을 때 사용합니다.",
     desc_en: "Navigates to the main Chrome settings page.",
-    shortcut: { win: "chrome://settings 입력", mac: "chrome://settings 입력" },
-    shortcut_en: { win: "Type chrome://settings", mac: "Type chrome://settings" },
+    shortcut: { win: "chrome://settings 입력", mac: "Cmd + , (쉼표)" },
+    shortcut_en: { win: "Type chrome://settings", mac: "Cmd + , (comma)" },
     link: "chrome://settings",
     tags: ["설정", "세팅", "옵션", "환경설정", "구성", "셋팅", "제어판", "관리", "크롬설정", "설정창", "환경"],
     tags_en: ["settings", "option", "configuration", "config", "chrome settings", "control panel", "manage"]
@@ -467,8 +467,8 @@ export const tips = [
     title_en: "Memory Saver Mode",
     desc: "사용하지 않는 탭의 메모리를 회수하여 브라우저 속도를 높여줍니다.",
     desc_en: "Frees up memory from inactive tabs to improve speed.",
-    shortcut: { win: "설정 > 성능", mac: "설정 > 성능" },
-    shortcut_en: { win: "Settings > Performance", mac: "Settings > Performance" },
+    shortcut: { win: "설정 > 성능 > 메모리 절약", mac: "설정 > 성능 > 메모리 절약" },
+    shortcut_en: { win: "Settings > Performance > Memory Saver", mac: "Settings > Performance > Memory Saver" },
     link: "chrome://settings/performance",
     tags: ["렉", "느려", "버벅", "무거워", "성능", "최적화", "램", "렉걸려", "빨리", "탭잠자기", "배터리", "메모리부족"],
     tags_en: ["lag", "slow", "performance", "optimization", "RAM", "speed", "memory", "saver", "fast", "tab sleep", "battery", "low memory"],
@@ -1327,8 +1327,9 @@ export const tips = [
     desc: "노트북 배터리가 부족할 때 백그라운드 활동을 제한하여 배터리 사용 시간을 늘려줍니다.",
     desc_en: "Reduces background activity to extend battery life when low.",
     link: "chrome://settings/performance",
-    shortcut: { win: "설정 > 성능", mac: "설정 > 성능" },
-    tags: ["배터리", "절약", "노트북", "에너지", "성능", "최적화"],
+    shortcut: { win: "설정 > 성능 > 에너지 절약", mac: "설정 > 성능 > 에너지 절약" },
+    shortcut_en: { win: "Settings > Performance > Energy Saver", mac: "Settings > Performance > Energy Saver" },
+    tags: ["배터리", "절약", "노트북", "에너지", "성능", "최적화", "배터리부족"],
     tags_en: ["battery", "save", "laptop", "energy", "performance", "optimization"]
   },
   {
@@ -1347,7 +1348,12 @@ export const tips = [
       "화면 하단에 나타나는 [Relaunch] 버튼을 눌러 브라우저를 재시작해야 기능이 활성화됩니다.",
       "이제 링크 위에서 마우스 우클릭 시 '미리보기' 메뉴가 나타납니다."
     ],
-    steps_en: ["Go to chrome://flags/#link-preview in the address bar.", "Change the setting to 'Enabled' and restart Chrome.", "Now, right-click any link to see the 'Preview' option."]
+    steps_en: [
+      "Go to chrome://flags/#link-preview in the address bar.",
+      "Change the setting to 'Enabled'.",
+      "Click the [Relaunch] button at the bottom to restart Chrome.",
+      "Now, right-click any link to see the 'Preview' option."
+    ]
   },
   {
     id: 124, category: "탭/창",

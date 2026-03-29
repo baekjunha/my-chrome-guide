@@ -209,11 +209,43 @@ export function getProcessedTips(allTips, { filter, currentOS, currentTab, favor
     .sort((a, b) => b.score - a.score);
 }
 
-export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut } = {}) {
+/**
+ * [UX 확장] 프리미엄 스켈레톤 로딩 렌더링
+ */
+export function renderSkeletons(count = 3) {
   const listEl = $('#list');
   if (!listEl) return;
   listEl.innerHTML = "";
   
+  const fragment = document.createDocumentFragment();
+  for (let i = 0; i < count; i++) {
+    const div = document.createElement('div');
+    div.className = 'skeleton';
+    div.innerHTML = `
+      <div class="skeleton-title"></div>
+      <div class="skeleton-desc"></div>
+      <div class="skeleton-btn"></div>
+    `;
+    fragment.appendChild(div);
+  }
+  listEl.appendChild(fragment);
+}
+
+
+export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut } = {}, isAppend = false) {
+  const listEl = $('#list');
+  if (!listEl) return;
+  
+  // [최적화] 새 검색/탭 전환 시에만 리스트 초기화 및 카운트 리셋
+  if (!isAppend) {
+    listEl.innerHTML = "";
+    store.state.visibleCount = store.state.ITEM_PER_PAGE;
+  } else {
+    // 기존의 "더보기" 영역 제거
+    $('.load-more-wrapper')?.remove();
+    store.state.visibleCount += store.state.ITEM_PER_PAGE;
+  }
+
   const strings = I18N[store.state.currentLang];
   const lang = store.state.currentLang;
   const currentOS = store.state.currentOS;
@@ -223,7 +255,6 @@ export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun
     return;
   }
 
-  // [Architecture] 분리된 로직 호출
   const processedItems = getProcessedTips(tips, {
     filter,
     currentOS,
@@ -233,10 +264,14 @@ export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun
     lang
   });
 
-  const fragment = document.createDocumentFragment();
-  const MAX_RENDER = 200;
+  const totalCount = processedItems.length;
+  const visibleCount = store.state.visibleCount;
+  const itemsToRender = processedItems.slice(isAppend ? visibleCount - store.state.ITEM_PER_PAGE : 0, visibleCount);
   
-  processedItems.slice(0, MAX_RENDER).forEach(({ tip }) => {
+  const fragment = document.createDocumentFragment();
+  
+  // [UX 확장] 아이템이 렌더링될 때 애니메이션 효과 추가
+  itemsToRender.forEach(({ tip }, idx) => {
     try {
       let title = (lang === LANG.EN && tip.title_en) ? tip.title_en : (tip.title || "");
       let desc = (lang === LANG.EN && tip.desc_en) ? tip.desc_en : (tip.desc || "");
@@ -255,9 +290,13 @@ export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun
 
       const isFav = store.state.favorites.includes(tip.id);
       const div = document.createElement('div');
-      div.className = 'tip-item' + (tip.category === '이스터에그' ? ' actionable' : '');
+      div.className = 'tip-item';
+      div.tabIndex = 0; // [UX 확장] 키보드 포커스 지원
       div.dataset.id = tip.id;
       div.dataset.category = tip.category;
+      
+      div.setAttribute('role', 'button');
+      div.setAttribute('aria-label', `${title}, ${desc}`);
 
       const shortcutObj = (lang === LANG.EN && tip.shortcut_en) ? tip.shortcut_en : tip.shortcut;
       let shortcutText = "";
@@ -287,23 +326,51 @@ export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun
       `;
 
       createActionButtons(tip, div, { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut });
-      
-      // 단계/가이드 및 관련 팁 렌더링 (생략 - 기존 로직 유지)
       renderDetails(tip, div, lang, currentOS, strings);
-
       fragment.appendChild(div);
     } catch (err) {
       console.error(`Tip ID ${tip.id} rendering error:`, err);
     }
   });
 
-  if (fragment.children.length === 0) {
+  if (!isAppend && totalCount === 0) {
     const empty = document.createElement('div');
     empty.className = 'empty-msg';
-    empty.innerHTML = filter ? strings.emptySearch : (store.state.currentTab === TABS.FAV ? strings.emptyFav : "");
+    
+    if (filter) {
+      empty.innerHTML = `
+        <div style="font-size: 40px; margin-bottom: 12px; opacity: 0.5;">🔍</div>
+        <div style="margin-bottom: 16px;">${strings.emptySearch}</div>
+        <button class="go-btn" id="empty-clear-btn" style="width: auto; padding: 8px 20px;">
+          ${strings.clearSearchCTA}
+        </button>
+      `;
+      setTimeout(() => {
+        $('#empty-clear-btn')?.addEventListener('click', () => {
+          $('#search').value = "";
+          renderTips("", { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut });
+        });
+      }, 0);
+    } else {
+      empty.innerHTML = store.state.currentTab === TABS.FAV ? strings.emptyFav : "";
+    }
     listEl.appendChild(empty);
   } else {
     listEl.appendChild(fragment);
+    
+    // [최적화] 더보기 버튼 및 진행 표시 추가
+    if (visibleCount < totalCount) {
+      const moreWrapper = document.createElement('div');
+      moreWrapper.className = 'load-more-wrapper';
+      moreWrapper.innerHTML = `
+        <div class="load-more-status">${strings.showMoreStatus(Math.min(visibleCount, totalCount), totalCount)}</div>
+        <button class="load-more-btn">${strings.loadMore}</button>
+      `;
+      moreWrapper.querySelector('.load-more-btn').onclick = () => {
+        renderTips(filter, { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut }, true);
+      };
+      listEl.appendChild(moreWrapper);
+    }
   }
 }
 /**
@@ -401,6 +468,9 @@ export function renderShortcuts(onRun, onEdit, onDelete) {
     const stepsCount = (sc.steps && sc.steps.length) || 0;
 
     card.className = 'widget-card';
+    card.tabIndex = 0;
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', `Macro: ${name}, ${stepsCount} steps`);
     card.innerHTML = `
       <div class="widget-icon">${ICONS.rocket}</div>
       <div class="widget-title">${name}</div>

@@ -144,7 +144,9 @@ class AppStore {
       relatedTipsCache: new Map(),
       debounceTimer: null,
       currentNoteId: null,
-      editingShortcutId: null
+      editingShortcutId: null,
+      visibleCount: 20, // [최적화] 현재 노출된 아이템 개수
+      ITEM_PER_PAGE: 20  // [최적화] 한 번에 추가로 로드할 개수
     };
 
     // State 키와 Storage 키 간의 매핑 및 스키마 정의
