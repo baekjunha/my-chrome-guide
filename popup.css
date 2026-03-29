@@ -44,7 +44,83 @@ body.dark {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ── [UX 개선] 플랫폼별 네이티브 디자인 ───────── */
+
+/* 1. Mac 전용 스타일 (SF Pro, Rounded, Glass) */
+body.os-mac {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+  --radius: 18px;
+  --card-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+}
+
+body.os-mac .card,
+body.os-mac .modal-content,
+body.os-mac input[type="text"],
+body.os-mac .nav button,
+body.os-mac #cat-nav button {
+  border-radius: var(--radius);
+}
+
+body.os-mac #list::-webkit-scrollbar {
+  width: 5px;
+}
+body.os-mac #list::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+}
+body.dark.os-mac #list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* 2. Windows 전용 스타일 (Segoe UI, Sharp, Fluent) */
+body.os-win {
+  font-family: "Segoe UI", "Pretendard", "Malgun Gothic", sans-serif;
+  --radius: 6px;
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+body.os-win .card,
+body.os-win .modal-content,
+body.os-win input[type="text"],
+body.os-win .nav button,
+body.os-win #cat-nav button {
+  border-radius: var(--radius);
+}
+
+body.os-win #list::-webkit-scrollbar {
+  width: 8px;
+}
+body.os-win #list::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+body.dark.os-win #list::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
 /* ── 애니메이션 정의 ──────────────────────── */
+/* ── [UX 개선] 검색어 하이라이트 스타일 ───────── */
+mark.highlight {
+  background: rgba(245, 158, 11, 0.25);
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+body.dark mark.highlight {
+  background: rgba(245, 158, 11, 0.4);
+}
+
+/* ── [UX 개선] 마이크로 인터랙션: 복사 성공 피드백 ── */
+.tip-item.flash-success,
+.card.flash-success {
+  animation: flash-success 0.6s ease-out;
+}
+
+@keyframes flash-success {
+  0% { background-color: var(--accent-bg); transform: scale(1.02); }
+  100% { background-color: var(--surface); transform: scale(1); }
+}
+
 @keyframes slide-in-stagger {
   from {
     opacity: 0;

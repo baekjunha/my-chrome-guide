@@ -46,6 +46,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderTips("", getRenderCallbacks());
         initCanvas();
         
+        // [UX 개선] 검색창 자동 포커스
+        const searchInput = $('#search');
+        if (searchInput) searchInput.focus();
+        
         requestAnimationFrame(() => {
           document.body.classList.remove('loading-phase');
         });

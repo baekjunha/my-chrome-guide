@@ -8,6 +8,11 @@ export function applyTheme() {
   const body = document.body;
   if (!body) return;
   body.classList.toggle('dark', store.state.isDark);
+  
+  // [UX 개선] OS 전용 클래스 부여 (디자인 차별화)
+  body.classList.remove('os-mac', 'os-win');
+  body.classList.add(`os-${store.state.currentOS}`);
+
   const darkBtn = $('#dark-btn');
   if (darkBtn) {
     darkBtn.innerHTML = store.state.isDark ? ICONS.sun : ICONS.moon;
@@ -139,6 +144,60 @@ export function showDailyTip() {
   }, 300);
 }
 
+/**
+ * [UX 개선] 검색어 하이라이팅 유틸리티
+ */
+function highlight(text, search) {
+  if (!search) return text;
+  const regex = new RegExp(`(${search.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
+  return text.replace(regex, '<mark class="highlight">$1</mark>');
+}
+
+/**
+ * [Architecture] 데이터 처리 로직 분리 (Pure Logic)
+ * 필터링, 점수 계산, 정렬만 수행하여 결과 배열을 반환합니다.
+ */
+export function getProcessedTips(allTips, { filter, currentOS, currentTab, favorites, currentCategory, lang }) {
+  const searchLow = (filter || "").toLowerCase().trim();
+  const searchLowNoSpace = searchLow.replace(/\s/g, "");
+
+  return allTips
+    .map(tip => {
+      let score = 0;
+
+      // 1. 플랫폼 필터링
+      if (tip.platform && tip.platform !== currentOS) return { tip, score: -1 };
+
+      // 2. 탭 & 카테고리 필터링
+      const matchesTab = currentTab === TABS.ALL || favorites.includes(tip.id);
+      const matchesCat = (currentCategory === CATEGORY_ALL || !currentCategory || tip.category === currentCategory);
+      if (!matchesTab || !matchesCat) return { tip, score: -1 };
+
+      if (!searchLow) return { tip, score: 1 }; // 검색어 없으면 기본 노출
+
+      const titleKO = (tip.title || "").toLowerCase();
+      const titleEN = (tip.title_en || "").toLowerCase();
+      const descKO = (tip.desc || "").toLowerCase();
+      const descEN = (tip.desc_en || "").toLowerCase();
+      const tagsKO = (tip.tags || []);
+      const tagsEN = (tip.tags_en || []);
+
+      // 가중치 계산
+      if (titleKO === searchLow || titleEN === searchLow) score += 15;
+      else if (titleKO.startsWith(searchLow) || titleEN.startsWith(searchLow)) score += 10;
+      else if (titleKO.includes(searchLow) || titleEN.includes(searchLow)) score += 8;
+      else if (titleKO.replace(/\s/g, "").includes(searchLowNoSpace)) score += 6;
+
+      const matchesTag = [...tagsKO, ...tagsEN].some(tag => tag.toLowerCase().includes(searchLow));
+      if (matchesTag) score += 5;
+      if (descKO.includes(searchLow) || descEN.includes(searchLow)) score += 2;
+
+      return { tip, score };
+    })
+    .filter(item => item.score > 0)
+    .sort((a, b) => b.score - a.score);
+}
+
 export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut } = {}) {
   const listEl = $('#list');
   if (!listEl) return;
@@ -147,58 +206,42 @@ export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun
   const strings = I18N[store.state.currentLang];
   const lang = store.state.currentLang;
   const currentOS = store.state.currentOS;
-  const searchLow = filter.toLowerCase().trim();
 
   if (store.state.currentTab === TABS.SHORTCUTS) {
     renderShortcuts(onShortcutRun, onEditShortcut, onDeleteShortcut);
     return;
   }
 
+  // [Architecture] 분리된 로직 호출
+  const processedItems = getProcessedTips(tips, {
+    filter,
+    currentOS,
+    currentTab: store.state.currentTab,
+    favorites: store.state.favorites,
+    currentCategory: store.state.currentCategory,
+    lang
+  });
+
   const fragment = document.createDocumentFragment();
-  let visibleCount = 0;
-
-  const MAX_RENDER = 200; // [최적화] 전수 조사를 위해 모든 팁(현재 124개)이 렌더링되도록 제한 완화
+  const MAX_RENDER = 200;
   
-  tips.forEach(tip => {
-    if (visibleCount >= MAX_RENDER) return; // 제한 도달 시 중단
-    // [Smart Filter] 탭 매칭 (전체보기 탭이거나 즐겨찾기 포함 여부)
-    const matchesTab = store.state.currentTab === TABS.ALL || store.state.favorites.includes(tip.id);
-    
-    // [Smart Filter] 카테고리 매칭 (카테고리가 '전체'이거나, 값이 없거나, 정확히 일치할 때)
-    const currentCat = store.state.currentCategory;
-    const matchesCat = (currentCat === CATEGORY_ALL || !currentCat || tip.category === currentCat);
-    
-    const titleKO = (tip.title || "").toLowerCase();
-    const titleEN = (tip.title_en || "").toLowerCase();
-    const descKO = (tip.desc || "").toLowerCase();
-    const descEN = (tip.desc_en || "").toLowerCase();
-    const tagsKO = (tip.tags || []).join(',').toLowerCase();
-    const tagsEN = (tip.tags_en || []).join(',').toLowerCase();
-    
-    // 공백 없는 버전으로도 검색 가능하게 (예: "새 탭" -> "새탭")
-    const searchLowNoSpace = searchLow.replace(/\s/g, "");
-    const titleKONoSpace = titleKO.replace(/\s/g, "");
-    const titleENNoSpace = titleEN.replace(/\s/g, "");
+  processedItems.slice(0, MAX_RENDER).forEach(({ tip }) => {
+    try {
+      let title = (lang === LANG.EN && tip.title_en) ? tip.title_en : (tip.title || "");
+      let desc = (lang === LANG.EN && tip.desc_en) ? tip.desc_en : (tip.desc || "");
+      desc = String(desc || "");
 
-    const matchesSearch = !searchLow || 
-      titleKO.includes(searchLow) || titleEN.includes(searchLow) ||
-      titleKONoSpace.includes(searchLowNoSpace) || titleENNoSpace.includes(searchLowNoSpace) ||
-      descKO.includes(searchLow) || descEN.includes(searchLow) ||
-      tagsKO.includes(searchLow) || tagsEN.includes(searchLow);
+      if (filter) {
+        title = highlight(title, filter);
+        desc = highlight(desc, filter);
+      }
 
-    const title = (lang === LANG.EN && tip.title_en) ? tip.title_en : (tip.title || "");
-    let desc = (lang === LANG.EN && tip.desc_en) ? tip.desc_en : (tip.desc || "");
-    desc = String(desc || "");
+      if (currentOS === OS.MAC) {
+        desc = desc.replace(/Ctrl|Win|Alt/g, m => ({ 'Ctrl': 'Cmd', 'Win': 'Cmd', 'Alt': 'Option' })[m] || m);
+      } else {
+        desc = desc.replace(/Cmd|Option/g, m => ({ 'Cmd': 'Ctrl', 'Option': 'Alt' })[m] || m);
+      }
 
-    // [최적화] OS별 정규표현식 일괄 치환
-    if (currentOS === OS.MAC) {
-      desc = desc.replace(/Ctrl|Win|Alt/g, m => ({ 'Ctrl': 'Cmd', 'Win': 'Cmd', 'Alt': 'Option' })[m] || m);
-    } else {
-      desc = desc.replace(/Cmd|Option/g, m => ({ 'Cmd': 'Ctrl', 'Option': 'Alt' })[m] || m);
-    }
-
-    if (matchesTab && matchesCat && matchesSearch) {
-      visibleCount++;
       const isFav = store.state.favorites.includes(tip.id);
       const div = document.createElement('div');
       div.className = 'tip-item' + (tip.category === '이스터에그' ? ' actionable' : '');
@@ -207,14 +250,17 @@ export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun
 
       const shortcutObj = (lang === LANG.EN && tip.shortcut_en) ? tip.shortcut_en : tip.shortcut;
       let shortcutText = "";
-      if (typeof shortcutObj === 'string') {
-        shortcutText = shortcutObj;
-      } else if (shortcutObj && typeof shortcutObj === 'object') {
-        shortcutText = shortcutObj[currentOS] || shortcutObj['win'] || "";
-      }
+      if (typeof shortcutObj === 'string') shortcutText = shortcutObj;
+      else if (shortcutObj && typeof shortcutObj === 'object') shortcutText = shortcutObj[currentOS] || shortcutObj['win'] || "";
 
-      let shortcutHTML = `<div class="shortcut">${shortcutText}</div>`;
-
+      let shortcutHTML = shortcutText ? `
+        <div class="shortcut" 
+             onclick="navigator.clipboard.writeText('${shortcutText.replace(/'/g, "\\'")}'); 
+                      this.closest('.tip-item').classList.add('flash-success'); 
+                      setTimeout(() => this.closest('.tip-item').classList.remove('flash-success'), 600);
+                      import('./utils.js').then(m => m.showToast('${strings.copiedToast(shortcutText.replace(/'/g, "\\'"))}'))">
+          ${shortcutText}
+        </div>` : "";
 
       div.innerHTML = `
         <div class="tip-category">${I18N[lang].categories[tip.category] || tip.category}</div>
@@ -230,91 +276,98 @@ export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun
       `;
 
       createActionButtons(tip, div, { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut });
-
-      // 단계별 가이드 생성
-      let rawSteps = lang === LANG.KO ? tip.steps : (tip.steps_en || tip.steps);
-      let steps = [];
-      if (rawSteps) {
-        if (Array.isArray(rawSteps)) steps = rawSteps;
-        else if (typeof rawSteps === 'object') steps = rawSteps[currentOS] || rawSteps['win'] || [];
-      }
-
-      if (steps && steps.length > 0) {
-        const stepGuide = document.createElement('div');
-        stepGuide.className = 'step-guide';
-        stepGuide.innerHTML = `
-          <div class="step-guide-header">
-            <div class="step-guide-title">
-              <span class="svg-icon">${ICONS.globe}</span>
-              <span>${lang === LANG.KO ? '단계별 스텝 가이드' : 'Step-by-Step Guide'}</span>
-            </div>
-            <div class="step-toggle-icon">${ICONS.chevron}</div>
-          </div>
-          <div class="step-content">
-            ${steps.map((step, idx) => {
-              let p = "";
-              // [Smart Fix] 단계가 객체(매크로)인 경우 텍스트로 변환
-              if (typeof step === 'object' && step !== null) {
-                const actionName = step.type === 'click' ? (lang === LANG.KO ? '클릭' : 'Click') : (lang === LANG.KO ? '입력' : 'Input');
-                p = `[${actionName}] ${step.target}${step.value ? ': ' + step.value : ''}`;
-              } else {
-                p = String(step || "");
-              }
-
-              if (currentOS === OS.MAC) {
-                p = p.replace(/Ctrl/g, 'Cmd').replace(/Win/g, 'Cmd').replace(/Alt/g, 'Option').replace(/우클릭/g, '이중 손가락 클릭(Control+클릭)');
-              } else {
-                p = p.replace(/Cmd/g, 'Ctrl').replace(/Option/g, 'Alt');
-              }
-              return `<div class="step-row"><div class="step-number">${idx+1}</div><div class="step-text">${p}</div></div>`;
-            }).join('')}
-          </div>
-        `;
-        div.appendChild(stepGuide);
-      }
-
-      // 관련 팁 (Lazy Loading 사용)
-      const related = store.getRelatedTips(tip.id);
-      if (related && related.length > 0) {
-        const relDiv = document.createElement('div');
-        relDiv.className = 'related-tips';
-        
-        relDiv.innerHTML = `
-          <div class="related-tips-header">
-            <div class="related-label">
-              <span class="svg-icon">${ICONS.link}</span>
-              ${strings.relatedTipsLabel}
-            </div>
-            <div class="related-toggle-icon">${ICONS.chevron}</div>
-          </div>
-          <div class="related-content">
-            <div class="related-list"></div>
-          </div>
-        `;
-        
-        const relList = relDiv.querySelector('.related-list');
-        related.forEach(rt => {
-          const rtTitle = (lang === LANG.EN && rt.title_en) ? rt.title_en : rt.title;
-          const rtBtn = document.createElement('span');
-          rtBtn.className = 'related-item';
-          rtBtn.dataset.id = rt.id;
-          rtBtn.textContent = rtTitle;
-          relList.appendChild(rtBtn);
-        });
-        div.appendChild(relDiv);
-      }
+      
+      // 단계/가이드 및 관련 팁 렌더링 (생략 - 기존 로직 유지)
+      renderDetails(tip, div, lang, currentOS, strings);
 
       fragment.appendChild(div);
+    } catch (err) {
+      console.error(`Tip ID ${tip.id} rendering error:`, err);
     }
   });
 
-  if (visibleCount === 0) {
+  if (fragment.children.length === 0) {
     const empty = document.createElement('div');
     empty.className = 'empty-msg';
     empty.innerHTML = filter ? strings.emptySearch : (store.state.currentTab === TABS.FAV ? strings.emptyFav : "");
     listEl.appendChild(empty);
   } else {
     listEl.appendChild(fragment);
+  }
+}
+/**
+ * [Architecture] 상세 정보(단계 가이드, 관련 팁) 렌더링 분리
+ */
+function renderDetails(tip, div, lang, currentOS, strings) {
+  // 1. 단계별 가이드 생성
+  let rawSteps = lang === LANG.KO ? tip.steps : (tip.steps_en || tip.steps);
+  let steps = [];
+  if (rawSteps) {
+    if (Array.isArray(rawSteps)) steps = rawSteps;
+    else if (typeof rawSteps === 'object') steps = rawSteps[currentOS] || rawSteps['win'] || [];
+  }
+
+  if (steps && steps.length > 0) {
+    const stepGuide = document.createElement('div');
+    stepGuide.className = 'step-guide';
+    stepGuide.innerHTML = `
+      <div class="step-guide-header">
+        <div class="step-guide-title">
+          <span class="svg-icon">${ICONS.globe}</span>
+          <span>${lang === LANG.KO ? '단계별 스텝 가이드' : 'Step-by-Step Guide'}</span>
+        </div>
+        <div class="step-toggle-icon">${ICONS.chevron}</div>
+      </div>
+      <div class="step-content">
+        ${steps.map((step, idx) => {
+          let p = "";
+          if (typeof step === 'object' && step !== null) {
+            const actionName = step.type === 'click' ? (lang === LANG.KO ? '클릭' : 'Click') : (lang === LANG.KO ? '입력' : 'Input');
+            p = `[${actionName}] ${step.target}${step.value ? ': ' + step.value : ''}`;
+          } else {
+            p = String(step || "");
+          }
+
+          if (currentOS === OS.MAC) {
+            p = p.replace(/Ctrl/g, 'Cmd').replace(/Win/g, 'Cmd').replace(/Alt/g, 'Option').replace(/우클릭/g, '이중 손가락 클릭(Control+클릭)');
+          } else {
+            p = p.replace(/Cmd/g, 'Ctrl').replace(/Option/g, 'Alt');
+          }
+          return `<div class="step-row"><div class="step-number">${idx+1}</div><div class="step-text">${p}</div></div>`;
+        }).join('')}
+      </div>
+    `;
+    div.appendChild(stepGuide);
+  }
+
+  // 2. 관련 팁 (Lazy Loading 사용)
+  const related = store.getRelatedTips(tip.id);
+  if (related && related.length > 0) {
+    const relDiv = document.createElement('div');
+    relDiv.className = 'related-tips';
+    relDiv.innerHTML = `
+      <div class="related-tips-header">
+        <div class="related-label">
+          <span class="svg-icon">${ICONS.link}</span>
+          ${strings.relatedTipsLabel}
+        </div>
+        <div class="related-toggle-icon">${ICONS.chevron}</div>
+      </div>
+      <div class="related-content">
+        <div class="related-list"></div>
+      </div>
+    `;
+    
+    const relList = relDiv.querySelector('.related-list');
+    related.forEach(rt => {
+      const rtTitle = (lang === LANG.EN && rt.title_en) ? rt.title_en : rt.title;
+      const rtBtn = document.createElement('span');
+      rtBtn.className = 'related-item';
+      rtBtn.dataset.id = rt.id;
+      rtBtn.textContent = rtTitle;
+      relList.appendChild(rtBtn);
+    });
+    div.appendChild(relDiv);
   }
 }
 

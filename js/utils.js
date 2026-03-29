@@ -3,6 +3,16 @@ import { store } from './store.js';
 
 let toastTimer = null;
 
+/**
+ * 현재 운영체제 감지 (Mac, Win, 기타)
+ */
+export function getPlatform() {
+  const platform = navigator.platform.toLowerCase();
+  if (platform.includes('mac')) return 'mac';
+  if (platform.includes('win')) return 'win';
+  return 'other';
+}
+
 export function showToast(message) {
   let toast = $('.toast');
   if (!toast) {
