@@ -177,7 +177,7 @@ export async function handleListClick(e) {
     return;
   }
 
-  // 5. 관련 팁 클릭
+  // 6. 관련 팁 클릭
   const relatedItem = target.closest('.related-item');
   if (relatedItem) {
     e.stopPropagation();

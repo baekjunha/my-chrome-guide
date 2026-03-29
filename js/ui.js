@@ -304,11 +304,7 @@ export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun
       else if (shortcutObj && typeof shortcutObj === 'object') shortcutText = shortcutObj[currentOS] || shortcutObj['win'] || "";
 
       let shortcutHTML = shortcutText ? `
-        <div class="shortcut" 
-             onclick="navigator.clipboard.writeText('${shortcutText.replace(/'/g, "\\'")}'); 
-                      this.closest('.tip-item').classList.add('flash-success'); 
-                      setTimeout(() => this.closest('.tip-item').classList.remove('flash-success'), 600);
-                      import('./utils.js').then(m => m.showToast('${strings.copiedToast(shortcutText.replace(/'/g, "\\'"))}'))">
+        <div class="shortcut">
           ${shortcutText}
         </div>` : "";
 

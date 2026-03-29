@@ -1,7 +1,11 @@
+/* ── 프리미엄 폰트 임포트 ─────────────── */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
 /* ── CSS 변수 (라이트 / 다크) ─────────────── */
 :root {
   --bg: #f8faff;
   --surface: #ffffff;
+  --surface-rgb: 255, 255, 255;
   --surface-opaque: #ffffff;
   --border: rgba(37, 99, 235, 0.08);
   --text: #1e293b;
@@ -23,9 +27,10 @@
 body.dark {
   --bg: #0f172a;
   --surface: #1e293b;
+  --surface-rgb: 30, 41, 59;
   --surface-opaque: #1e293b;
   --border: rgba(255, 255, 255, 0.05);
-  --text: #f1f5f9;
+  --text: #e2e8f0; /* 톤다운된 화이트로 눈부심 방지 */
   --text-sub: #cbd5e1;
   --text-mute: #64748b;
   --accent: #1e40af;
@@ -48,9 +53,9 @@ body.dark {
 
 /* ── [UX 개선] 플랫폼별 네이티브 디자인 ───────── */
 
-/* 1. Mac 전용 스타일 (SF Pro, Rounded, Glass) */
+/* 1. Mac 전용 스타일 (Pretendard + SF Pro, Rounded, Glass) */
 body.os-mac {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
   --radius: 18px;
   --card-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
 }
@@ -450,11 +455,11 @@ input[type="text"] {
   border-radius: 22px;
   outline: none;
   font-size: 14px;
-  background: var(--input-bg);
+  background: rgba(var(--surface-rgb), 0.75);
+  backdrop-filter: blur(12px);
   color: var(--text);
-  transition: all 0.33s ease;
-  /* backdrop-filter: blur(12px); 제거 */
-  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px -2px rgba(0,0,0,0.03);
 }
 
 input[type="text"]:focus {
@@ -515,17 +520,13 @@ input[type="text"]:focus {
   cursor: grab;
   padding: 7px 16px;
   border-radius: 16px;
-  background: var(--cat-bg);
+  background: rgba(var(--surface-rgb), 0.6);
+  backdrop-filter: blur(8px);
   border: 1px solid var(--cat-border);
   font-size: 12px;
   font-weight: 700;
   color: var(--text-sub);
-  /* 부드러운 위치 이동을 위해 transition 강화 */
-  transition: transform 0.25s cubic-bezier(0.2, 1, 0.3, 1), 
-              background 0.2s, 
-              border-color 0.2s,
-              box-shadow 0.2s;
-  /* backdrop-filter: blur(5px); 제거 */
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
   user-select: none;
 }
 
@@ -564,30 +565,22 @@ input[type="text"]:focus {
 
 .tip-item {
   background: var(--surface);
-  padding: 22px;
-  border-radius: 26px;
+  padding: 16px 20px;
+  border-radius: 20px; /* 라운딩 살짝 축소하여 모던함 강조 */
   border: 1px solid var(--border);
   position: relative;
-  /* transition: all 0.3s ease;  <-- 'all'은 200개 아이템 동시 렌더링 시 치명적입니다. */
-  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), 
-              border-color 0.2s ease, 
-              box-shadow 0.3s ease;
+  transition: border-color 0.2s ease, box-shadow 0.3s ease;
   box-shadow: var(--shadow);
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px; /* 내부 요소 간격 조정 */
 }
 
 .tip-item:hover {
   background: var(--surface-opaque);
-}
-
-.tip-item:hover,
-#daily-card:hover {
-  transform: translateY(-6px) scale(1.02);
   border-color: var(--accent);
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 30px -5px rgba(0, 0, 0, 0.08); /* transform(튀어오름) 없이 그림자만 우아하게 */
 }
 
 .tip-item.highlight {
@@ -604,9 +597,8 @@ input[type="text"]:focus {
 }
 
 #daily-card:hover {
-  transform: translateY(-8px) scale(1.03);
-  filter: brightness(1.05);
-  box-shadow: 0 25px 50px -12px rgba(37, 99, 235, 0.4);
+  filter: brightness(1.05); /* transform 제거 */
+  box-shadow: 0 15px 40px -10px rgba(37, 99, 235, 0.3);
 }
 
 .tip-item.actionable {
@@ -614,27 +606,34 @@ input[type="text"]:focus {
 }
 
 .tip-category {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 4px 10px;
+  background: var(--bg-high);
+  border: 1px solid var(--border);
+  border-radius: 8px; /* 배지 디자인 */
   font-size: 10px;
   color: var(--accent);
-  font-weight: 900;
+  font-weight: 800;
   margin-bottom: 2px;
   text-transform: uppercase;
-  letter-spacing: 1.2px;
+  letter-spacing: 1px;
 }
 
 .tip-title {
-  font-weight: 900;
-  font-size: 16px;
+  font-weight: 800; /* 너무 무겁지 않게 */
+  font-size: 15px;
   color: var(--text);
   line-height: 1.4;
-  margin-bottom: 2px;
+  margin-bottom: 0px;
   padding-right: 64px;
 }
 
 .tip-desc {
   font-size: 12.5px;
   color: var(--text-sub);
-  line-height: 1.6;
+  line-height: 1.5;
+  font-weight: 400; /* 가독성 강화 */
 }
 
 .shortcut {
@@ -1061,7 +1060,6 @@ input[type="text"]:focus {
   background: var(--accent);
   color: #fff;
   border-color: var(--accent);
-  transform: scale(1.05);
 }
 
 /* ── 토스트 알림 스타일 ────────────────── */
@@ -1070,15 +1068,15 @@ input[type="text"]:focus {
   bottom: -60px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #2c3e50; /* 기본 어두운 색 */
+  background-color: #0f172a; /* 조금 더 모던한 다크 톤 */
   color: #fff;
-  padding: 14px 28px;
-  border-radius: 24px;
+  padding: 12px 28px;
+  border-radius: 9999px; /* 완전한 알약 형태 */
   font-size: 13px;
   font-weight: 800;
   z-index: 10001;
-  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); /* 바운스 약화 */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   opacity: 0;
   white-space: nowrap;
   pointer-events: none;
