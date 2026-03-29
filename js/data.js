@@ -1515,57 +1515,6 @@ export const tips = [
     shortcut_en: { win: "Settings > Password Manager > 'Install as App'", mac: "Settings > Password Manager > 'Install as App'" },
     tags: ["비밀번호", "보안", "앱설치", "매니저", "설정"],
     tags_en: ["password", "security", "install app", "manager", "settings"]
-  },
-  // ── 자동화 매크로 (실전 예시) ──────────────────
-  {
-    id: 201, category: "자동화",
-    title: "GitHub 저장소 검색",
-    title_en: "GitHub - Search Repository",
-    desc: "GitHub에 접속하여 특정 키워드로 저장소를 빠르게 검색하도록 자동화합니다.",
-    desc_en: "Automates the process of searching for a repository on GitHub with a specific keyword.",
-    url: "https://github.com/search",
-    steps: [
-      { type: "input", target: "Search or jump to...", value: "chrome extension" },
-      { type: "click", target: "Enter", value: "" }
-    ],
-    steps_en: [
-      { type: "input", target: "Search or jump to...", value: "chrome extension" },
-      { type: "click", target: "Enter", value: "" }
-    ],
-    tags: ["깃허브", "github", "코드", "검색", "자동화"],
-    tags_en: ["github", "code", "search", "automation"]
-  },
-  {
-    id: 202, category: "자동화",
-    title: "Notion 새 페이지 만들기",
-    title_en: "Notion - Create New Page",
-    desc: "노션 접속 후 즉시 새로운 페이지를 생성하는 과정을 자동화하여 기록 시간을 단축합니다.",
-    desc_en: "Automates creating a new page in Notion instantly.",
-    url: "https://www.notion.so/",
-    steps: [
-      { type: "click", target: "새 페이지", value: "" }
-    ],
-    steps_en: [
-      { type: "click", target: "New page", value: "" }
-    ],
-    tags: ["노션", "notion", "메모", "생산성", "자동화"],
-    tags_en: ["notion", "note", "productivity", "automation"]
-  },
-  {
-    id: 203, category: "자동화",
-    title: "Gmail 편지쓰기 즉시 이동",
-    title_en: "Gmail - Direct Compose",
-    desc: "Gmail 접속 후 바로 편지 쓰기 창이 열리도록 자동화하여 메일 작성 속도를 높여줍니다.",
-    desc_en: "Automates opening the Compose window in Gmail instantly.",
-    url: "https://mail.google.com/",
-    steps: [
-      { type: "click", target: "편지쓰기", value: "" }
-    ],
-    steps_en: [
-      { type: "click", target: "Compose", value: "" }
-    ],
-    tags: ["지메일", "gmail", "메일", "편지쓰기", "자동화"],
-    tags_en: ["gmail", "mail", "compose", "automation"]
   }
 ];
 

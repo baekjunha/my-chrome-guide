@@ -74,27 +74,54 @@ class AppStore {
       favorites: [],
       userShortcuts: [
         {
-          id: 'naver-mail',
-          name: '네이버 메일',
-          url: 'https://www.naver.com',
+          id: 'gmail-compose',
+          name: 'Gmail 편지쓰기',
+          url: 'https://mail.google.com/',
           steps: [
-            { type: 'click', target: '메일' }
+            { type: 'click', target: '편지쓰기' }
           ]
         },
         {
-          id: 'google-images',
-          name: '구글 이미지 검색',
-          url: 'https://www.google.com',
+          id: 'notion-new',
+          name: '노션 새 페이지',
+          url: 'https://www.notion.so/',
           steps: [
-            { type: 'click', target: '이미지' }
+            { type: 'click', target: '새 페이지' }
           ]
         },
         {
-          id: 'youtube-subs',
-          name: '유튜브 구독 목록',
-          url: 'https://www.youtube.com',
+          id: 'github-search',
+          name: 'GitHub 저장소 검색',
+          url: 'https://github.com/search',
           steps: [
-            { type: 'click', target: '구독' }
+            { type: 'input', target: 'Search or jump to...', value: 'chrome extension' },
+            { type: 'click', target: 'Enter' }
+          ]
+        },
+        {
+          id: 'google-calendar',
+          name: 'Google 캘린더 일정 추가',
+          url: 'https://calendar.google.com/',
+          steps: [
+            { type: 'click', target: '만들기' },
+            { type: 'click', target: '이벤트' }
+          ]
+        },
+        {
+          id: 'chatgpt-new',
+          name: 'ChatGPT 새 대화',
+          url: 'https://chatgpt.com/',
+          steps: [
+            { type: 'click', target: 'New chat' }
+          ]
+        },
+        {
+          id: 'coupang-orders',
+          name: '쿠팡 주문 내역',
+          url: 'https://www.coupang.com/',
+          steps: [
+            { type: 'click', target: '마이쿠팡' },
+            { type: 'click', target: '주문목록' }
           ]
         }
       ],

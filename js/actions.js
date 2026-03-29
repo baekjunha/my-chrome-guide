@@ -101,11 +101,18 @@ export async function deleteNote() {
  * 매크로 실행
  */
 export function runShortcut(sc) {
-  const strings = I18N[store.state.currentLang];
+  const lang = store.state.currentLang;
+  const strings = I18N[lang];
   
+  // 내장 매크로의 경우 언어에 맞는 단계를 선택
+  let steps = sc.steps;
+  if (lang === LANG.EN && sc.steps_en) {
+    steps = sc.steps_en;
+  }
+
   const task = {
     id: sc.id,
-    steps: sc.steps,
+    steps: steps,
     currentStepIndex: 0,
     startTime: Date.now()
   };
@@ -178,10 +185,12 @@ export async function handleListClick(e) {
     return;
   }
 
-  // 6. 설정/링크 이동 버튼 (직접 조작)
-  const goBtn = target.closest('.go-btn');
-  if (goBtn) {
-    return;
+  // 7. 조회수 증가 및 중앙 정렬 (팁 아이템 본체 단순 클릭 시)
+  const tipItem = target.closest('.tip-item');
+  const isActionElement = target.closest('.fav-btn, .note-btn, .go-btn, .step-guide-header, .related-tips-header');
+  
+  if (tipItem && !isActionElement) {
+    tipItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 }
 

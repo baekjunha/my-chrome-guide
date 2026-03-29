@@ -229,7 +229,7 @@ export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun
         </button>
       `;
 
-      createActionButtons(tip, div);
+      createActionButtons(tip, div, { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut });
 
       // 단계별 가이드 생성
       let rawSteps = lang === LANG.KO ? tip.steps : (tip.steps_en || tip.steps);
@@ -360,11 +360,27 @@ export function renderShortcuts(onRun, onEdit, onDelete) {
   listEl.appendChild(grid);
 }
 
-function createActionButtons(tip, div) {
+function createActionButtons(tip, div, callbacks = {}) {
   const lang = store.state.currentLang;
   const shortcutObj = (lang === LANG.EN && tip.shortcut_en) ? tip.shortcut_en : tip.shortcut;
   const shortcutText = (shortcutObj && shortcutObj[store.state.currentOS]) || "";
   const strings = I18N[store.state.currentLang];
+
+  // 1. 내장 매크로(자동화) 처리
+  if (tip.url && tip.steps && tip.category === '자동화') {
+    const btn = document.createElement('button');
+    btn.className = 'go-btn';
+    btn.style.background = 'var(--accent-gold)';
+    btn.innerHTML = `<span class="svg-icon" style="margin-right: 6px;">${ICONS.play}</span>${strings.runShortcut}`;
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      if (typeof callbacks.onShortcutRun === 'function') {
+        callbacks.onShortcutRun(tip);
+      }
+    };
+    div.appendChild(btn);
+    return; // 매크로 버튼이 있으면 다른 버튼은 생략하거나 추가 로직 결정
+  }
 
   const chromeUrlMatch = shortcutText && shortcutText.match(/chrome:\/\/[^\s]+/);
   if (chromeUrlMatch) {
