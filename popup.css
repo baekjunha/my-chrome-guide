@@ -99,6 +99,11 @@ body.dark.os-win #list::-webkit-scrollbar-thumb {
 }
 
 /* ── 애니메이션 정의 ──────────────────────── */
+/* 테마 전환 시 버벅임 방지를 위한 유틸리티 */
+.no-transition * {
+  transition: none !important;
+}
+
 /* ── [UX 개선] 검색어 하이라이트 스타일 ───────── */
 mark.highlight {
   background: rgba(245, 158, 11, 0.25);
@@ -177,7 +182,7 @@ body {
   /* GPU 가속을 활용하여 팝업 열림 애니메이션 안정화 */
   will-change: transform, opacity;
   transform: translateZ(0);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  /* transition: background-color 0.3s ease, color 0.3s ease;  <-- 전역 트랜지션 제거 (버벅임의 주범) */
 }
 
 @media (max-width: 380px) {
@@ -237,7 +242,7 @@ h2 {
   padding: 2px;
   border-radius: 12px;
   border: 1px solid var(--cat-border);
-  backdrop-filter: blur(5px);
+  /* backdrop-filter: blur(5px); 제거 */
   height: 32px; /* 높이 축소 */
   align-items: stretch;
 }
@@ -274,7 +279,7 @@ h2 {
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  backdrop-filter: blur(5px);
+  /* backdrop-filter: blur(5px); 제거 */
   padding: 0;
   flex-shrink: 0;
 }
@@ -413,7 +418,7 @@ input[type="text"] {
   background: var(--input-bg);
   color: var(--text);
   transition: all 0.33s ease;
-  backdrop-filter: blur(12px);
+  /* backdrop-filter: blur(12px); 제거 */
   box-shadow: var(--shadow);
 }
 
@@ -445,7 +450,7 @@ input[type="text"]:focus {
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   background: var(--cat-bg);
   border: 1px solid var(--cat-border);
-  backdrop-filter: blur(10px);
+  /* backdrop-filter: blur(10px); 제거 */
   line-height: 1;
   white-space: nowrap; /* 자동 줄바꿈 방지 */
 }
@@ -485,7 +490,7 @@ input[type="text"]:focus {
               background 0.2s, 
               border-color 0.2s,
               box-shadow 0.2s;
-  backdrop-filter: blur(5px);
+  /* backdrop-filter: blur(5px); 제거 */
   user-select: none;
 }
 
@@ -528,7 +533,10 @@ input[type="text"]:focus {
   border-radius: 26px;
   border: 1px solid var(--border);
   position: relative;
-  transition: all 0.3s ease;
+  /* transition: all 0.3s ease;  <-- 'all'은 200개 아이템 동시 렌더링 시 치명적입니다. */
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), 
+              border-color 0.2s ease, 
+              box-shadow 0.3s ease;
   box-shadow: var(--shadow);
   cursor: pointer;
   display: flex;

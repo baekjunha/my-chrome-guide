@@ -1,6 +1,6 @@
 /**
- * check-data.js (v2.1)
- * 팁 데이터, 다국어 설정, JS 모듈 간 의존성, 그리고 프로젝트 구조의 무결성을 검사하는 스크립트입니다.
+ * check-data.js (v3.0)
+ * 팁 데이터, 다국어 설정, 매니페스트, 에셋, 그리고 프로젝트 전체의 무결성을 검사하는 심화 스크립트입니다.
  * 
  * 실행: node check-data.js
  */
@@ -8,216 +8,328 @@
 const fs = require('fs');
 const path = require('path');
 
-// ── 파일 읽기 ──────────────────────────────────────
-const jsDir = path.join(__dirname, 'js');
-const files = {
-  data:    fs.readFileSync(path.join(jsDir, 'data.js'), 'utf8'),
-  i18n:    fs.readFileSync(path.join(jsDir, 'i18n.js'), 'utf8'),
-  ui:      fs.readFileSync(path.join(jsDir, 'ui.js'), 'utf8'),
-  store:   fs.readFileSync(path.join(jsDir, 'store.js'), 'utf8'),
-  actions: fs.readFileSync(path.join(jsDir, 'actions.js'), 'utf8'),
-  utils:   fs.readFileSync(path.join(jsDir, 'utils.js'), 'utf8'),
-  constants: fs.readFileSync(path.join(jsDir, 'constants.js'), 'utf8'),
-};
-
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log('  🔍 [my-chrome-guide] 통합 무결성 검사 v2.1');
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+// ── 설정 및 상태 ────────────────────────────────────
+const ROOT = __dirname;
+const JS_DIR = path.join(ROOT, 'js');
+const LOCALES_DIR = path.join(ROOT, '_locales');
+const IMAGES_DIR = path.join(ROOT, 'images');
 
 let errors = 0;
 let warnings = 0;
 let passed = 0;
 
-function reportError(section, msg) {
-  console.error(`  ❌ [${section}] ${msg}`);
+// ── 유틸리티 ────────────────────────────────────────
+function reportError(section, msg, detail = '') {
+  console.error(`  ❌ [\x1b[31m${section}\x1b[0m] ${msg}${detail ? ` (${detail})` : ''}`);
   errors++;
 }
 
-function reportWarning(section, msg) {
-  console.warn(`  ⚠️  [${section}] ${msg}`);
+function reportWarning(section, msg, detail = '') {
+  console.warn(`  ⚠️  [\x1b[33m${section}\x1b[0m] ${msg}${detail ? ` (${detail})` : ''}`);
   warnings++;
 }
 
 function reportPass(section, msg) {
-  console.log(`  ✅ [${section}] ${msg}`);
+  console.log(`  ✅ [\x1b[32m${section}\x1b[0m] ${msg}`);
   passed++;
 }
 
-// ═══════════════════════════════════════════════════
-// 0. 프로젝트 구조 검사
-// ═══════════════════════════════════════════════════
-console.log('📋 0. 프로젝트 구조 검사');
+function readFileSafe(filePath) {
+  try {
+    return fs.readFileSync(filePath, 'utf8');
+  } catch (e) {
+    reportError('파일', `파일을 읽을 수 없음: ${filePath}`);
+    return null;
+  }
+}
 
+function readJsonSafe(filePath) {
+  const content = readFileSafe(filePath);
+  if (!content) return null;
+  try {
+    return JSON.parse(content);
+  } catch (e) {
+    reportError('JSON', `JSON 파싱 오류: ${filePath}`, e.message);
+    return null;
+  }
+}
+
+// ── 메인 검사 로직 ──────────────────────────────────
+console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+console.log('  🔍 [my-chrome-guide] 통합 무결성 검사 v3.0');
+console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+
+// 1. 프로젝트 필수 파일 및 구조 검사
+console.log('📋 1. 프로젝트 구조 및 필수 파일 검사');
 const criticalFiles = [
   'manifest.json',
   'PROJECT_GUIDE.md',
-  'landing/index.html',
-  'landing/style.css',
   'popup.html',
   'popup.js',
   'popup.css',
-  'content_script.js'
+  'content_script.js',
+  'js/data.js',
+  'js/i18n.js',
+  'js/store.js',
+  'js/ui.js',
+  'js/actions.js',
+  'js/constants.js',
+  'js/utils.js',
+  '_locales/ko/messages.json',
+  '_locales/en/messages.json'
 ];
 
 criticalFiles.forEach(file => {
-  if (fs.existsSync(path.join(__dirname, file))) {
+  if (fs.existsSync(path.join(ROOT, file))) {
     reportPass('구조', `${file} 존재함`);
   } else {
     reportError('구조', `${file} 누락됨!`);
   }
 });
 
-// ═══════════════════════════════════════════════════
-// 1. I18N 카테고리 검사
-// ═══════════════════════════════════════════════════
-console.log('\n📋 1. I18N 카테고리 검사');
-
-function extractCategories(content, lang) {
-  const regex = new RegExp(`${lang}:[\\s\\S]*?categories:\\s*{([\\s\\S]*?)}`, 'm');
-  const match = content.match(regex);
-  if (!match) return [];
-  return match[1].split(',').map(item => {
-    const parts = item.split(':');
-    if (parts[0]) return parts[0].trim().replace(/['"]/g, '');
-    return null;
-  }).filter(Boolean);
-}
-
-const koCategories = extractCategories(files.i18n, 'ko');
-const enCategories = extractCategories(files.i18n, 'en');
-
-if (koCategories.length > 0) reportPass('I18N', `한국어 카테고리 ${koCategories.length}개 발견`);
-if (enCategories.length > 0) reportPass('I18N', `영어 카테고리 ${enCategories.length}개 발견`);
-if (koCategories.length !== enCategories.length) reportWarning('I18N', '다국어 개수 불일치');
-
-// ═══════════════════════════════════════════════════
-// 2. 팁 데이터 상세 검사
-// ═══════════════════════════════════════════════════
-console.log('\n📋 2. 팁 데이터 상세 검사');
-
-function extractTipBlocks(content) {
-  const tips = [];
-  const idMatches = [...content.matchAll(/{\s*\n?\s*id:\s*(\d+)/g)];
-  for (let i = 0; i < idMatches.length; i++) {
-    const startIdx = idMatches[i].index;
-    const id = idMatches[i][1];
-    let depth = 0;
-    let endIdx = startIdx;
-    for (let j = startIdx; j < content.length; j++) {
-      if (content[j] === '{') depth++;
-      else if (content[j] === '}') {
-        depth--;
-        if (depth === 0) { endIdx = j + 1; break; }
-      }
+// 2. 매니페스트(manifest.json) 검증
+console.log('\n📋 2. 매니페스트(manifest.json) 정밀 검증');
+const manifest = readJsonSafe(path.join(ROOT, 'manifest.json'));
+if (manifest) {
+  // 아이콘 존재 여부
+  const icons = { ...manifest.icons, ...(manifest.action?.default_icon || {}) };
+  Object.values(icons).forEach(iconPath => {
+    if (!fs.existsSync(path.join(ROOT, iconPath))) {
+      reportError('매니페스트', `아이콘 파일 누락: ${iconPath}`);
+    } else {
+      reportPass('매니페스트', `아이콘 확인: ${iconPath}`);
     }
-    const block = content.substring(startIdx, endIdx);
-    tips.push({ id, block, startLine: content.substring(0, startIdx).split('\n').length });
-  }
-  return tips;
-}
-
-const tipBlocks = extractTipBlocks(files.data);
-console.log(`  📊 총 ${tipBlocks.length}개의 팁 발견`);
-
-const usedIds = new Map();
-const categoryUsage = {};
-
-tipBlocks.forEach(({ id, block, startLine }) => {
-  const section = `ID:${id}`;
-  if (usedIds.has(id)) reportError(section, `중복 ID (라인 ${usedIds.get(id)})`);
-  usedIds.set(id, startLine);
-
-  const fields = ['category', 'title', 'desc', 'tags'];
-  fields.forEach(f => {
-    if (!block.match(new RegExp(`${f}:`))) reportError(section, `${f} 필드 누락`);
   });
 
-  const catMatch = block.match(/category:\s*['"](.+?)['"]/);
-  if (catMatch) {
-    const cat = catMatch[1];
-    categoryUsage[cat] = (categoryUsage[cat] || 0) + 1;
-    if (!koCategories.includes(cat)) reportError(section, `정의되지 않은 카테고리: ${cat}`);
+  // 스크립트 존재 여부
+  const scripts = [
+    ...(manifest.background?.service_worker ? [manifest.background.service_worker] : []),
+    ...(manifest.content_scripts?.flatMap(cs => cs.js) || []),
+    manifest.action?.default_popup
+  ].filter(Boolean);
+
+  scripts.forEach(script => {
+    if (!fs.existsSync(path.join(ROOT, script))) {
+      reportError('매니페스트', `스크립트/HTML 누락: ${script}`);
+    } else {
+      reportPass('매니페스트', `리소스 확인: ${script}`);
+    }
+  });
+}
+
+// 3. 다국어(I18N) 메시지 일관성 검사
+console.log('\n📋 3. 다국어(I18N) 메시지 일관성 검사');
+const koMsg = readJsonSafe(path.join(LOCALES_DIR, 'ko', 'messages.json'));
+const enMsg = readJsonSafe(path.join(LOCALES_DIR, 'en', 'messages.json'));
+
+if (koMsg && enMsg) {
+  const koKeys = Object.keys(koMsg);
+  const enKeys = Object.keys(enMsg);
+
+  // 키 개수 및 일치 확인
+  koKeys.forEach(key => {
+    if (!enMsg[key]) reportError('I18N', `영어(en) 메시지 누락: ${key}`);
+  });
+  enKeys.forEach(key => {
+    if (!koMsg[key]) reportError('I18N', `한국어(ko) 메시지 누락: ${key}`);
+  });
+
+  if (koKeys.length === enKeys.length) reportPass('I18N', `메시지 키 일치 (총 ${koKeys.length}개)`);
+
+  // 플레이스홀더 일관성 확인
+  koKeys.forEach(key => {
+    if (enMsg[key]) {
+      const koPh = Object.keys(koMsg[key].placeholders || {}).sort();
+      const enPh = Object.keys(enMsg[key].placeholders || {}).sort();
+      if (JSON.stringify(koPh) !== JSON.stringify(enPh)) {
+        reportError('I18N', `플레이스홀더 불일치: ${key}`);
+      }
+    }
+  });
+}
+
+// 4. 팁 데이터(js/data.js) 심층 검증
+console.log('\n📋 4. 팁 데이터(js/data.js) 심층 검증');
+const dataRaw = readFileSafe(path.join(JS_DIR, 'data.js'));
+let tips = [];
+if (dataRaw) {
+  // ES6 export 제거 후 JSON-like 파싱 시도 (간단하게 객체 추출)
+  try {
+    const dataClean = dataRaw
+      .replace(/export const tips =/g, 'return')
+      .replace(/export function [\s\S]*$/g, '');
+    tips = new Function(dataClean)();
+  } catch (e) {
+    reportError('데이터', 'data.js 파싱 실패 (JS 문법 오류)', e.message);
   }
 
-  // Related ID validation
-  const relatedMatch = block.match(/related:\s*\[([\s\S]*?)\]/);
-  if (relatedMatch) {
-    const rIds = relatedMatch[1].split(',').map(s => s.trim().replace(/['"]/g, '')).filter(Boolean);
-    rIds.forEach(rId => {
-      // usedIds strings comparison
-      if (![...usedIds.keys()].includes(rId) && !tipBlocks.some(t => t.id === rId)) {
-        // Since we are iterating, we check against all IDs found in extraction
-        if (!tipBlocks.some(t => t.id === rId)) {
-          reportError(section, `존재하지 않는 관련 팁 ID: ${rId}`);
-        }
+  if (tips.length > 0) {
+    reportPass('데이터', `총 ${tips.length}개의 팁 로드 완료`);
+    const usedIds = new Set();
+    const titles = new Set();
+
+    tips.forEach((tip, idx) => {
+      const idTag = `ID:${tip.id || 'N/A'}`;
+      
+      // 필수 필드
+      const required = ['id', 'category', 'title', 'desc', 'tags'];
+      required.forEach(f => {
+        if (!tip[f]) reportError('데이터', `${idTag} - 필수 필드 누락: ${f}`);
+      });
+
+      // ID 중복 및 유효성
+      if (tip.id) {
+        if (usedIds.has(tip.id)) reportError('데이터', `${idTag} - 중복된 ID 발견`);
+        usedIds.add(tip.id);
+      }
+
+      // 제목 중복 (경고)
+      if (tip.title) {
+        if (titles.has(tip.title)) reportWarning('데이터', `${idTag} - 중복된 제목: ${tip.title}`);
+        titles.add(tip.title);
+      }
+
+      // 플랫폼 유효성
+      if (tip.platform && !['win', 'mac', 'all'].includes(tip.platform)) {
+        reportError('데이터', `${idTag} - 잘못된 플랫폼 값: ${tip.platform}`);
+      }
+
+      // 태그 검사
+      if (Array.isArray(tip.tags)) {
+        if (tip.tags.length === 0) reportWarning('데이터', `${idTag} - 태그가 비어 있음`);
+        tip.tags.forEach(t => {
+          if (typeof t !== 'string' || t.trim() === '') reportError('데이터', `${idTag} - 빈 태그 포함`);
+        });
+      }
+
+      // 다국어 필드 쌍 확인 (제목/설명/태그)
+      if (tip.title && !tip.title_en) reportWarning('데이터', `${idTag} - 영어 제목(title_en) 누락`);
+      if (tip.desc && !tip.desc_en) reportWarning('데이터', `${idTag} - 영어 설명(desc_en) 누락`);
+      if (tip.tags && !tip.tags_en) reportWarning('데이터', `${idTag} - 영어 태그(tags_en) 누락`);
+
+      // 관련 팁 ID 유효성
+      if (Array.isArray(tip.related)) {
+        tip.related.forEach(rId => {
+          if (!tips.find(t => t.id === rId)) reportError('데이터', `${idTag} - 존재하지 않는 관련 팁 ID: ${rId}`);
+        });
+      }
+
+      // TODO/FIXME 키워드 검사
+      const tipStr = JSON.stringify(tip);
+      if (tipStr.includes('TODO') || tipStr.includes('FIXME') || tipStr.includes('TBD')) {
+        reportWarning('데이터', `${idTag} - 미완성 키워드(TODO/FIXME) 발견`);
       }
     });
   }
-});
-
-// ═══════════════════════════════════════════════════
-// 3. 문법 및 안티패턴 검사
-// ═══════════════════════════════════════════════════
-console.log('\n📋 3. 문법 및 안티패턴 검사');
-
-function checkBrackets(content, filename) {
-  const stack = [];
-  const opening = ['{', '[', '('];
-  const closing = ['}', ']', ')'];
-  const pairs = { '}': '{', ']': '[', ')': '(' };
-  for (let i = 0; i < content.length; i++) {
-    if (opening.includes(content[i])) stack.push(content[i]);
-    else if (closing.includes(content[i])) {
-      const last = stack.pop();
-      if (last !== pairs[content[i]]) {
-        reportError('문법', `${filename}: 괄호 짝 불일치`);
-        return false;
-      }
-    }
-  }
-  if (stack.length > 0) {
-    reportError('문법', `${filename}: 괄호가 닫히지 않음`);
-    return false;
-  }
-  reportPass('문법', `${filename} 정상`);
-  return true;
 }
 
-Object.entries(files).forEach(([name, content]) => checkBrackets(content, `js/${name}.js`));
+// 5. HTML/JS/CSS 교차 참조 검사
+console.log('\n📋 5. 리소스 교차 참조(Cross-reference) 검사');
+const html = readFileSafe(path.join(ROOT, 'popup.html'));
+const css = readFileSafe(path.join(ROOT, 'popup.css'));
+const jsFiles = ['popup.js', 'js/ui.js', 'js/actions.js', 'js/utils.js'].map(f => readFileSafe(path.join(ROOT, f))).filter(Boolean).join('\n');
+
+if (html && css && jsFiles) {
+  // HTML 내의 모든 ID 추출
+  const idRegex = /id=["'](.+?)["']/g;
+  const idsInHtml = [...html.matchAll(idRegex)].map(m => m[1]);
+  
+  // JS에서 사용되는 $() 또는 getElementById() 호출 추출
+  const jsIdRegex = /\$=["']#(.+?)["']|getElementById\(["'](.+?)["']\)/g;
+  const idsInJs = [...jsFiles.matchAll(jsIdRegex)].map(m => m[1] || m[2]).filter(Boolean);
+
+  idsInJs.forEach(id => {
+    if (!idsInHtml.includes(id) && !id.includes('${')) { // 동적 ID 제외
+       // 일부 ID는 JS에서 생성될 수 있으므로 Warning
+       reportWarning('참조', `JS에서 참조하는 ID가 HTML에 없음: #${id}`);
+    }
+  });
+
+  reportPass('참조', `HTML ID ${idsInHtml.length}개 확인 및 교차 검증 완료`);
+}
+
+// 6. 안티패턴 및 코드 품질 검사
+console.log('\n📋 6. 안티패턴 및 코드 품질 검사');
+const allJsContent = criticalFiles.filter(f => f.endsWith('.js')).map(f => readFileSafe(path.join(ROOT, f))).filter(Boolean).join('\n');
+
+const antiPatterns = [
+  { p: /console\.log\(/g, m: '남아있는 console.log 발견 (개발 완료 후 제거 권장)', level: 'warning' },
+  { p: /debugger;/g, m: 'debugger 문 발견', level: 'error' },
+  { p: /innerHTML\s*=/g, m: 'innerHTML 사용 발견 (XSS 취약점 주의)', level: 'warning' },
+  { p: /http:\/\//g, m: 'HTTP 링크 발견 (HTTPS 권장)', level: 'warning' }
+];
+
+antiPatterns.forEach(ap => {
+  const matches = (allJsContent.match(ap.p) || []).length;
+  if (matches > 0) {
+    if (ap.level === 'error') reportError('품질', `${ap.m} (${matches}회)`);
+    else reportWarning('품질', `${ap.m} (${matches}회)`);
+  }
+});
+
+// 7. 다국어 카테고리 정의 검사 (js/i18n.js)
+console.log('\n📋 7. I18N 카테고리 일관성 검사');
+const i18nRaw = readFileSafe(path.join(JS_DIR, 'i18n.js'));
+let koCats = [];
+let enCats = [];
+if (i18nRaw) {
+  const extractCat = (lang) => {
+    const regex = new RegExp(`${lang}:[\\s\\S]*?categories:\\s*{([\\s\\S]*?)}`, 'm');
+    const match = i18nRaw.match(regex);
+    if (!match) return [];
+    return match[1].split(',').map(s => s.split(':')[0].trim().replace(/['"]/g, '')).filter(Boolean);
+  };
+  koCats = extractCat('ko');
+  enCats = extractCat('en');
+
+  if (koCats.length !== enCats.length) reportError('I18N-CAT', 'KO/EN 카테고리 개수 불일치');
+  else reportPass('I18N-CAT', `다국어 카테고리 ${koCats.length}개 일치`);
+}
+
+// 8. 팁 데이터 카테고리 실제 사용 여부 검사
+if (koCats.length > 0 && typeof tips !== 'undefined') {
+  console.log('\n📋 8. 카테고리 정의 및 실제 사용 검사');
+  const usedCats = new Set(tips.map(t => t.category));
+  usedCats.forEach(cat => {
+    if (!koCats.includes(cat)) {
+      reportError('데이터', `i18n.js에 정의되지 않은 카테고리 사용됨: ${cat}`);
+    }
+  });
+  koCats.forEach(cat => {
+    if (!usedCats.has(cat)) {
+      reportWarning('데이터', `정의되었으나 사용되지 않는 카테고리: ${cat}`);
+    }
+  });
+}
+
+// 9. 미사용 이미지 에셋 검사
+console.log('\n📋 9. 미사용 이미지 에셋 검사');
+const allFilesContent = criticalFiles.map(f => readFileSafe(path.join(ROOT, f))).filter(Boolean).join('\n') + html + css + jsFiles + JSON.stringify(manifest);
+try {
+  const images = fs.readdirSync(IMAGES_DIR);
+  images.forEach(img => {
+    if (img === '.DS_Store') return;
+    const imgPath = `images/${img}`;
+    if (!allFilesContent.includes(imgPath)) {
+      reportWarning('에셋', `사용되지 않는 이미지 파일: ${imgPath}`);
+    } else {
+      reportPass('에셋', `이미지 사용 확인: ${imgPath}`);
+    }
+  });
+} catch (e) {
+  reportError('에셋', '이미지 디렉토리를 읽을 수 없음');
+}
 
 // ═══════════════════════════════════════════════════
 // 결과 요약
 // ═══════════════════════════════════════════════════
-// 📋 4. 로직 시뮬레이션 검사 (Runtime Stability)
-console.log('\n📋 4. 로직 시뮬레이션 검사');
-try {
-  const testCases = [
-    { filter: '', os: 'win', tab: 'ALL', cat: '전체' },
-    { filter: '탭', os: 'mac', tab: 'ALL', cat: '전체' },
-    { filter: 'ai', os: 'win', tab: 'FAV', cat: 'AI 기능' }
-  ];
-
-  // tips 데이터 추출 (문자열 파싱)
-  const dataContent = fs.readFileSync('js/data.js', 'utf8');
-  const tipsCount = (dataContent.match(/id:\s*[0-9]+/g) || []).length;
-
-  testCases.forEach(tc => {
-    // 실제 tips 배열 대신 파일의 문법적 무결성과 기본 필터링 로직만 시뮬레이션
-    const mockFilter = (tip) => {
-      if (tip.platform && tip.platform !== tc.os) return false;
-      return true;
-    };
-    console.log(`  ✅ [시뮬레이션] 필터: "${tc.filter}", OS: ${tc.os} -> 검증 완료 (안정적)`);
-  });
-  passed += 1;
-} catch (err) {
-  console.error('  ❌ [로직] 시뮬레이션 중 오류 발생:', err.message);
-  process.exit(1);
-}
-
 console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-
-console.log(`  📊 결과: ✅ ${passed} / ⚠️ ${warnings} / ❌ ${errors}`);
+console.log(`  📊 검사 완료: \x1b[32m✅ ${passed} 패스\x1b[0m / \x1b[33m⚠️ ${warnings} 경고\x1b[0m / \x1b[31m❌ ${errors} 오류\x1b[0m`);
 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
-if (errors > 0) process.exit(1);
+if (errors > 0) {
+  console.log('  \x1b[31m무결성 검사 실패! 오류를 해결해 주세요.\x1b[0m\n');
+  process.exit(1);
+} else {
+  console.log('  \x1b[32m모든 주요 검사를 통과했습니다. 안전한 상태입니다.\x1b[0m\n');
+}

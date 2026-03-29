@@ -7,16 +7,27 @@ import { ICONS } from './icons.js';
 export function applyTheme() {
   const body = document.body;
   if (!body) return;
-  body.classList.toggle('dark', store.state.isDark);
   
-  // [UX 개선] OS 전용 클래스 부여 (디자인 차별화)
-  body.classList.remove('os-mac', 'os-win');
-  body.classList.add(`os-${store.state.currentOS}`);
+  // 1. 테마 전환 순간에만 모든 애니메이션 강제 중지 (200개 아이템 렉 방지 핵심)
+  body.classList.add('no-transition');
+  
+  requestAnimationFrame(() => {
+    body.classList.toggle('dark', store.state.isDark);
+    
+    // [UX 개선] OS 전용 클래스 부여 (디자인 차별화)
+    body.classList.remove('os-mac', 'os-win');
+    body.classList.add(`os-${store.state.currentOS}`);
 
-  const darkBtn = $('#dark-btn');
-  if (darkBtn) {
-    darkBtn.innerHTML = store.state.isDark ? ICONS.sun : ICONS.moon;
-  }
+    const darkBtn = $('#dark-btn');
+    if (darkBtn) {
+      darkBtn.innerHTML = store.state.isDark ? ICONS.sun : ICONS.moon;
+    }
+
+    // 2. 브라우저가 스타일 업데이트를 마친 후 애니메이션 복구
+    setTimeout(() => {
+      body.classList.remove('no-transition');
+    }, 50); // 짧은 딜레이 후 복구
+  });
 }
 
 export function applyLanguage() {
