@@ -318,9 +318,20 @@
         if (target) {
           isProcessing = true;
           retryCount = 0;
+          
+          // [시각적 피드백] 현재 조작 중인 요소를 빨간색 테두리로 강조
+          const originalOutline = target.style.outline;
+          target.style.outline = '4px solid #ef4444';
+          target.style.outlineOffset = '2px';
+          
           cachedTask = { ...cachedTask, currentStepIndex: currentStepIndex + 1 }; // [최적화] 캐시 즉시 업데이트
           await chrome.storage.local.set({ activeShortcutTask: cachedTask });
-          setTimeout(() => { isProcessing = false; runEngine(); }, 1200);
+          
+          setTimeout(() => { 
+            target.style.outline = originalOutline;
+            isProcessing = false; 
+            runEngine(); 
+          }, 1800); // 지연 시간을 1.8초로 늘려 시각적으로 단계를 인지하게 함
         } else {
           // [Smart Skip] Check if the NEXT step is already available (to skip login/redundant steps)
           if (currentStepIndex + 1 < steps.length) {

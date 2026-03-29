@@ -245,8 +245,8 @@ export const tips = [
     desc_en: "Watch video in a floating window. Note: YouTube requires two right-clicks!",
     shortcut: { win: "우클릭 두 번 (유튜브) / 미디어 제어 아이콘", mac: "우클릭 두 번 (유튜브) / 미디어 제어 아이콘" },
     shortcut_en: { win: "Right-click twice (YouTube) / Media icon", mac: "Right-click twice (YouTube) / Media icon" },
-    tags: ["동영상", "팝업", "멀티태스킹", "작은화면", "영상보기", "유튜브"],
-    tags_en: ["pip", "picture in picture", "video", "popup", "multitasking", "small screen", "watch video", "youtube"],
+    tags: ["동영상", "팝업", "멀티태스킹", "작은화면", "영상보기", "유튜브", "도구", "플로팅"],
+    tags_en: ["pip", "picture in picture", "video", "popup", "multitasking", "small screen", "watch video", "youtube", "tool", "floating"],
     steps: ["유튜브: 영상 위에서 우클릭을 두 번 해서 브라우저 메뉴를 여세요.", "기타 사이트: 주소창 우측의 '미디어 제어(음표 모양)' 아이콘을 눌러 PIP를 켤 수도 있습니다.", "'PIP 모드'를 선택하면 화면 구석에 작은 창이 생깁니다."],
     steps_en: ["YouTube: Right-click twice on the video to see the browser's context menu.", "Other sites: You can also use the 'Media Control' icon (music note) next to the address bar.", "Select 'Picture in picture' to create a small floating window."]
   },
@@ -1112,7 +1112,7 @@ export const tips = [
   },
   {
     id: 112, category: "주소창/검색",
-    title: "Quick Search in Address Bar",
+    title: "주소창 빠른 검색",
     title_en: "Quick Search in Address Bar",
     desc: "어떤 페이지에서든 즉시 주소창으로 포커스를 이동하여 새로운 검색을 시작할 수 있습니다.",
     desc_en: "Moves focus to the address bar and switches to search mode from anywhere.",
