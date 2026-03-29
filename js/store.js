@@ -74,54 +74,59 @@ class AppStore {
       favorites: [],
       userShortcuts: [
         {
-          id: 'mdn-search',
-          name: 'MDN 개발 문서 검색',
-          url: 'https://developer.mozilla.org/ko/',
+          id: 'wikipedia-search',
+          name: '위키백과 지식 검색',
+          url: 'https://www.wikipedia.org/',
           steps: [
-            { type: 'input', target: 'Search MDN', value: 'fetch' },
-            { type: 'click', target: 'Enter' }
-          ]
-        },
-        {
-          id: 'noonnu-fonts',
-          name: '눈누 무료 폰트 탐색',
-          url: 'https://noonnu.cc/',
-          steps: [
-            { type: 'input', target: '폰트명 입력', value: '고딕' },
-            { type: 'click', target: '검색' }
-          ]
-        },
-        {
-          id: 'unsplash-nature',
-          name: 'Unsplash 자연 풍경 이미지',
-          url: 'https://unsplash.com/',
-          steps: [
-            { type: 'input', target: 'Search photos', value: 'nature' },
-            { type: 'click', target: 'Enter' }
-          ]
-        },
-        {
-          id: 'caniuse-check',
-          name: '브라우저 호환성 확인',
-          url: 'https://caniuse.com/',
-          steps: [
-            { type: 'input', target: 'Search for a feature', value: 'flexbox' },
-            { type: 'click', target: 'Enter' }
-          ]
-        },
-        {
-          id: 'json-formatter',
-          name: 'JSON 데이터 정렬 도구',
-          url: 'https://jsonlint.com/',
-          steps: []
-        },
-        {
-          id: 'flaticon-search',
-          name: '무료 아이콘 검색',
-          url: 'https://www.flaticon.com/',
-          steps: [
-            { type: 'input', target: 'Search for icons', value: 'home' },
+            { type: 'input', target: 'Search Wikipedia', value: 'Google Chrome' },
             { type: 'click', target: 'Search' }
+          ]
+        },
+        {
+          id: 'nasa-explore',
+          name: 'NASA 우주 탐사 탐색',
+          url: 'https://www.nasa.gov/',
+          steps: [
+            { type: 'click', target: 'Search Icon' },
+            { type: 'input', target: 'Search NASA', value: 'Mars' },
+            { type: 'click', target: 'Enter' }
+          ]
+        },
+        {
+          id: 'imdb-movies',
+          name: 'IMDb 영화 평점 확인',
+          url: 'https://www.imdb.com/',
+          steps: [
+            { type: 'input', target: 'Search IMDb', value: 'Inception' },
+            { type: 'click', target: 'Search Icon' }
+          ]
+        },
+        {
+          id: 'bbc-news-search',
+          name: 'BBC 글로벌 뉴스 검색',
+          url: 'https://www.bbc.com/news',
+          steps: [
+            { type: 'click', target: 'Search' },
+            { type: 'input', target: 'Search BBC', value: 'Technology' },
+            { type: 'click', target: 'Enter' }
+          ]
+        },
+        {
+          id: 'archive-wayback',
+          name: '인터넷 아카이브 탐험',
+          url: 'https://web.archive.org/',
+          steps: [
+            { type: 'input', target: 'Enter a URL', value: 'google.com' },
+            { type: 'click', target: 'Go' }
+          ]
+        },
+        {
+          id: 'stackoverflow-dev',
+          name: 'Stack Overflow 코드 검색',
+          url: 'https://stackoverflow.com/',
+          steps: [
+            { type: 'input', target: 'Search...', value: 'javascript' },
+            { type: 'click', target: 'Enter' }
           ]
         }
       ],
