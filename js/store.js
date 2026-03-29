@@ -74,59 +74,58 @@ class AppStore {
       favorites: [],
       userShortcuts: [
         {
-          id: 'wikipedia-search',
-          name: '위키백과 지식 검색',
-          url: 'https://www.wikipedia.org/',
-          steps: [
-            { type: 'input', target: 'Search Wikipedia', value: 'Google Chrome' },
-            { type: 'click', target: 'Search' }
-          ]
-        },
-        {
-          id: 'nasa-explore',
-          name: 'NASA 우주 탐사 탐색',
-          url: 'https://www.nasa.gov/',
-          steps: [
-            { type: 'click', target: 'Search Icon' },
-            { type: 'input', target: 'Search NASA', value: 'Mars' },
-            { type: 'click', target: 'Enter' }
-          ]
-        },
-        {
-          id: 'imdb-movies',
-          name: 'IMDb 영화 평점 확인',
+          id: 'imdb-top-horror',
+          name: 'IMDb 장르별 영화 탐색',
           url: 'https://www.imdb.com/',
           steps: [
-            { type: 'input', target: 'Search IMDb', value: 'Inception' },
-            { type: 'click', target: 'Search Icon' }
+            { type: 'click', target: 'Menu' },
+            { type: 'click', target: 'Top 250 Movies' },
+            { type: 'click', target: 'Genre' },
+            { type: 'click', target: 'Horror' }
           ]
         },
         {
-          id: 'bbc-news-search',
-          name: 'BBC 글로벌 뉴스 검색',
-          url: 'https://www.bbc.com/news',
+          id: 'nasa-multimedia-search',
+          name: 'NASA 우주 사진 아카이브',
+          url: 'https://www.nasa.gov/',
           steps: [
-            { type: 'click', target: 'Search' },
-            { type: 'input', target: 'Search BBC', value: 'Technology' },
-            { type: 'click', target: 'Enter' }
+            { type: 'click', target: 'Multimedia' },
+            { type: 'click', target: 'Astronomy Picture of the Day' },
+            { type: 'click', target: 'Archive' },
+            { type: 'input', target: 'Search', value: 'Mars Rover' }
           ]
         },
         {
-          id: 'archive-wayback',
-          name: '인터넷 아카이브 탐험',
-          url: 'https://web.archive.org/',
+          id: 'github-advanced-js',
+          name: 'GitHub JS 오픈소스 탐색',
+          url: 'https://github.com/search',
           steps: [
-            { type: 'input', target: 'Enter a URL', value: 'google.com' },
-            { type: 'click', target: 'Go' }
+            { type: 'input', target: 'Search or jump to...', value: 'react' },
+            { type: 'click', target: 'Enter' },
+            { type: 'click', target: 'Languages' },
+            { type: 'click', target: 'JavaScript' }
           ]
         },
         {
-          id: 'stackoverflow-dev',
-          name: 'Stack Overflow 코드 검색',
-          url: 'https://stackoverflow.com/',
+          id: 'wikipedia-deep-search',
+          name: '위키백과 심화 지식 탐험',
+          url: 'https://www.wikipedia.org/',
           steps: [
-            { type: 'input', target: 'Search...', value: 'javascript' },
-            { type: 'click', target: 'Enter' }
+            { type: 'click', target: 'English' },
+            { type: 'click', target: 'Contents' },
+            { type: 'click', target: 'Current events' },
+            { type: 'input', target: 'Search Wikipedia', value: 'SpaceX' }
+          ]
+        },
+        {
+          id: 'bbc-world-tech',
+          name: 'BBC 글로벌 기술 뉴스',
+          url: 'https://www.bbc.com/',
+          steps: [
+            { type: 'click', target: 'News' },
+            { type: 'click', target: 'World' },
+            { type: 'click', target: 'Technology' },
+            { type: 'click', target: 'Search' }
           ]
         }
       ],
