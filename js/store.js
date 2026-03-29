@@ -74,49 +74,55 @@ class AppStore {
       favorites: [],
       userShortcuts: [
         {
-          id: 'google-maps-food',
-          name: '주변 맛집 검색',
-          url: 'https://www.google.com/maps',
+          id: 'mdn-search',
+          name: 'MDN 개발 문서 검색',
+          url: 'https://developer.mozilla.org/ko/',
           steps: [
-            { type: 'input', target: '지도 검색', value: '주변 맛집' },
-            { type: 'click', target: '검색' }
-          ]
-        },
-        {
-          id: 'youtube-search-tips',
-          name: '크롬 사용법 검색',
-          url: 'https://www.youtube.com',
-          steps: [
-            { type: 'input', target: '검색', value: '크롬 사용 꿀팁' },
-            { type: 'click', target: '검색 아이콘' }
-          ]
-        },
-        {
-          id: 'github-trending',
-          name: 'GitHub 인기 저장소',
-          url: 'https://github.com/trending',
-          steps: []
-        },
-        {
-          id: 'chrome-webstore-search',
-          name: '추천 확장 프로그램',
-          url: 'https://chromewebstore.google.com/',
-          steps: [
-            { type: 'input', target: '스토어 검색', value: 'productivity' },
+            { type: 'input', target: 'Search MDN', value: 'fetch' },
             { type: 'click', target: 'Enter' }
           ]
         },
         {
-          id: 'wikipedia-random',
-          name: '위키백과 무작위 문서',
-          url: 'https://ko.wikipedia.org/wiki/특수:임의문서',
+          id: 'noonnu-fonts',
+          name: '눈누 무료 폰트 탐색',
+          url: 'https://noonnu.cc/',
+          steps: [
+            { type: 'input', target: '폰트명 입력', value: '고딕' },
+            { type: 'click', target: '검색' }
+          ]
+        },
+        {
+          id: 'unsplash-nature',
+          name: 'Unsplash 자연 풍경 이미지',
+          url: 'https://unsplash.com/',
+          steps: [
+            { type: 'input', target: 'Search photos', value: 'nature' },
+            { type: 'click', target: 'Enter' }
+          ]
+        },
+        {
+          id: 'caniuse-check',
+          name: '브라우저 호환성 확인',
+          url: 'https://caniuse.com/',
+          steps: [
+            { type: 'input', target: 'Search for a feature', value: 'flexbox' },
+            { type: 'click', target: 'Enter' }
+          ]
+        },
+        {
+          id: 'json-formatter',
+          name: 'JSON 데이터 정렬 도구',
+          url: 'https://jsonlint.com/',
           steps: []
         },
         {
-          id: 'naver-weather',
-          name: '오늘의 날씨 확인',
-          url: 'https://search.naver.com/search.naver?query=오늘날씨',
-          steps: []
+          id: 'flaticon-search',
+          name: '무료 아이콘 검색',
+          url: 'https://www.flaticon.com/',
+          steps: [
+            { type: 'input', target: 'Search for icons', value: 'home' },
+            { type: 'click', target: 'Search' }
+          ]
         }
       ],
       currentTab: TABS.ALL,
