@@ -113,9 +113,6 @@ export function runShortcut(sc) {
   chrome.storage.local.set({ activeShortcutTask: task }, () => {
     const macroUrl = sc.url.includes('#') ? `${sc.url}-macro-active` : `${sc.url}#macro-active`;
     
-    // 매크로 실행은 가장 높은 관여도(10점) 부여
-    if (sc.id && !isNaN(sc.id)) recordEngagement(parseInt(sc.id), 10);
-
     // 1. 완전히 새로운 창(New Window)을 생성하여 실행합니다.
     chrome.windows.create({ 
       url: macroUrl, 
@@ -125,21 +122,6 @@ export function runShortcut(sc) {
     
     showToast(strings.runningMacro);
   });
-}
-
-/**
- * 관여도 점수 기록 (통계용)
- * @param {number} id - 팁 ID
- * @param {number} score - 가중치 (1: 조회, 3: 가이드 확인, 5: 즐겨찾기, 10: 실행)
- */
-export async function recordEngagement(id, score = 1) {
-  if (!id || isNaN(id)) return;
-  
-  const newViews = { ...store.state.viewCounts };
-  const currentScore = Number(newViews[id] || 0);
-  newViews[id] = currentScore + score;
-  
-  await store.update({ viewCounts: newViews });
 }
 
 /**
@@ -155,14 +137,17 @@ export async function handleListClick(e) {
     e.preventDefault();
     e.stopPropagation();
     const guideEl = guideHeader.closest('.step-guide');
-    const isExpanding = !guideEl.classList.contains('expanded');
     guideEl.classList.toggle('expanded');
-    
-    // 가이드를 펼칠 때만 점수(3점) 부여
-    if (isExpanding) {
-      const tipItem = target.closest('.tip-item');
-      if (tipItem) recordEngagement(parseInt(tipItem.dataset.id), 3);
-    }
+    return;
+  }
+
+  // 2. 관련 팁 펼치기 토글
+  const relatedHeader = target.closest('.related-tips-header');
+  if (relatedHeader) {
+    e.preventDefault();
+    e.stopPropagation();
+    const relatedEl = relatedHeader.closest('.related-tips');
+    relatedEl.classList.toggle('expanded');
     return;
   }
 
@@ -172,8 +157,6 @@ export async function handleListClick(e) {
     e.stopPropagation();
     const id = parseInt(favBtn.dataset.id);
     const isAdding = !store.state.favorites.includes(id);
-    // 즐겨찾기 추가 시 점수(5점) 부여
-    if (isAdding) recordEngagement(id, 5);
     callbacks.onFavClick(id, isAdding);
     return;
   }
@@ -183,8 +166,6 @@ export async function handleListClick(e) {
   if (noteBtn) {
     e.stopPropagation();
     const id = parseInt(noteBtn.dataset.id);
-    // 메모 버튼 클릭 시 점수(2점) 부여
-    recordEngagement(id, 2);
     callbacks.onNoteClick(id, noteBtn); // [수정] 클릭된 버튼 엘리먼트 전달
     return;
   }
@@ -200,17 +181,7 @@ export async function handleListClick(e) {
   // 6. 설정/링크 이동 버튼 (직접 조작)
   const goBtn = target.closest('.go-btn');
   if (goBtn) {
-    const tipItem = target.closest('.tip-item');
-    if (tipItem) recordEngagement(parseInt(tipItem.dataset.id), 10); // 실행 점수 10점
     return;
-  }
-  
-  // 7. 조회수 증가 (팁 아이템 본체 단순 클릭 시 - 1점)
-  const tipItem = target.closest('.tip-item');
-  const isActionElement = target.closest('.fav-btn, .note-btn, .go-btn, .step-guide-header');
-  
-  if (tipItem && !isActionElement) {
-    recordEngagement(parseInt(tipItem.dataset.id), 1);
   }
 }
 
@@ -243,53 +214,6 @@ export function handleRelatedItemClick(targetId) {
     targetEl.classList.add('highlight');
     setTimeout(() => targetEl.classList.remove('highlight'), 600);
   }
-
-  // 관련 팁으로 이동한 경우도 관심으로 간주 (1점)
-  recordEngagement(targetId, 1);
-}
-
-/**
- * 통계 모달 열기
- */
-export function openStatsModal(e) {
-  if (e) e.stopPropagation(); // 탭 전환 등 다른 클릭 이벤트 방지
-  
-  const lang = store.state.currentLang || LANG.KO;
-  const strings = I18N[lang];
-  
-  // 조회수가 아닌 'Engagement Score' 기준으로 정렬
-  const views = store.state.viewCounts || {};
-  
-  const sorted = Object.entries(views)
-    .filter(([_, score]) => Number(score) > 0)
-    .sort((a, b) => Number(b[1]) - Number(a[1]))
-    .slice(0, 10);
-  
-  const body = $('#stats-list');
-  if (!body) return;
-
-  if (sorted.length === 0) {
-    body.innerHTML = `<div style="text-align:center; padding: 40px 0; color: var(--text-mute);">${strings.emptyStats || "기록된 데이터가 없습니다."}</div>`;
-  } else {
-    body.innerHTML = sorted.map(([id, score], index) => {
-      const tip = tips.find(t => String(t.id) === String(id));
-      if (!tip) return "";
-      const title = lang === LANG.EN ? (tip.title_en || tip.title) : tip.title;
-      const catDisplayName = (I18N[lang].categories && I18N[lang].categories[tip.category]) || tip.category;
-      
-      return `
-        <div class="stats-item">
-          <span class="stats-rank">${index + 1}</span>
-          <div class="stats-info">
-            <div class="stats-title">${title}</div>
-            <div class="stats-category">${catDisplayName}</div>
-          </div>
-          <span class="stats-views">${strings.views(score)}</span>
-        </div>
-      `;
-    }).join("");
-  }
-  openModal($('#stats-modal'));
 }
 
 /**

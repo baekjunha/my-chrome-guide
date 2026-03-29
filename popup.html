@@ -46,7 +46,6 @@
     <button type="button" id="tab-all" class="active">전체 팁</button>
     <button type="button" id="tab-fav">보관함</button>
     <button type="button" id="tab-shortcuts">1클릭 매크로</button>
-    <button type="button" id="stats-btn" class="header-icon-btn" style="width: 42px; height: 42px; border-radius: 16px;"></button>
   </div>
 
   <!-- 카테고리 필터 (JS로 생성) -->
@@ -64,20 +63,6 @@
   <div id="toast-notification" class="toast"></div>
 
   <canvas id="effect-canvas"></canvas>
-
-  <!-- 통계 모달 -->
-  <div id="stats-modal" class="modal" style="display: none;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 style="display: flex; align-items: center; gap: 8px;">
-          <span id="stats-icon" class="svg-icon"></span>
-          <span id="stats-modal-title">Top 10</span>
-        </h3>
-        <button class="modal-close stats-close" aria-label="닫기">✕</button>
-      </div>
-      <div id="stats-list" class="stats-list"></div>
-    </div>
-  </div>
 
   <!-- 지름길 모달 -->
   <div id="shortcut-modal" class="modal" style="display: none;">

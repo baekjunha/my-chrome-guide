@@ -102,7 +102,6 @@ class AppStore {
       currentCategory: CATEGORY_ALL,
       currentOS: navigator.platform.toUpperCase().indexOf('MAC') >= 0 ? OS.MAC : OS.WIN,
       isDark: false,
-      viewCounts: {},
       tipNotes: {},
       currentLang: LANG.KO,
       categoryOrder: ["전체", "탭/창", "탐색", "주소창/검색", "화면", "북마크", "편집", "프로필/공간", "AI 기능", "개발자", "설정", "이스터에그", "자동화", "시스템"]
@@ -123,7 +122,6 @@ class AppStore {
       'userShortcuts': { stateKey: 'userShortcuts', defaultValue: this.defaults.userShortcuts, type: 'array' },
       'os': { stateKey: 'currentOS', defaultValue: this.defaults.currentOS, type: 'string' },
       'dark': { stateKey: 'isDark', defaultValue: this.defaults.isDark, type: 'boolean' },
-      'views': { stateKey: 'viewCounts', defaultValue: this.defaults.viewCounts, type: 'object' },
       'notes': { stateKey: 'tipNotes', defaultValue: this.defaults.tipNotes, type: 'object' },
       'lang': { stateKey: 'currentLang', defaultValue: this.defaults.currentLang, type: 'string' },
       'categoryOrder': { stateKey: 'categoryOrder', defaultValue: this.defaults.categoryOrder, type: 'array' }

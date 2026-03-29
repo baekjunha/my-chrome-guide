@@ -39,13 +39,6 @@ export function applyLanguage() {
   const tabShortcuts = $('#tab-shortcuts');
   if (tabShortcuts) tabShortcuts.innerHTML = `<span class="svg-icon">${ICONS.rocket}</span>${strings.myShortcuts}`;
   
-  const statsBtn = $('#stats-btn');
-  if (statsBtn) {
-    statsBtn.title = strings.statsBtnTitle;
-    statsBtn.setAttribute('aria-label', strings.statsBtnTitle);
-    statsBtn.innerHTML = ICONS.stats;
-  }
-  
   const darkBtn = $('#dark-btn');
   if (darkBtn) {
     darkBtn.title = strings.darkMode;
@@ -73,9 +66,6 @@ export function applyLanguage() {
   }
 
   // 모달 정보 및 아이콘
-  $$('#stats-icon').forEach(el => el.innerHTML = ICONS.stats);
-  if ($('#stats-modal-title')) $('#stats-modal-title').textContent = strings.statsModalTitle;
-  
   $$('.sc-tag-icon').forEach(el => el.innerHTML = ICONS.tag);
   $$('.sc-globe-icon').forEach(el => el.innerHTML = ICONS.globe);
   $$('.sc-bot-icon').forEach(el => el.innerHTML = ICONS.bot);
@@ -288,9 +278,21 @@ export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun
       if (related && related.length > 0) {
         const relDiv = document.createElement('div');
         relDiv.className = 'related-tips';
-        relDiv.innerHTML = `<div class="related-label"><span class="svg-icon">${ICONS.link}</span>${strings.relatedTipsLabel}</div>`;
-        const relList = document.createElement('div');
-        relList.className = 'related-list';
+        
+        relDiv.innerHTML = `
+          <div class="related-tips-header">
+            <div class="related-label">
+              <span class="svg-icon">${ICONS.link}</span>
+              ${strings.relatedTipsLabel}
+            </div>
+            <div class="related-toggle-icon">${ICONS.chevron}</div>
+          </div>
+          <div class="related-content">
+            <div class="related-list"></div>
+          </div>
+        `;
+        
+        const relList = relDiv.querySelector('.related-list');
         related.forEach(rt => {
           const rtTitle = (lang === LANG.EN && rt.title_en) ? rt.title_en : rt.title;
           const rtBtn = document.createElement('span');
@@ -299,7 +301,6 @@ export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun
           rtBtn.textContent = rtTitle;
           relList.appendChild(rtBtn);
         });
-        relDiv.appendChild(relList);
         div.appendChild(relDiv);
       }
 

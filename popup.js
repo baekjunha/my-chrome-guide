@@ -20,8 +20,7 @@ import {
   startRecording,
   getRenderCallbacks,
   closeModal,
-  handleListClick,
-  openStatsModal
+  handleListClick
 } from './js/actions.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -104,8 +103,6 @@ function initEventListeners() {
   });
 
   // 모달 관리
-  $('#stats-btn').addEventListener('click', openStatsModal);
-  $('.stats-close').addEventListener('click', () => closeModal($('#stats-modal')));
   $('.note-close').addEventListener('click', () => closeModal($('#note-modal')));
   $('.shortcut-close').addEventListener('click', () => closeModal($('#shortcut-modal')));
 
