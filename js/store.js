@@ -74,55 +74,49 @@ class AppStore {
       favorites: [],
       userShortcuts: [
         {
-          id: 'gmail-compose',
-          name: 'Gmail 편지쓰기',
-          url: 'https://mail.google.com/',
+          id: 'google-maps-food',
+          name: '주변 맛집 검색',
+          url: 'https://www.google.com/maps',
           steps: [
-            { type: 'click', target: '편지쓰기' }
+            { type: 'input', target: '지도 검색', value: '주변 맛집' },
+            { type: 'click', target: '검색' }
           ]
         },
         {
-          id: 'notion-new',
-          name: '노션 새 페이지',
-          url: 'https://www.notion.so/',
+          id: 'youtube-search-tips',
+          name: '크롬 사용법 검색',
+          url: 'https://www.youtube.com',
           steps: [
-            { type: 'click', target: '새 페이지' }
+            { type: 'input', target: '검색', value: '크롬 사용 꿀팁' },
+            { type: 'click', target: '검색 아이콘' }
           ]
         },
         {
-          id: 'github-search',
-          name: 'GitHub 저장소 검색',
-          url: 'https://github.com/search',
+          id: 'github-trending',
+          name: 'GitHub 인기 저장소',
+          url: 'https://github.com/trending',
+          steps: []
+        },
+        {
+          id: 'chrome-webstore-search',
+          name: '추천 확장 프로그램',
+          url: 'https://chromewebstore.google.com/',
           steps: [
-            { type: 'input', target: 'Search or jump to...', value: 'chrome extension' },
+            { type: 'input', target: '스토어 검색', value: 'productivity' },
             { type: 'click', target: 'Enter' }
           ]
         },
         {
-          id: 'google-calendar',
-          name: 'Google 캘린더 일정 추가',
-          url: 'https://calendar.google.com/',
-          steps: [
-            { type: 'click', target: '만들기' },
-            { type: 'click', target: '이벤트' }
-          ]
+          id: 'wikipedia-random',
+          name: '위키백과 무작위 문서',
+          url: 'https://ko.wikipedia.org/wiki/특수:임의문서',
+          steps: []
         },
         {
-          id: 'chatgpt-new',
-          name: 'ChatGPT 새 대화',
-          url: 'https://chatgpt.com/',
-          steps: [
-            { type: 'click', target: 'New chat' }
-          ]
-        },
-        {
-          id: 'coupang-orders',
-          name: '쿠팡 주문 내역',
-          url: 'https://www.coupang.com/',
-          steps: [
-            { type: 'click', target: '마이쿠팡' },
-            { type: 'click', target: '주문목록' }
-          ]
+          id: 'naver-weather',
+          name: '오늘의 날씨 확인',
+          url: 'https://search.naver.com/search.naver?query=오늘날씨',
+          steps: []
         }
       ],
       currentTab: TABS.ALL,
