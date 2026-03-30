@@ -135,7 +135,8 @@ class AppStore {
       isDark: false,
       tipNotes: {},
       currentLang: LANG.KO,
-      categoryOrder: ["전체", "탭/창", "탐색", "주소창/검색", "화면", "북마크", "편집", "프로필/공간", "AI 기능", "개발자", "설정", "다른 기기로 Chrome 사용", "이스터에그", "자동화", "시스템"]
+      categoryOrder: ["전체", "탭/창", "탐색", "주소창/검색", "화면", "북마크", "편집", "프로필/공간", "AI 기능", "개발자", "설정", "다른 기기로 Chrome 사용", "이스터에그", "자동화", "시스템"],
+      hasSeenOnboarding: false
     };
 
     // 상태 초기화
@@ -157,7 +158,8 @@ class AppStore {
       'dark': { stateKey: 'isDark', defaultValue: this.defaults.isDark, type: 'boolean' },
       'notes': { stateKey: 'tipNotes', defaultValue: this.defaults.tipNotes, type: 'object' },
       'lang': { stateKey: 'currentLang', defaultValue: this.defaults.currentLang, type: 'string' },
-      'categoryOrder': { stateKey: 'categoryOrder', defaultValue: this.defaults.categoryOrder, type: 'array' }
+      'categoryOrder': { stateKey: 'categoryOrder', defaultValue: this.defaults.categoryOrder, type: 'array' },
+      'onboarding': { stateKey: 'hasSeenOnboarding', defaultValue: this.defaults.hasSeenOnboarding, type: 'boolean' }
     };
 
     // State 키 -> Storage 키 역매핑 사전 계산

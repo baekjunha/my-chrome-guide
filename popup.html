@@ -52,8 +52,14 @@
   <div id="cat-nav"></div>
 
   <!-- 추가 버튼 (지름길 탭에서만 보임) -->
-  <div id="shortcut-controls" style="display: none; margin-bottom: 16px;">
+  <div id="shortcut-controls" style="display: none; margin-bottom: 16px; align-items: center; justify-content: space-between;">
     <button id="add-shortcut-btn" class="go-btn" style="margin-top: 0; background: var(--accent-gold); border-radius: 20px;">+ 새 1클릭 매크로 만들기</button>
+    
+    <div class="macro-data-controls" style="display: flex; gap: 8px;">
+      <button id="macro-export-btn" class="icon-btn" title="매크로 백업 (내보내기)"><span class="svg-icon" style="pointer-events:none;"></span></button>
+      <button id="macro-import-btn" class="icon-btn" title="매크로 복원 (불러오기)"><span class="svg-icon" style="pointer-events:none;"></span></button>
+      <input type="file" id="macro-import-file" accept=".json" style="display: none;">
+    </div>
   </div>
 
   <!-- 꿀팁 목록 -->
@@ -135,6 +141,25 @@
         </div>
       </div>
       <div id="note-list" class="note-list"></div>
+    </div>
+  </div>
+
+  <!-- 온보딩 모달 -->
+  <div id="onboarding-modal" class="modal" style="display: none; z-index: 1000;">
+    <div class="modal-content" style="max-width: 400px; text-align: center; padding: 40px 20px;">
+      <div id="onboarding-icon" style="background: var(--accent-bg); width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+        <span class="svg-icon sc-rocket-icon" style="color: var(--accent); width: 32px; height: 32px;"></span>
+      </div>
+      <h2 style="margin: 0 0 12px; font-size: 20px; color: var(--text);">환영합니다! 🎉</h2>
+      <p style="margin: 0 0 24px; color: var(--text-sub); line-height: 1.6; font-size: 14px;">
+        복잡하고 귀찮은 반복 작업,<br>
+        이제 <strong>'1클릭 매크로'</strong>로 한 번에 해결하세요.<br>
+        AI 자동화 기능을 통해 나만의 자율주행 북마크를<br>
+        만들고 클릭 한 번에 실행할 수 있습니다.
+      </p>
+      <button id="start-onboarding-btn" style="width: 100%; padding: 14px; background: var(--accent-gold); border: none; border-radius: 12px; color: white; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 0 4px 12px rgba(234, 179, 8, 0.3);">
+        지금 매크로 만들어보기
+      </button>
     </div>
   </div>
 

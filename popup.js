@@ -1,6 +1,6 @@
 import { $, $$, TABS, OS, LANG } from './js/constants.js';
 import { store } from './js/store.js';
-import { initCanvas } from './js/utils.js';
+import { initCanvas, showToast } from './js/utils.js';
 import { 
   applyTheme, 
   applyLanguage, 
@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       setTimeout(() => {
         renderTips("", getRenderCallbacks());
         initCanvas();
+        checkOnboarding();
         
         // [UX 개선] 검색창 자동 포커스
         const searchInput = $('#search');
@@ -66,6 +67,34 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 5. 이벤트 리스너 통합 등록
   initEventListeners();
 });
+
+/**
+ * 신규 사용자 온보딩 경험 (UX) 제어 함수
+ */
+function checkOnboarding() {
+  if (!store.state.hasSeenOnboarding) {
+    const modal = $('#onboarding-modal');
+    if (modal) {
+      modal.style.display = 'flex';
+      // CSS 트랜지션을 위한 미세 딜레이
+      setTimeout(() => modal.classList.add('show'), 10);
+      
+      const startBtn = $('#start-onboarding-btn');
+      if (startBtn) {
+        startBtn.addEventListener('click', () => {
+          modal.classList.remove('show');
+          setTimeout(() => modal.style.display = 'none', 300);
+          
+          store.update({ hasSeenOnboarding: true });
+          
+          // 매크로 탭으로 자동 이동시켜 경험 유도
+          const shortcutTab = $('#tab-shortcuts');
+          if (shortcutTab) shortcutTab.click();
+        }, { once: true });
+      }
+    }
+  }
+}
 
 /**
  * 모든 전역 이벤트 리스너 초기화
@@ -117,6 +146,71 @@ function initEventListeners() {
   // 매크로(지름길) 관리
   $('#add-shortcut-btn').addEventListener('click', () => openShortcutModal());
   $('#record-shortcut-btn').addEventListener('click', startRecording);
+
+  // 매크로 백업/복구 기능 (Export / Import)
+  const exportBtn = $('#macro-export-btn');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', () => {
+      const dataStr = JSON.stringify(store.state.userShortcuts, null, 2);
+      const blob = new Blob([dataStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "my_chrome_guide_macros.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast(store.state.currentLang === LANG.KO ? '매크로가 안전하게 백업되었습니다.' : 'Macros exported successfully.');
+    });
+  }
+
+  const importBtn = $('#macro-import-btn');
+  const importFile = $('#macro-import-file');
+  if (importBtn && importFile) {
+    importBtn.addEventListener('click', () => importFile.click());
+    importFile.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const importedData = JSON.parse(event.target.result);
+          if (!Array.isArray(importedData)) throw new Error("Invalid format: Not an array");
+          
+          const validMacros = importedData.filter(m => m.id && m.name && Array.isArray(m.steps));
+          if (validMacros.length === 0) throw new Error("No valid macros found");
+
+          const newShortcuts = [...store.state.userShortcuts];
+          let addedCount = 0;
+          
+          validMacros.forEach(macro => {
+             // 병합(Merge) 전략 적용: 기존 ID 겹침 방지
+             let finalId = macro.id;
+             while (newShortcuts.find(s => s.id === finalId)) {
+               finalId = `${macro.id}-${Math.random().toString(36).substr(2, 5)}`;
+             }
+             newShortcuts.push({ ...macro, id: finalId });
+             addedCount++;
+          });
+          
+          await store.update({ userShortcuts: newShortcuts });
+          
+          // 현재 탭이 매크로 탭이면 리스트 재렌더링
+          if (store.state.currentTab === TABS.SHORTCUTS) {
+             renderTips("", callbacks);
+          }
+          
+          showToast(store.state.currentLang === LANG.KO ? `${addedCount}개의 매크로를 성공적으로 불러왔습니다!` : `${addedCount} macros imported successfully!`);
+        } catch (error) {
+          console.error('[Import Error]', error);
+          showToast(store.state.currentLang === LANG.KO ? '파일 형식이 올바르지 않습니다.' : 'Invalid file format.', true);
+        }
+        importFile.value = ''; 
+      };
+      reader.readAsText(file);
+    });
+  }
 
   // 메모 관리
   $('#note-save-btn').addEventListener('click', saveNote);

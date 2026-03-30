@@ -108,6 +108,18 @@ export function applyLanguage() {
     });
   });
 
+  const macroExportBtn = $('#macro-export-btn');
+  if (macroExportBtn) {
+    macroExportBtn.textContent = "";
+    macroExportBtn.insertAdjacentHTML('beforeend', ICONS.download);
+  }
+
+  const macroImportBtn = $('#macro-import-btn');
+  if (macroImportBtn) {
+    macroImportBtn.textContent = "";
+    macroImportBtn.insertAdjacentHTML('beforeend', ICONS.upload);
+  }
+
   if ($('#note-input')) $('#note-input').placeholder = strings.noteInputPlaceholder;
   if ($('#note-delete-btn')) $('#note-delete-btn').textContent = strings.noteDelete;
   if ($('#note-save-btn')) $('#note-save-btn').textContent = strings.noteSave;

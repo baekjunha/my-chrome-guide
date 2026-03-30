@@ -308,7 +308,8 @@ h2 {
   color: #fff;
 }
 
-.header-icon-btn {
+.header-icon-btn,
+.icon-btn {
   background: var(--cat-bg);
   border: 1px solid var(--cat-border);
   width: 32px; /* 크기 축소 */
@@ -319,12 +320,12 @@ h2 {
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  /* backdrop-filter: blur(5px); 제거 */
   padding: 0;
   flex-shrink: 0;
 }
 
-.header-icon-btn svg {
+.header-icon-btn svg,
+.icon-btn svg {
   width: 20px;
   height: 20px;
 }
@@ -343,7 +344,8 @@ h2 {
   display: block;
 }
 
-.header-icon-btn:hover {
+.header-icon-btn:hover,
+.icon-btn:hover {
   transform: scale(1.1);
 }
 
