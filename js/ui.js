@@ -3,6 +3,7 @@ import { store } from './store.js';
 import { I18N } from './i18n.js';
 import { tips } from './data.js';
 import { ICONS } from './icons.js';
+import { getPlatform, levenshtein } from './utils.js';
 
 export function applyTheme() {
   const body = document.body;
@@ -163,45 +164,66 @@ function highlight(text, search) {
   const regex = new RegExp(`(${search.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
   return text.replace(regex, '<mark class="highlight">$1</mark>');
 }
-
 /**
- * [Architecture] 데이터 처리 로직 분리 (Pure Logic)
- * 필터링, 점수 계산, 정렬만 수행하여 결과 배열을 반환합니다.
+ * [Architecture] 검색 고도화 (다중 키워드, 퍼지 매칭, 가중치 최적화)
  */
 export function getProcessedTips(allTips, { filter, currentOS, currentTab, favorites, currentCategory, lang }) {
-  const searchLow = (filter || "").toLowerCase().trim();
-  const searchLowNoSpace = searchLow.replace(/\s/g, "");
+  const query = (filter || "").toLowerCase().trim();
+  
+  // 1. 기본 필터링 (플랫폼, 탭, 카테고리)
+  const baseFiltered = allTips.filter(tip => {
+    if (tip.platform && tip.platform !== currentOS) return false;
+    const matchesTab = currentTab === TABS.ALL || favorites.includes(tip.id);
+    const matchesCat = (currentCategory === CATEGORY_ALL || !currentCategory || tip.category === currentCategory);
+    return matchesTab && matchesCat;
+  });
 
-  return allTips
+  if (!query) return baseFiltered.map(tip => ({ tip, score: 1 }));
+
+  const terms = query.split(/\s+/); // 다중 키워드 분리 (개선안 2)
+
+  return baseFiltered
     .map(tip => {
       let score = 0;
+      const title = ((lang === LANG.EN && tip.title_en) ? tip.title_en : tip.title || "").toLowerCase();
+      const desc = ((lang === LANG.EN && tip.desc_en) ? tip.desc_en : tip.desc || "").toLowerCase();
+      const tags = [...(tip.tags || []), ...(tip.tags_en || [])];
+      
+      // 다중 키워드 매칭 점수 계산
+      let matchedTerms = 0;
+      terms.forEach(term => {
+        let termScore = 0;
+        
+        // 1. 정확도 매칭 (Exact/Include)
+        if (title === term) termScore += 40;
+        else if (title.includes(term)) termScore += 20;
+        
+        if (desc.includes(term)) termScore += 10;
+        
+        const tagMatch = tags.some(tag => tag.toLowerCase().includes(term));
+        if (tagMatch) termScore += 15;
 
-      // 1. 플랫폼 필터링
-      if (tip.platform && tip.platform !== currentOS) return { tip, score: -1 };
+        // 2. 퍼지 매칭 (개선안 3: 오타 대응)
+        // 짧은 단어는 오타 허용 안 함, 3글자 이상부터 거리 1~2 허용
+        if (termScore === 0 && term.length >= 3) {
+          const titleWords = title.split(/\s+/);
+          titleWords.forEach(word => {
+            const dist = levenshtein(term, word);
+            if (dist <= 1) termScore += 10; // 거리 1이면 유사함
+          });
+        }
 
-      // 2. 탭 & 카테고리 필터링
-      const matchesTab = currentTab === TABS.ALL || favorites.includes(tip.id);
-      const matchesCat = (currentCategory === CATEGORY_ALL || !currentCategory || tip.category === currentCategory);
-      if (!matchesTab || !matchesCat) return { tip, score: -1 };
+        if (termScore > 0) {
+          score += termScore;
+          matchedTerms++;
+        }
+      });
 
-      if (!searchLow) return { tip, score: 1 }; // 검색어 없으면 기본 노출
-
-      const titleKO = (tip.title || "").toLowerCase();
-      const titleEN = (tip.title_en || "").toLowerCase();
-      const descKO = (tip.desc || "").toLowerCase();
-      const descEN = (tip.desc_en || "").toLowerCase();
-      const tagsKO = (tip.tags || []);
-      const tagsEN = (tip.tags_en || []);
-
-      // 가중치 계산
-      if (titleKO === searchLow || titleEN === searchLow) score += 15;
-      else if (titleKO.startsWith(searchLow) || titleEN.startsWith(searchLow)) score += 10;
-      else if (titleKO.includes(searchLow) || titleEN.includes(searchLow)) score += 8;
-      else if (titleKO.replace(/\s/g, "").includes(searchLowNoSpace)) score += 6;
-
-      const matchesTag = [...tagsKO, ...tagsEN].some(tag => tag.toLowerCase().includes(searchLow));
-      if (matchesTag) score += 5;
-      if (descKO.includes(searchLow) || descEN.includes(searchLow)) score += 2;
+      // 모든 검색 단어를 포함하고 있으면 큰 가중치 (AND 조건 우대)
+      if (matchedTerms === terms.length) score += 30;
+      
+      // 검색어 전체가 제목에 그대로 포함된 경우 (순서 일치 우대)
+      if (title.includes(query)) score += 20;
 
       return { tip, score };
     })
@@ -334,21 +356,45 @@ export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun
     empty.className = 'empty-msg';
     
     if (filter) {
+      const suggestions = store.state.currentLang === LANG.KO 
+        ? ['단축키', '탭', '시크릿', '개발자', '메모리'] 
+        : ['Shortcut', 'Tab', 'Incognito', 'Dev', 'Memory'];
+
       empty.innerHTML = `
-        <div style="font-size: 40px; margin-bottom: 12px; opacity: 0.5;">🔍</div>
-        <div style="margin-bottom: 16px;">${strings.emptySearch}</div>
-        <button class="go-btn" id="empty-clear-btn" style="width: auto; padding: 8px 20px;">
+        <div class="empty-icon">${ICONS.search}</div>
+        <h3>${strings.emptySearch || '검색 결과가 없어요'}</h3>
+        <p>${strings.emptySearchDesc || '다른 키워드로 검색하거나 아래 추천 항목을 확인해 보세요.'}</p>
+        <div class="suggestion-chips">
+          ${suggestions.map(s => `<span class="suggestion-chip">${s}</span>`).join('')}
+        </div>
+        <button class="go-btn" id="empty-clear-btn" style="width: auto; padding: 10px 24px; margin-top: 12px;">
           ${strings.clearSearchCTA}
         </button>
       `;
+
+      // 이벤트 위임 또는 개별 등록
       setTimeout(() => {
         $('#empty-clear-btn')?.addEventListener('click', () => {
-          $('#search').value = "";
+          const searchInput = $('#search');
+          if (searchInput) searchInput.value = "";
           renderTips("", { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut });
+        });
+
+        empty.querySelectorAll('.suggestion-chip').forEach(chip => {
+          chip.addEventListener('click', () => {
+            const searchInput = $('#search');
+            if (searchInput) {
+              searchInput.value = chip.textContent;
+              renderTips(chip.textContent, { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut });
+            }
+          });
         });
       }, 0);
     } else {
-      empty.innerHTML = store.state.currentTab === TABS.FAV ? strings.emptyFav : "";
+      empty.innerHTML = `
+        <div class="empty-icon" style="background: var(--accent-bg);">${ICONS.starOutline}</div>
+        <p>${store.state.currentTab === TABS.FAV ? strings.emptyFav : ""}</p>
+      `;
     }
     listEl.appendChild(empty);
   } else {
