@@ -132,6 +132,34 @@ export function runShortcut(sc) {
 }
 
 /**
+ * 특정 매크로 1개를 개별적으로 추출하여 공유(다운로드)
+ */
+export function shareShortcut(sc) {
+  if (!sc) return;
+  const lang = store.state.currentLang;
+  
+  // 단일 매크로도 불러오기 로직과 호환되도록 배열로 감싸서 추출
+  const dataStr = JSON.stringify([sc], null, 2);
+  const blob = new Blob([dataStr], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  
+  // 파일명 안전하게 처리
+  const safeName = (sc.name || 'macro').replace(/[^a-z0-9가-힣]/gi, '_');
+  
+  a.href = url;
+  a.download = `${safeName}_macro.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  
+  showToast(lang === LANG.KO 
+    ? `'${sc.name}' 매크로가 개별 추출되었습니다.` 
+    : `'${sc.name}' macro exported individually.`);
+}
+
+/**
  * 리스트 클릭 통합 핸들러 (이벤트 위임용)
  */
 export async function handleListClick(e) {
@@ -364,6 +392,7 @@ export function getRenderCallbacks() {
         await store.update({ userShortcuts });
         renderTips($('#search').value, getRenderCallbacks());
       }
-    }
+    },
+    onShareShortcut: (sc) => shareShortcut(sc)
   };
 }

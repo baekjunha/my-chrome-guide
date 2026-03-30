@@ -852,13 +852,20 @@ input[type="text"]:focus {
   height: 100%;
   background: rgba(0, 0, 0, 0.6);
   display: none; /* JS에서 flex로 변경 */
-  align-items: center; /* [최적화] 중앙 정렬로 변경하여 안정성 확보 */
+  align-items: center;
   justify-content: center;
   z-index: 100000;
+  padding: 20px; /* 모바일 대응 여백 */
+  box-sizing: border-box;
   backdrop-filter: blur(8px);
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
+}
+
+#onboarding-modal {
+  align-items: flex-start;
+  padding-top: 54px; 
 }
 
 .modal.show {
@@ -875,8 +882,8 @@ input[type="text"]:focus {
   overflow-y: auto;
   box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.4);
   border: 1px solid var(--border);
-  transform: translateY(-20px);
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), margin-top 0.3s ease; /* [최적화] 마진 변동 시에도 부드럽게 이동 */
+  transform: translateY(-10px); /* 튀어오름 정도 축소 */
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), margin-top 0.3s ease;
 }
 
 .modal.show .modal-content {

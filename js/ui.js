@@ -285,7 +285,7 @@ export function renderSkeletons(count = 3) {
 }
 
 
-export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut } = {}, isAppend = false) {
+export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut, onShareShortcut } = {}, isAppend = false) {
   const listEl = $('#list');
   if (!listEl) return;
 
@@ -304,7 +304,7 @@ export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun
   const currentOS = store.state.currentOS;
 
   if (store.state.currentTab === TABS.SHORTCUTS) {
-    renderShortcuts(onShortcutRun, onEditShortcut, onDeleteShortcut);
+    renderShortcuts(onShortcutRun, onEditShortcut, onDeleteShortcut, onShareShortcut);
     return;
   }
 
@@ -375,7 +375,7 @@ export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun
         </button>
       `);
 
-      createActionButtons(tip, div, { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut });
+      createActionButtons(tip, div, { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut, onShareShortcut });
       renderDetails(tip, div, lang, currentOS, strings);
       fragment.appendChild(div);
     } catch (err) {
@@ -444,7 +444,7 @@ export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun
         <button class="load-more-btn">${strings.loadMore}</button>
       `);
       moreWrapper.querySelector('.load-more-btn').onclick = () => {
-        renderTips(filter, { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut }, true);
+        renderTips(filter, { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut, onShareShortcut }, true);
       };
       listEl.appendChild(moreWrapper);
     }
@@ -528,7 +528,7 @@ function renderDetails(tip, div, lang, currentOS, strings) {
   }
 }
 
-export function renderShortcuts(onRun, onEdit, onDelete) {
+export function renderShortcuts(onRun, onEdit, onDelete, onShare) {
   const listEl = $('#list');
   const scs = store.state.userShortcuts;
   const strings = I18N[store.state.currentLang];
@@ -557,6 +557,7 @@ export function renderShortcuts(onRun, onEdit, onDelete) {
       <div class="widget-title">${name}</div>
       <div class="widget-steps-count">${stepsCount} STEPS</div>
       <div class="widget-actions">
+        <button class="widget-action-btn share-sc" title="내보내기/공유"><span class="svg-icon">${ICONS.download}</span></button>
         <button class="widget-action-btn edit-sc" title="수정"><span class="svg-icon">${ICONS.edit}</span></button>
         <button class="widget-action-btn delete-sc" title="삭제"><span class="svg-icon">${ICONS.trash}</span></button>
       </div>
@@ -564,7 +565,8 @@ export function renderShortcuts(onRun, onEdit, onDelete) {
     `);
 
     card.addEventListener('click', (e) => {
-      if (e.target.closest('.edit-sc')) onEdit(sc);
+      if (e.target.closest('.share-sc')) onShare(sc);
+      else if (e.target.closest('.edit-sc')) onEdit(sc);
       else if (e.target.closest('.delete-sc')) onDelete(sc);
       else onRun(sc);
     });
