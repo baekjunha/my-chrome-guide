@@ -416,7 +416,7 @@
           setTimeout(() => { 
             isProcessing = false; 
             runEngine(); 
-          }, 1800); 
+          }, 4000); 
         } else {
           // [Smart Skip] Check if the NEXT step is already available (to skip login/redundant steps)
           if (currentStepIndex + 1 < steps.length) {

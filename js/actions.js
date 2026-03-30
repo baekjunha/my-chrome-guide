@@ -123,7 +123,7 @@ export function runShortcut(sc) {
     // 1. 완전히 새로운 창(New Window)을 생성하여 실행합니다.
     chrome.windows.create({ 
       url: macroUrl, 
-      state: 'maximized',
+      state: 'fullscreen',
       focused: true
     });
     
@@ -362,7 +362,7 @@ export function startRecording() {
     
     chrome.windows.create({ 
       url: recordUrl, 
-      state: 'maximized',
+      state: 'fullscreen',
       focused: true
     });
     
