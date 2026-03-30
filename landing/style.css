@@ -15,6 +15,31 @@
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
     --accent-gold: #f59e0b;
     --accent-gold-light: #fef3c7;
+
+    /* ── Spacing Tokens (4px Grid) ─────────── */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 12px;
+    --space-lg: 16px;
+    --space-xl: 20px;
+    --space-2xl: 24px;
+    --space-3xl: 32px;
+    --space-4xl: 40px;
+    --font-base: 13px;
+    --font-md: 15px;
+    --font-lg: 18px;
+    --font-xl: 22px;
+    --font-2xl: 32px;
+    --font-3xl: 40px;
+    --font-4xl: 52px;
+
+    --weight-regular: 400;
+    --weight-medium: 500;
+    --weight-bold: 800;
+
+    --lh-tight: 1.2;
+    --lh-base: 1.4;
+    --lh-relaxed: 1.5;
 }
 
 * {
@@ -40,7 +65,7 @@ h1, h2, h3 {
 .container {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 0 var(--space-2xl); /* 1.5rem -> 24px */
 }
 
 /* Navbar */
@@ -67,7 +92,7 @@ h1, h2, h3 {
 .logo {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: var(--space-sm); /* 0.6rem -> 8px or 12px, 8px is tighter/cleaner */
     font-size: 1.1rem;
     font-weight: 700;
     text-decoration: none;
@@ -83,7 +108,7 @@ h1, h2, h3 {
 .nav-links {
     display: flex;
     list-style: none;
-    gap: 2rem;
+    gap: var(--space-3xl); /* 2rem -> 32px */
     align-items: center;
 }
 
@@ -146,7 +171,7 @@ h1, h2, h3 {
 .hero .container {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 3rem;
+    gap: var(--space-3xl); /* 3rem(48px) -> 32px for more compact hero */
     align-items: center;
 }
 
@@ -158,15 +183,15 @@ h1, h2, h3 {
     border-radius: 99px;
     font-size: 0.8rem;
     font-weight: 700;
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--space-lg); /* 1.5rem -> 16px or 24px, 1.5rem is 24px, but lg is 16px. I'll use xl or 2xl. 1.5rem = 24px = 2xl */
     border: 1px solid rgba(245, 158, 11, 0.2);
 }
 
 .hero h1 {
-    font-size: 3.2rem;
-    line-height: 1.2;
-    margin-bottom: 1.2rem;
-    font-weight: 800;
+    font-size: var(--font-4xl); /* 3.2rem -> 52px */
+    line-height: var(--lh-tight);
+    margin-bottom: var(--space-lg);
+    font-weight: var(--weight-bold);
     letter-spacing: -0.02em;
 }
 
@@ -175,9 +200,9 @@ h1, h2, h3 {
 }
 
 .hero p {
-    font-size: 1.15rem;
+    font-size: var(--font-lg); /* 1.15rem -> 18px */
     color: var(--text-slate);
-    margin-bottom: 2rem;
+    margin-bottom: var(--space-3xl);
     max-width: 500px;
 }
 
@@ -232,9 +257,9 @@ h1, h2, h3 {
 }
 
 .stat-item h3 {
-    font-size: 2rem;
-    font-weight: 800;
-    margin-bottom: 0.2rem;
+    font-size: var(--font-2xl); /* 2rem -> 32px */
+    font-weight: var(--weight-bold);
+    margin-bottom: var(--space-xs);
     color: var(--primary);
 }
 
@@ -255,8 +280,8 @@ h1, h2, h3 {
 }
 
 .section-header h2 {
-    font-size: 2.2rem;
-    margin-bottom: 0.5rem;
+    font-size: var(--font-2xl); /* 2.2rem -> 32px */
+    margin-bottom: var(--space-xs);
 }
 
 .section-header p {
@@ -267,11 +292,11 @@ h1, h2, h3 {
 .feature-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 2.5rem;
+    gap: var(--space-3xl); /* 2.5rem(40px) -> 32px */
 }
 
 .feature-card {
-    padding: 2rem;
+    padding: var(--space-3xl); /* 2rem -> 32px */
     border-radius: 16px;
     background: white;
     border: 1px solid #f1f5f9;
@@ -290,7 +315,7 @@ h1, h2, h3 {
     background: var(--bg-light);
     color: var(--primary);
     border-radius: 12px;
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--space-lg); /* 1.5rem -> 16px for tighter look */
     border: 1px solid var(--border);
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
 }
@@ -301,8 +326,8 @@ h1, h2, h3 {
 }
 
 .feature-card h3 {
-    font-size: 1.25rem;
-    margin-bottom: 0.75rem;
+    font-size: var(--font-xl); /* 1.25rem -> 20px -> 22px (Normalized) */
+    margin-bottom: var(--space-sm);
 }
 
 .feature-card p {
@@ -313,7 +338,7 @@ h1, h2, h3 {
 
 /* CTA Bottom */
 .cta-bottom {
-    padding: 100px 0;
+    padding: var(--space-6xl) 0; /* 100px -> 64px reduced for better flow */
     text-align: center;
     background-color: var(--bg-dark);
     background: linear-gradient(to right, #2563eb, #1d4ed8);
@@ -321,8 +346,8 @@ h1, h2, h3 {
 }
 
 .cta-bottom h2 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
+    font-size: var(--font-2xl); /* 2.5rem -> 32px */
+    margin-bottom: var(--space-sm);
     color: white;
 }
 

@@ -22,6 +22,50 @@
   --daily-to: #2563eb;
   --accent-gold: #f59e0b;
   --bg-high: #f1f5f9;
+
+  /* ── Spacing Tokens (4px Grid) ─────────── */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 20px;
+  --space-2xl: 24px;
+  --space-3xl: 32px;
+  --space-4xl: 40px;
+  --space-6xl: 64px;
+
+  /* Semantic Aliases */
+  --padding-page: var(--space-xl);
+  --padding-card: var(--space-lg);
+  --gap-layout: var(--space-xl);
+  --gap-component: var(--space-sm);
+
+  /* ── Typography Tokens ─────────────────── */
+  --font-xs: 10px;
+  --font-sm: 11px;
+  --font-base: 13px;
+  --font-md: 15px;
+  --font-lg: 18px;
+  --font-xl: 22px;
+
+  --font-base: 13px;
+  --font-md: 15px;
+  --font-lg: 18px;
+  --font-xl: 22px;
+  --font-2xl: 32px;
+  --font-3xl: 40px;
+  --font-4xl: 52px;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 800;
+
+  --lh-tight: 1.2;
+  --lh-base: 1.4;
+  --lh-relaxed: 1.5;
+
+  /* ── Accessibility Tokens ──────────────── */
+  --focus-ring: 0 0 0 3px var(--accent-bg), 0 0 0 1px var(--accent);
 }
 
 body.dark {
@@ -166,13 +210,24 @@ body.dark mark.highlight {
 .skeleton-desc { width: 90%; height: 14px; background: var(--border); border-radius: 4px; }
 .skeleton-btn { width: 80px; height: 30px; background: var(--border); border-radius: 10px; margin-top: 8px; }
 
-/* 키보드 포커스 스타일 */
-.tip-item:focus-visible {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 4px var(--accent-bg), var(--shadow);
+/* ── [UX/A11y] 전역 포커스 링 스타일 ───────── */
+:focus-visible {
+  outline: none !important;
+  box-shadow: var(--focus-ring) !important;
+  transition: box-shadow 0.2s ease, transform 0.2s ease !important;
+}
+
+/* 특정 요소들에 대한 추가 피드백 */
+.tip-item:focus-visible,
+.card:focus-visible,
+.widget-card:focus-visible {
   transform: translateY(-4px);
   z-index: 10;
+}
+
+.nav button:focus-visible,
+#cat-nav button:focus-visible {
+  transform: scale(1.05);
 }
 
 /* 하이라이트 스타일 개선 */
@@ -207,7 +262,7 @@ body {
   font-family: 'Inter', 'Pretendard', sans-serif;
   width: 420px;
   min-width: 400px; /* 최소 너비 고정 */
-  padding: 20px;
+  padding: var(--padding-page);
   background: var(--bg);
   margin: 0;
   color: var(--text);
@@ -216,7 +271,7 @@ body {
   border: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--gap-layout);
   min-height: auto;
   height: auto;
   /* GPU 가속을 활용하여 팝업 열림 애니메이션 안정화 */
@@ -227,8 +282,8 @@ body {
 
 @media (max-width: 380px) {
   body {
-    padding: 16px;
-    gap: 16px;
+    padding: var(--space-lg);
+    gap: var(--space-lg);
   }
   h2 { font-size: 13px; }
   .nav button { font-size: 11px; padding: 10px 2px; }
@@ -249,11 +304,11 @@ body {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 0; /* body gap 사용 */
-  gap: 8px; /* 간격 축소 */
+  gap: var(--space-sm); /* 8px */
 }
 
 h2 {
-  font-size: 15px; /* 크기 더 축소 */
+  font-size: var(--font-md); /* 15px */
   font-weight: 900;
   background: linear-gradient(to right, var(--accent), #f59e0b);
   -webkit-background-clip: text;
@@ -271,7 +326,7 @@ h2 {
 
 .header-controls {
   display: flex;
-  gap: 4px; /* 간격 더 축소 */
+  gap: var(--space-xs); /* 4px */
   align-items: center;
   flex-shrink: 0;
 }
@@ -295,12 +350,12 @@ h2 {
   padding: 0 6px; /* 패딩 축소 */
   cursor: pointer;
   color: var(--text-mute);
-  font-size: 10px;
-  font-weight: 800;
+  font-size: var(--font-xs);
+  font-weight: var(--weight-bold);
   border-radius: 9px;
   border: none;
   transition: all 0.3s ease;
-  line-height: 1;
+  line-height: var(--lh-tight);
 }
 
 .os-toggle button.active, .lang-toggle button.active {
@@ -423,10 +478,10 @@ h2 {
 }
 
 #daily-title {
-  font-size: 17px;
-  font-weight: 800;
+  font-size: var(--font-lg); /* 17px -> 18px (Normalized) */
+  font-weight: var(--weight-bold);
   margin-bottom: 10px;
-  line-height: 1.4;
+  line-height: var(--lh-base);
   transition: all 0.3s ease;
 }
 
@@ -456,7 +511,7 @@ input[type="text"] {
   border: 1px solid var(--border);
   border-radius: 22px;
   outline: none;
-  font-size: 14px;
+  font-size: var(--font-md); /* 14px -> 15px */
   background: rgba(var(--surface-rgb), 0.75);
   backdrop-filter: blur(12px);
   color: var(--text);
@@ -466,13 +521,13 @@ input[type="text"] {
 
 input[type="text"]:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 5px var(--accent-bg);
+  /* box-shadow는 전역 :focus-visible에서 처리됨 */
   background: var(--surface-opaque);
 }
 
 .nav {
   display: flex;
-  gap: 6px; /* 10px에서 6px로 축소 */
+  gap: var(--space-sm); /* 8px로 정규화 */
   margin: 0;
   align-items: center;
 }
@@ -482,24 +537,24 @@ input[type="text"]:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px; /* 간격 축소 */
+  gap: var(--space-xs); /* 4px */
   cursor: pointer;
-  padding: 12px 4px; /* 좌우 패딩 대폭 축소 */
+  padding: var(--space-md) var(--space-xs); /* 12px 4px */
   border-radius: 20px;
-  font-size: 12px; /* 13px에서 12px로 축소 */
-  font-weight: 800;
+  font-size: var(--font-base);
+  font-weight: var(--weight-bold);
   color: var(--text-sub);
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   background: var(--cat-bg);
   border: 1px solid var(--cat-border);
   /* backdrop-filter: blur(10px); 제거 */
-  line-height: 1;
+  line-height: var(--lh-tight);
   white-space: nowrap; /* 자동 줄바꿈 방지 */
 }
 
 #stats-btn {
   flex: 0 0 auto;
-  font-size: 20px;
+  font-size: var(--font-xl);
   padding: 12px;
   min-width: unset;
 }
@@ -513,7 +568,7 @@ input[type="text"]:focus {
 
 #cat-nav {
   display: flex;
-  gap: 8px;
+  gap: var(--space-sm);
   flex-wrap: wrap;
   margin-bottom: 0;
 }
@@ -562,12 +617,12 @@ input[type="text"]:focus {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-lg);
 }
 
 .tip-item {
   background: var(--surface);
-  padding: 16px 20px;
+  padding: var(--space-lg) var(--space-xl);
   border-radius: 20px; /* 라운딩 살짝 축소하여 모던함 강조 */
   border: 1px solid var(--border);
   position: relative;
@@ -576,7 +631,7 @@ input[type="text"]:focus {
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 8px; /* 내부 요소 간격 조정 */
+  gap: var(--space-sm); /* 8px */
 }
 
 .tip-item:hover {
@@ -614,28 +669,28 @@ input[type="text"]:focus {
   background: var(--bg-high);
   border: 1px solid var(--border);
   border-radius: 8px; /* 배지 디자인 */
-  font-size: 10px;
+  font-size: var(--font-xs);
   color: var(--accent);
-  font-weight: 800;
+  font-weight: var(--weight-bold);
   margin-bottom: 2px;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
 .tip-title {
-  font-weight: 800; /* 너무 무겁지 않게 */
-  font-size: 15px;
+  font-weight: var(--weight-bold); /* 너무 무겁지 않게 */
+  font-size: var(--font-md); /* 15px */
   color: var(--text);
-  line-height: 1.4;
+  line-height: var(--lh-base);
   margin-bottom: 0px;
   padding-right: 64px;
 }
 
 .tip-desc {
-  font-size: 12.5px;
+  font-size: var(--font-base); /* 12.5px -> 13px */
   color: var(--text-sub);
-  line-height: 1.5;
-  font-weight: 400; /* 가독성 강화 */
+  line-height: var(--lh-relaxed);
+  font-weight: var(--weight-regular); /* 가독성 강화 */
 }
 
 .shortcut {
@@ -645,7 +700,7 @@ input[type="text"]:focus {
   padding: 6px 14px;
   border-radius: 12px;
   font-size: 11px;
-  margin-top: 8px;
+  margin-top: var(--space-sm); /* 8px */
   font-weight: 800;
   border: 1px solid var(--border);
   width: fit-content;
@@ -696,12 +751,12 @@ input[type="text"]:focus {
   background: var(--accent);
   color: white;
   border: none;
-  padding: 12px;
+  padding: var(--space-md); /* 12px */
   border-radius: 16px;
-  margin-top: 14px;
+  margin-top: var(--space-md); /* 14px -> 12px (Grid Alignment) */
   cursor: pointer;
-  font-size: 12px;
-  font-weight: 800;
+  font-size: var(--font-base); /* 12px -> 13px */
+  font-weight: var(--weight-bold);
   transition: all 0.3s ease;
   box-shadow: 0 5px 15px rgba(30, 64, 175, 0.2);
 }
@@ -714,11 +769,11 @@ input[type="text"]:focus {
 .empty-msg {
   text-align: center;
   color: var(--text-sub);
-  padding: 60px 20px;
+  padding: 60px var(--space-xl);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-lg); /* 16px */
   animation: fade-in 0.4s ease-out;
 }
 
@@ -736,16 +791,16 @@ input[type="text"]:focus {
 
 .empty-msg h3 {
   margin: 0;
-  font-size: 18px;
-  font-weight: 800;
+  font-size: var(--font-lg); /* 18px */
+  font-weight: var(--weight-bold);
   color: var(--text);
 }
 
 .empty-msg p {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--font-base); /* 13px */
   color: var(--text-mute);
-  line-height: 1.5;
+  line-height: var(--lh-relaxed);
 }
 
 .suggestion-chips {
@@ -761,7 +816,7 @@ input[type="text"]:focus {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 99px;
-  font-size: 12px;
+  font-size: var(--font-base); /* 12px -> 13px */
   font-weight: 700;
   color: var(--accent);
   cursor: pointer;

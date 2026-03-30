@@ -22,7 +22,7 @@ export function applyTheme() {
     const darkBtn = $('#dark-btn');
     if (darkBtn) {
       darkBtn.textContent = "";
-      darkBtn.insertAdjacentHTML('beforeend', store.state.isDark ? ICONS.sun : ICONS.moon);
+      darkBtn.insertAdjacentHTML('beforeend', `<span aria-hidden="true">${store.state.isDark ? ICONS.sun : ICONS.moon}</span>`);
     }
 
     // 2. 브라우저가 스타일 업데이트를 마친 후 애니메이션 복구
@@ -46,13 +46,13 @@ export function applyLanguage() {
   // 헤더 및 내비게이션 아이콘
   if ($('#header-logo')) {
     $('#header-logo').textContent = "";
-    $('#header-logo').insertAdjacentHTML('beforeend', ICONS.logo);
+    $('#header-logo').insertAdjacentHTML('beforeend', `<span aria-hidden="true">${ICONS.logo}</span>`);
   }
 
   const dailyLabel = $('#daily-label');
   if (dailyLabel) {
     dailyLabel.textContent = "";
-    dailyLabel.insertAdjacentHTML('beforeend', `<span class="svg-icon">${ICONS.sparkles}</span>${strings.dailyLabel}`);
+    dailyLabel.insertAdjacentHTML('beforeend', `<span class="svg-icon" aria-hidden="true">${ICONS.sparkles}</span>${strings.dailyLabel}`);
   }
 
   if ($('#tab-all')) $('#tab-all').textContent = strings.allTips;
@@ -60,13 +60,13 @@ export function applyLanguage() {
   const tabFav = $('#tab-fav');
   if (tabFav) {
     tabFav.textContent = "";
-    tabFav.insertAdjacentHTML('beforeend', `<span class="svg-icon" style="margin-right: 4px;">${ICONS.star}</span>${strings.myLibrary}`);
+    tabFav.insertAdjacentHTML('beforeend', `<span class="svg-icon" aria-hidden="true" style="margin-right: 4px;">${ICONS.star}</span>${strings.myLibrary}`);
   }
 
   const tabShortcuts = $('#tab-shortcuts');
   if (tabShortcuts) {
     tabShortcuts.textContent = "";
-    tabShortcuts.insertAdjacentHTML('beforeend', `<span class="svg-icon">${ICONS.rocket}</span>${strings.myShortcuts}`);
+    tabShortcuts.insertAdjacentHTML('beforeend', `<span class="svg-icon" aria-hidden="true">${ICONS.rocket}</span>${strings.myShortcuts}`);
   }
 
   const darkBtn = $('#dark-btn');
@@ -81,13 +81,13 @@ export function applyLanguage() {
     clearBtn.title = strings.clearSearchTitle;
     clearBtn.setAttribute('aria-label', strings.clearSearchTitle);
     clearBtn.textContent = "";
-    clearBtn.insertAdjacentHTML('beforeend', ICONS.close);
+    clearBtn.insertAdjacentHTML('beforeend', `<span aria-hidden="true">${ICONS.close}</span>`);
   }
 
   // 모달 닫기 버튼들 일괄 적용
   $$('.modal-close').forEach(el => {
     el.textContent = "";
-    el.insertAdjacentHTML('beforeend', ICONS.close);
+    el.insertAdjacentHTML('beforeend', `<span aria-hidden="true">${ICONS.close}</span>`);
   });
 
   // 새 매크로 만들기 버튼 아이콘
@@ -367,11 +367,11 @@ export function renderTips(filter = "", { onFavClick, onNoteClick, onShortcutRun
         <div class="tip-title">${title}</div>
         <div class="tip-desc">${desc}</div>
         ${shortcutHTML}
-        <span class="fav-btn" data-id="${tip.id}" aria-label="즐겨찾기">
-          <span class="svg-icon">${isFav ? ICONS.star : ICONS.starOutline}</span>
+        <span class="fav-btn" data-id="${tip.id}" aria-label="${isFav ? strings.favRemove : strings.favAdd}">
+          <span class="svg-icon" aria-hidden="true">${isFav ? ICONS.star : ICONS.starOutline}</span>
         </span>
         <button class="note-btn" data-id="${tip.id}" title="${strings.writeNoteTitle}" aria-label="${strings.writeNoteTitle}">
-          <span class="svg-icon">${ICONS.note}</span>
+          <span class="svg-icon" aria-hidden="true">${ICONS.note}</span>
         </button>
       `);
 

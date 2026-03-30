@@ -89,17 +89,20 @@ graph TD
 ├── popup.html            # 메인 UI 레이아웃
 ├── popup.js              # 엔트리 포인트 및 초기화
 ├── content_script.js     # 자동화 매크로 엔진
-├── check-data.js         # 데이터 무결성 검사 도구 (Node)
+├── scripts/              # [Dev] 프로젝트 관리 및 데이터 검증 스크립트
+│   └── check-data.js     # 데이터 무결성 검사 도구 (Node)
 ├── landing/              # 화이트 테마 홍보 랜딩 페이지
-└── js/
-    ├── store.js          # 중앙 상태 및 지연 로딩 로직
-    ├── actions.js        # 비즈니스 로직 및 이벤트
-    ├── ui.js             # 렌더링 엔진 (Render Limit 및 검색 UI 포함)
-    ├── i18n.js           # 다국어 메시지 및 카테고리
-    ├── data.js           # 139개 팁 데이터베이스
-    ├── utils.js          # 공통 유틸리티 (퍼지 검색 알고리즘 포함)
-    └── constants.js      # 앱 전역 상수 및 ICONS 관리
+├── js/
+│   ├── store.js          # 중앙 상태 및 지연 로딩 로직
+│   ├── actions.js        # 비즈니스 로직 및 이벤트
+│   ├── ui.js             # 렌더링 엔진 (Render Limit 및 검색 UI 포함)
+│   ├── i18n.js           # 다국어 메시지 및 카테고리
+│   ├── data.js           # 139개 팁 데이터베이스
+│   ├── utils.js          # 공통 유틸리티 (퍼지 검색 알고리즘 포함)
+│   └── constants.js      # 앱 전역 상수 및 ICONS 관리
 ├── docs/                 # 프로젝트 문서 및 상업성 분석 보고서
+│   ├── UI_SPACING_GUIDE.md # [Internal] UI 스페이싱 가이드 (4px Grid)
+│   └── UI_TYPOGRAPHY_GUIDE.md # [Internal] UI 타이포그래피 가이드 (Scale & Tokens)
 └── images/               # 아이콘 및 에셋 폴더
 ```
 

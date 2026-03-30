@@ -223,6 +223,16 @@ export async function handleListClick(e) {
 }
 
 /**
+ * 리스트 키보드 통합 핸들러 (Enter/Space 지원)
+ */
+export async function handleListKeydown(e) {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    handleListClick(e);
+  }
+}
+
+/**
  * 관련 팁 클릭 핸들러
  */
 export function handleRelatedItemClick(targetId) {

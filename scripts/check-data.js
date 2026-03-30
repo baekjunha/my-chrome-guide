@@ -9,7 +9,7 @@ const fs = require('fs');
 const path = require('path');
 
 // ── 설정 및 상태 ────────────────────────────────────
-const ROOT = __dirname;
+const ROOT = path.join(__dirname, '..');
 const JS_DIR = path.join(ROOT, 'js');
 const LOCALES_DIR = path.join(ROOT, '_locales');
 const IMAGES_DIR = path.join(ROOT, 'images');

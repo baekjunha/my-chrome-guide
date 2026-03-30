@@ -21,7 +21,8 @@ import {
   startRecording,
   getRenderCallbacks,
   closeModal,
-  handleListClick
+  handleListClick,
+  handleListKeydown
 } from './js/actions.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -218,19 +219,20 @@ function initEventListeners() {
 
   // 리스트 클릭 통합 핸들러 (이벤트 위임)
   $('#list').addEventListener('click', handleListClick);
+  $('#list').addEventListener('keydown', handleListKeydown);
 
-  // [UX 확장] 키보드 내비게이션 (ArrowUp, ArrowDown, Enter)
+  // [UX 확장] 키보드 내비게이션 (ArrowUp, ArrowDown)
   window.addEventListener('keydown', (e) => {
     const active = document.activeElement;
     const isSearchFocused = active.id === 'search';
-    const items = Array.from($$('.tip-item, .widget-card'));
+    const items = Array.from($$('.tip-item, .widget-card, .suggestion-chip, .nav button'));
     
-    if (items.length === 0) return;
+    if (items.length === 0 && !isSearchFocused) return;
 
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       if (isSearchFocused) {
-        items[0].focus();
+        items[0]?.focus();
       } else {
         const idx = items.indexOf(active);
         if (idx < items.length - 1) items[idx + 1].focus();
@@ -243,20 +245,7 @@ function initEventListeners() {
       } else if (idx > 0) {
         items[idx - 1].focus();
       }
-    } else if (e.key === 'Enter') {
-      const activeItem = active.closest('.tip-item, .widget-card');
-      if (activeItem && !isSearchFocused) {
-        // 엔터 키 입력 시 기본 동작: 클릭 이벤트 시뮬레이션
-        activeItem.click(); 
-        
-        // tip-item의 경우 내부의 shortcut이나 go-btn이 우선순위가 있을 수 있음
-        const shortcut = activeItem.querySelector('.shortcut');
-        if (shortcut) shortcut.click();
-        else if (activeItem.classList.contains('tip-item')) {
-           const goBtn = activeItem.querySelector('.go-btn');
-           if (goBtn) goBtn.click();
-        }
-      }
     }
+    // Enter/Space는 요소 자체의 이벤트 리스너(handleListKeydown 등)에서 처리되도록 유도
   });
 }
