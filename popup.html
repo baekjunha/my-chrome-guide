@@ -51,15 +51,17 @@
   <!-- 카테고리 필터 (JS로 생성) -->
   <div id="cat-nav"></div>
 
-  <!-- 추가 버튼 (지름길 탭에서만 보임) -->
-  <div id="shortcut-controls" style="display: none; margin-bottom: 16px; align-items: center; justify-content: space-between;">
-    <button id="add-shortcut-btn" class="go-btn" style="margin-top: 0; background: var(--accent-gold); border-radius: 20px;">+ 새 1클릭 매크로 만들기</button>
-    
-    <div class="macro-data-controls" style="display: flex; gap: 8px;">
-      <button id="macro-export-btn" class="icon-btn" title="매크로 백업 (내보내기)"><span class="svg-icon" style="pointer-events:none;"></span></button>
-      <button id="macro-import-btn" class="icon-btn" title="매크로 복원 (불러오기)"><span class="svg-icon" style="pointer-events:none;"></span></button>
+  <!-- 매크로 전용 컨트롤 영역 (지름길 탭에서만 보임) -->
+  <div id="shortcut-controls" style="display: none; margin-bottom: 16px;">
+    <!-- 작고 미니멀한 우측 정렬 공유 버튼들 -->
+    <div style="display: flex; justify-content: flex-end; gap: 6px; margin-bottom: 8px;">
+      <button id="macro-export-btn" class="icon-btn" style="width: 24px; height: 24px; background: transparent; border: none; box-shadow: none; opacity: 0.5; transition: opacity 0.2s;" title="매크로 내보내기"><span class="svg-icon" style="pointer-events:none;"></span></button>
+      <button id="macro-import-btn" class="icon-btn" style="width: 24px; height: 24px; background: transparent; border: none; box-shadow: none; opacity: 0.5; transition: opacity 0.2s;" title="매크로 불러오기"><span class="svg-icon" style="pointer-events:none;"></span></button>
       <input type="file" id="macro-import-file" accept=".json" style="display: none;">
     </div>
+    
+    <!-- 메인 생성 버튼 (방해받지 않음) -->
+    <button id="add-shortcut-btn" class="go-btn" style="margin-top: 0; box-shadow: 0 4px 12px rgba(30, 64, 175, 0.15);">+ 새 매크로 만들기</button>
   </div>
 
   <!-- 꿀팁 목록 -->
