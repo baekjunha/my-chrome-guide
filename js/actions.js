@@ -22,7 +22,7 @@ export async function handleOSChange(os) {
   await store.update({ currentOS: os });
   applyLanguage();
   const listEl = $('#list');
-  if (listEl) listEl.innerHTML = "";
+  if (listEl) listEl.textContent = "";
   renderTips($('#search').value, getRenderCallbacks());
   showDailyTip();
 }
@@ -38,7 +38,7 @@ export async function handleLangChange(lang) {
   showDailyTip();
   setRandomPlaceholder();
   const listEl = $('#list');
-  if (listEl) listEl.innerHTML = "";
+  if (listEl) listEl.textContent = "";
   renderTips($('#search').value, getRenderCallbacks());
 }
 

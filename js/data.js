@@ -8,7 +8,7 @@ export const tips = [
     desc_en: "Reopens the last closed tab in order.",
     shortcut: { win: "Ctrl + Shift + T", mac: "Cmd + Shift + T" },
     tags: ["탭", "복구", "실수", "되돌리기", "삭제", "방금", "살리기", "되살리기", "실수로닫음", "방금닫은"],
-    tags_en: ["tab", "recovery", "mistake", "undo", "delete", "just now", "back", "reopen", "restore", "bring back", "unclose", "tab recovery"]
+    tags_en: ["tab", "recovery", "mistake", "undo", "delete", "just now", "back", "reopen", "restore", "bring back"]
   },
   {
     id: 2, category: "탭/창",
@@ -18,7 +18,7 @@ export const tips = [
     desc_en: "Quickly opens a new tab.",
     shortcut: { win: "Ctrl + T", mac: "Cmd + T" },
     tags: ["새탭", "탭", "열기", "추가", "플러스", "탭추가"],
-    tags_en: ["new tab", "tab", "open", "add tab", "plus", "newtab", "open tab", "new"]
+    tags_en: ["new tab", "tab", "open", "add tab", "plus", "newtab"]
   },
   {
     id: 3, category: "탭/창",
@@ -27,7 +27,7 @@ export const tips = [
     desc: "작업이 끝난 페이지를 닫고 싶을 때, 현재 활성화된 탭을 종료해줍니다.",
     desc_en: "Closes the currently active tab.",
     shortcut: { win: "Ctrl + W", mac: "Cmd + W" },
-    tags: ["탭닫기", "닫기", "종료", "끄기", "꺼짐", "탭끄기", "닫아"],
+    tags: ["탭닫기", "닫기", "종료", "끄기", "꺼짐", "탭끄기"],
     tags_en: ["close tab", "close", "exit", "quit", "exit tab", "bye"]
   },
   {
@@ -39,7 +39,7 @@ export const tips = [
     shortcut: { win: "Ctrl + Tab / Ctrl + Shift + Tab", mac: "Cmd + Option + → / ← (또는 Ctrl + Tab / Ctrl + Shift + Tab)" },
     shortcut_en: { win: "Ctrl + Tab / Ctrl + Shift + Tab", mac: "Cmd + Option + → / ← (or Ctrl + Tab / Ctrl + Shift + Tab)" },
     tags: ["탭이동", "전환", "다음탭", "이전탭", "바꾸기", "옆으로", "순서", "오른쪽", "왼쪽"],
-    tags_en: ["tab switch", "switch", "next tab", "previous tab", "prev tab", "change", "side", "order", "next", "previous", "move", "right", "left"]
+    tags_en: ["tab switch", "switch", "next tab", "previous tab", "prev tab", "change", "side", "order", "next"]
   },
   {
     id: 5, category: "탭/창",
@@ -49,7 +49,7 @@ export const tips = [
     desc_en: "Instantly jump to tabs 1 through 8. 9 is the last tab.",
     shortcut: { win: "Ctrl + 1 ~ 9", mac: "Cmd + 1 ~ 9" },
     tags: ["탭번호", "탭이동", "빠른탭", "숫자", "바로가기", "점프", "고속이동", "번호이동", "1번", "9번"],
-    tags_en: ["tab number", "go to tab", "quick tab", "number", "shortcut", "jump", "fast move", "go to number", "tab 1", "tab 9", "last tab"]
+    tags_en: ["tab number", "go to tab", "quick tab", "number", "shortcut", "jump", "fast move", "go to number", "tab 1", "tab 9"]
   },
   {
     id: 6, category: "탭/창",
@@ -59,7 +59,7 @@ export const tips = [
     desc_en: "Drag a tab out of the window to detach it.",
     shortcut: { win: "탭 드래그 > 창 밖으로", mac: "탭 드래그 > 창 밖으로" },
     shortcut_en: { win: "Drag tab > out of window", mac: "Drag tab > out of window" },
-    tags: ["분리", "새창", "드래그", "떼기", "따로", "창분리", "꺼내기", "바깥으로"],
+    tags: ["분리", "새창", "드래그", "떼기", "따로", "창분리", "꺼내기"],
     tags_en: ["detach", "new window", "drag", "split", "separate", "move tab", "pull out"]
   },
   {
@@ -79,7 +79,7 @@ export const tips = [
     desc: "방문 기록이나 쿠키를 남기지 않고 안전하게 웹서핑을 할 수 있습니다.",
     desc_en: "Browse the web privately without saving your history. (Note: School, employer, or ISP may still see activity)",
     shortcut: { win: "Ctrl + Shift + N", mac: "Cmd + Shift + N" },
-    tags: ["몰래", "기록", "비밀", "야동", "선물", "사생활", "보안", "숨기기", "남기지않기", "히든", "인코그니토", "기록안남기기", "몰컴"],
+    tags: ["몰래", "기록", "비밀", "야동", "선물", "사생활", "보안", "숨기기"],
     tags_en: ["private", "incognito", "security", "hide", "no history", "hidden", "secret", "privacy"],
     steps: ["단축키를 눌러 새 시크릿 창을 엽니다.", "이제 방문 기록, 쿠키, 사이트 데이터가 기기에 저장되지 않습니다.", "학교, 회사, 인터넷 서비스 제공업체(ISP)는 사용자의 활동을 여전히 볼 수 있으니 주의하세요.", "다운로드한 파일이나 북마크는 유지되니 안심하세요."],
     steps_en: ["Use the shortcut to open a new Incognito window.", "Browsing history, cookies, and site data won't be saved on this device.", "Note: Your school, employer, or ISP might still see your activity.", "Downloaded files and bookmarks are still kept."]
@@ -92,7 +92,7 @@ export const tips = [
     desc_en: "Organize multiple tabs with colors and names to manage them together.",
     shortcut: { win: "탭 우클릭 > 탭을 새 그룹에 추가", mac: "탭 우클릭 > 탭을 새 그룹에 추가" },
     shortcut_en: { win: "Right-click tab > Add tab to new group", mac: "Right-click tab > Add tab to new group" },
-    tags: ["정리", "그룹", "지저분", "복잡", "모으기", "묶기", "정렬", "폴더", "정리정돈", "깔끔하게", "뭉치기"],
+    tags: ["정리", "그룹", "지저분", "복잡", "모으기", "묶기", "정렬", "폴더", "정리정돈"],
     tags_en: ["organize", "group", "messy", "complex", "gather", "clean", "folder", "sort", "tab group"],
     steps: ["그룹화할 탭 하나 또는 여러 개(Ctrl 누른 채 클릭)를 선택하세요.", "선택한 탭 위에서 마우스 우클릭을 하세요.", "'탭을 새 그룹에 추가'를 클릭하세요.", "그룹의 이름과 색상을 지정하여 관리하세요."],
     steps_en: ["Select one or more tabs (Ctrl+Click to select multiples).", "Right-click on the selected tab(s).", "Select 'Add tab to new group'.", "Assign a name and color to the group."]
@@ -106,7 +106,7 @@ export const tips = [
     shortcut: { win: "탭 우클릭 > 사이트 음소거", mac: "탭 우클릭 > 사이트 음소거" },
     shortcut_en: { win: "Right-click tab > Mute site", mac: "Right-click tab > Mute site" },
     tags: ["소리", "시끄러워", "광고", "음소거", "뮤트", "끄기", "조용히", "소리끄기", "조용", "미디어제어"],
-    tags_en: ["sound", "noisy", "ad", "mute", "volume", "off", "quiet", "speaker", "no sound", "silent", "media control"],
+    tags_en: ["sound", "noisy", "ad", "mute", "volume", "off", "quiet", "speaker", "no sound", "silent"],
     steps: ["소리가 나는 탭을 마우스 우클릭 하세요.", "'사이트 음소거'를 클릭하세요.", "다시 소리를 켜려면 같은 방법으로 '사이트 음소거 해제'를 누르세요."],
     steps_en: ["Right-click the tab that is making sound.", "Select 'Mute site'.", "To unmute, follow the same steps and select 'Unmute site'."]
   },
@@ -118,7 +118,7 @@ export const tips = [
     desc_en: "Quickly find a specific tab among many by keyword.",
     shortcut: { win: "Ctrl + Shift + A", mac: "Cmd + Shift + A" },
     tags: ["탭검색", "찾기", "탭찾기", "수많은탭", "탭관리", "검색", "필터"],
-    tags_en: ["tab search", "find", "find tab", "many tabs", "tab management", "search", "filter", "filter tabs"]
+    tags_en: ["tab search", "find", "find tab", "many tabs", "tab management", "search", "filter"]
   },
   // ── 탐색 ──────────────────────────────────────
   {
@@ -129,7 +129,7 @@ export const tips = [
     desc_en: "Go to the beginning or end of the page without scrolling.",
     shortcut: { win: "Home / End", mac: "Cmd + ↑ / Cmd + ↓" },
     tags: ["맨위", "맨아래", "스크롤", "끝", "처음", "끝으로", "시작으로", "가장위", "가장아래"],
-    tags_en: ["top", "bottom", "scroll", "end", "beginning", "up", "down", "home", "end", "page top", "page bottom"]
+    tags_en: ["top", "bottom", "scroll", "end", "beginning", "up", "down", "home", "end"]
   },
   {
     id: 12, category: "탐색",
@@ -149,7 +149,7 @@ export const tips = [
     desc_en: "Navigates forward and backward through your browser history.",
     shortcut: { win: "Alt + ← / Alt + →", mac: "Cmd + [ / Cmd + ] (또는 Cmd + ← / →)" },
     shortcut_en: { win: "Alt + ← / Alt + →", mac: "Cmd + [ / Cmd + ] (or Cmd + ← / →)" },
-    tags: ["뒤로", "앞으로", "이전", "다음", "히스토리", "브라우징", "이전페이지", "다음페이지", "뒤가기", "앞가기"],
+    tags: ["뒤로", "앞으로", "이전", "다음", "히스토리", "브라우징", "이전페이지", "다음페이지", "뒤가기"],
     tags_en: ["back", "forward", "previous", "next", "history", "browsing", "go back", "go forward", "backspace"]
   },
   {
@@ -160,7 +160,7 @@ export const tips = [
     desc_en: "Reloads the current page.",
     shortcut: { win: "F5 또는 Ctrl + R", mac: "Cmd + R" },
     shortcut_en: { win: "F5 or Ctrl + R", mac: "Cmd + R" },
-    tags: ["새로고침", "리로드", "갱신", "다시읽기", "고침", "새로", "페이지새로고침", "다시", "또읽기"],
+    tags: ["새로고침", "리로드", "갱신", "다시읽기", "고침", "새로", "페이지새로고침"],
     tags_en: ["refresh", "reload", "update", "retry", "reload page", "f5", "re-fresh"]
   },
   {
@@ -191,7 +191,7 @@ export const tips = [
     desc: "현재 페이지 내에서 특정 단어나 문장을 빠르게 찾고 싶을 때 사용합니다.",
     desc_en: "Quickly finds a specific word on the current page.",
     shortcut: { win: "Ctrl + F", mac: "Cmd + F" },
-    tags: ["찾기", "검색", "단어", "하이라이트", "문구", "텍스트찾기", "텍스트", "찾아내기", "검색어", "찾어"],
+    tags: ["찾기", "검색", "단어", "하이라이트", "문구", "텍스트찾기", "텍스트", "찾아내기", "검색어"],
     tags_en: ["find", "search", "word", "highlight", "phrase", "find text", "ctrlf", "cmdf", "text"]
   },
   {
@@ -202,7 +202,7 @@ export const tips = [
     desc_en: "Opens a link in a new tab while keeping the current tab.",
     shortcut: { win: "Ctrl + 링크 클릭", mac: "Cmd + 링크 클릭" },
     shortcut_en: { win: "Ctrl + Click link", mac: "Cmd + Click link" },
-    tags: ["링크", "새탭", "열기", "유지", "뒤에서", "몰래열기", "탭추가", "새탭열기", "배경탭"],
+    tags: ["링크", "새탭", "열기", "유지", "뒤에서", "몰래열기", "탭추가", "새탭열기"],
     tags_en: ["link", "new tab", "open", "keep", "link new tab", "background tab", "behind", "new tab link"]
   },
   {
@@ -214,7 +214,7 @@ export const tips = [
     shortcut: { win: "Shift + 링크 클릭", mac: "Shift + 링크 클릭" },
     shortcut_en: { win: "Shift + Click link", mac: "Shift + Click link" },
     tags: ["링크", "새창", "따로열기", "창열기", "새창으로", "바깥으로"],
-    tags_en: ["link", "new window", "shift", "link new window", "window open", "separate", "window link", "open in new window"]
+    tags_en: ["link", "new window", "shift", "link new window", "window open", "separate"]
   },
   {
     id: 20, category: "탐색",
@@ -223,7 +223,7 @@ export const tips = [
     desc: "브라우저의 메뉴바 등을 숨기고 웹페이지 화면만 꽉 차게 보고 싶을 때 사용합니다.",
     desc_en: "Switches the browser to full-screen mode.",
     shortcut: { win: "F11", mac: "Cmd + Ctrl + F" },
-    tags: ["전체화면", "풀스크린", "숨기기", "최대화", "꽉찬화면", "집중모드", "영화모드", "큰화면"],
+    tags: ["전체화면", "풀스크린", "숨기기", "최대화", "꽉찬화면", "집중모드", "영화모드"],
     tags_en: ["fullscreen", "full screen", "hide", "maximize", "movie mode", "focus mode", "big screen"]
   },
   {
@@ -235,7 +235,7 @@ export const tips = [
     shortcut: { win: "주소창 자물쇠 아이콘 클릭", mac: "주소창 자물쇠 아이콘 클릭" },
     shortcut_en: { win: "Click lock icon in address bar", mac: "Click lock icon in address bar" },
     tags: ["보안", "자물쇠", "https", "인증서", "권한", "안전"],
-    tags_en: ["security", "lock", "https", "certificate", "permissions", "safe", "lock icon", "site info"]
+    tags_en: ["security", "lock", "https", "certificate", "permissions", "safe"]
   },
   {
     id: 87, category: "화면",
@@ -246,7 +246,7 @@ export const tips = [
     shortcut: { win: "우클릭 두 번 (유튜브) / 미디어 제어 아이콘", mac: "우클릭 두 번 (유튜브) / 미디어 제어 아이콘" },
     shortcut_en: { win: "Right-click twice (YouTube) / Media icon", mac: "Right-click twice (YouTube) / Media icon" },
     tags: ["동영상", "팝업", "멀티태스킹", "작은화면", "영상보기", "유튜브", "도구", "플로팅"],
-    tags_en: ["pip", "picture in picture", "video", "popup", "multitasking", "small screen", "watch video", "youtube", "tool", "floating"],
+    tags_en: ["pip", "picture in picture", "video", "popup", "multitasking", "small screen", "watch video", "youtube"],
     steps: ["유튜브: 영상 위에서 우클릭을 두 번 해서 브라우저 메뉴를 여세요.", "기타 사이트: 주소창 우측의 '미디어 제어(음표 모양)' 아이콘을 눌러 PIP를 켤 수도 있습니다.", "'PIP 모드'를 선택하면 화면 구석에 작은 창이 생깁니다."],
     steps_en: ["YouTube: Right-click twice on the video to see the browser's context menu.", "Other sites: You can also use the 'Media Control' icon (music note) next to the address bar.", "Select 'Picture in picture' to create a small floating window."]
   },
@@ -259,7 +259,7 @@ export const tips = [
     desc_en: "Zoom in on the screen when the text is too small.",
     shortcut: { win: "Ctrl + + / Ctrl + -", mac: "Cmd + + / Cmd + -" },
     tags: ["확대", "축소", "글씨", "작아", "잘안보여", "치우기", "크게", "작게", "보기", "노안", "돋보기", "보이게"],
-    tags_en: ["zoom", "zoom in", "zoom out", "text", "small", "can't see", "bigger", "smaller", "size", "font size", "view", "magnify", "scale"]
+    tags_en: ["zoom", "zoom in", "zoom out", "text", "small", "can't see", "bigger", "smaller", "size", "font size", "view", "magnify"]
   },
   {
     id: 22, category: "화면",
@@ -268,7 +268,7 @@ export const tips = [
     desc: "확대 또는 축소된 화면 비율을 기본 크기(100%)로 즉시 되돌리고 싶을 때 사용합니다.",
     desc_en: "Resets the zoom level to the default 100%.",
     shortcut: { win: "Ctrl + 0", mac: "Cmd + 0" },
-    tags: ["초기화", "원래대로", "줌", "100", "정상", "기본", "100퍼센트", "원상복구", "되돌리기"],
+    tags: ["초기화", "원래대로", "줌", "100", "정상", "기본", "100퍼센트"],
     tags_en: ["reset", "default", "zoom", "100%", "reset zoom", "normal", "back to normal"]
   },
   {
@@ -279,7 +279,7 @@ export const tips = [
     desc_en: "Removes ads and unnecessary layouts for a comfortable reading experience.",
     shortcut: { win: "도구 더보기 > 읽기 모드", mac: "도구 더보기 > 읽기 모드" },
     shortcut_en: { win: "More tools > Reading mode", mac: "More tools > Reading mode" },
-    tags: ["읽기", "광고제거", "깔끔", "집중", "클린", "리더", "글자만", "포커스", "글보기", "기사보기", "사이드패널"],
+    tags: ["읽기", "광고제거", "깔끔", "집중", "클린", "리더", "글자만", "포커스", "글보기"],
     tags_en: ["read", "remove ads", "clean", "focus", "reader", "reading mode", "text only", "readability", "side panel"],
     steps: ["기사나 블로그 등 텍스트가 많은 페이지에서 실행하세요.", "우측 상단 '더보기(⋮)' > '도구 더보기' > '읽기 모드'를 선택하세요.", "사이드바에 본문만 깔끔하게 추출되어 나타납니다.", "글꼴 크기, 배경색, 줄 간격 등을 취향껏 조절해 보세요."],
     steps_en: ["Open a page with lots of text like an article or blog.", "Go to 'More(⋮)' > 'More Tools' > 'Reading Mode'.", "The text will appear cleanly extracted in the sidebar.", "Adjust font size, background color, and line spacing to your liking."]
@@ -292,7 +292,7 @@ export const tips = [
     desc: "나중에 다시 방문하고 싶은 페이지를 북마크에 저장하여 쉽게 찾아볼 수 있습니다.",
     desc_en: "Save the current page to your bookmarks.",
     shortcut: { win: "Ctrl + D", mac: "Cmd + D" },
-    tags: ["북마크", "즐겨찾기", "저장", "별", "저장하기", "찜", "기억", "나중에보기", "북마클", "즐겨찾기추가"],
+    tags: ["북마크", "즐겨찾기", "저장", "별", "저장하기", "찜", "기억", "나중에보기"],
     tags_en: ["bookmark", "favorite", "save", "star", "add bookmark", "remember", "read later", "add fav"]
   },
   {
@@ -303,7 +303,7 @@ export const tips = [
     desc_en: "Saves all open tabs into a single folder.",
     shortcut: { win: "Ctrl + Shift + D", mac: "Cmd + Shift + D" },
     tags: ["전체북마크", "다저장", "탭저장", "폴더저장", "일괄저장", "전체저장", "모두저장", "탭백업", "몽땅저장"],
-    tags_en: ["bookmark all", "save all tabs", "tab save", "all tabs", "folder save", "batch save", "save all", "tab backup", "backup", "all favorites"]
+    tags_en: ["bookmark all", "save all tabs", "tab save", "all tabs", "folder save", "batch save", "save all", "tab backup", "backup"]
   },
   {
     id: 26, category: "북마크",
@@ -312,7 +312,7 @@ export const tips = [
     desc: "자주 방문하는 사이트에 빠르게 접속하거나, 화면을 넓게 쓰기 위해 북마크 바를 켜고 끌 수 있습니다.",
     desc_en: "Toggles the visibility of the bookmarks bar below the address bar.",
     shortcut: { win: "Ctrl + Shift + B", mac: "Cmd + Shift + B" },
-    tags: ["북마크바", "즐겨찾기바", "보이기", "숨기기", "메뉴바", "바", "토글", "즐찾바", "막대", "툴바"],
+    tags: ["북마크바", "즐겨찾기바", "보이기", "숨기기", "메뉴바", "바", "토글", "즐찾바", "막대"],
     tags_en: ["bookmark bar", "favorites bar", "show", "hide", "menu bar", "bar", "toggle", "toolbar", "show bookmark bar"]
   },
   {
@@ -323,7 +323,7 @@ export const tips = [
     desc_en: "See a complete list of all the pages you have visited.",
     shortcut: { win: "Ctrl + H", mac: "Cmd + Y" },
     link: "chrome://history",
-    tags: ["히스토리", "기록", "방문", "기록보기", "기록찾기", "어디갔지", "내역", "갔던곳", "봤던것", "방문링크", "어제본거", "오늘본거", "로그"],
+    tags: ["히스토리", "기록", "방문", "기록보기", "기록찾기", "어디갔지", "내역", "갔던곳"],
     tags_en: ["history", "record", "visit", "view history", "find history", "browsing history", "past", "log"]
   },
   {
@@ -334,7 +334,7 @@ export const tips = [
     desc_en: "Check the list of downloaded files.",
     shortcut: { win: "Ctrl + J", mac: "Cmd + Shift + J" },
     link: "chrome://downloads",
-    tags: ["다운로드", "다운", "파일", "받은파일", "목록", "파일함", "받기", "내려받기", "받은거", "저장된파일", "파일목록", "겟"],
+    tags: ["다운로드", "다운", "파일", "받은파일", "목록", "파일함", "받기"],
     tags_en: ["download", "file", "downloaded file", "list", "downloads", "get", "get file"]
   },
   {
@@ -355,7 +355,7 @@ export const tips = [
     desc: "페이지 내의 모든 텍스트나 요소를 한꺼번에 선택하여 복사하고 싶을 때 사용합니다.",
     desc_en: "Selects all text on the page.",
     shortcut: { win: "Ctrl + A", mac: "Cmd + A" },
-    tags: ["전체", "선택", "복사", "몽땅", "모두", "전부", "다하기", "전부다"],
+    tags: ["전체", "선택", "복사", "몽땅", "모두", "전부", "다하기"],
     tags_en: ["select all", "all", "copy", "ctrl a", "cmd a", "every", "selectall"]
   },
   {
@@ -376,7 +376,7 @@ export const tips = [
     desc_en: "Pastes as plain text without any font or color styling.",
     shortcut: { win: "Ctrl + Shift + V", mac: "Cmd + Shift + V (또는 Cmd + Option + Shift + V)" },
     shortcut_en: { win: "Ctrl + Shift + V", mac: "Cmd + Shift + V (or Cmd + Option + Shift + V)" },
-    tags: ["서식없이", "붙여넣기", "깔끔", "텍스트만", "글자만", "서식제거", "걍붙이기", "스타일없이", "텍스트로만", "글씨만", "단순붙여넣기"],
+    tags: ["서식없이", "붙여넣기", "깔끔", "텍스트만", "글자만", "서식제거", "걍붙이기", "스타일없이"],
     tags_en: ["paste without formatting", "plain text", "paste", "clean", "plain paste", "text only", "clean paste", "remove style"]
   },
   {
@@ -399,7 +399,7 @@ export const tips = [
     shortcut: { win: "F12 또는 Ctrl + Shift + I", mac: "Cmd + Option + I" },
     shortcut_en: { win: "F12 or Ctrl + Shift + I", mac: "Cmd + Option + I" },
     tags: ["개발자", "콘솔", "디버그", "코딩", "공부", "검사기"],
-    tags_en: ["developer", "devtools", "console", "debug", "dev", "debugger", "inspector", "f12", "coding", "study", "developer tools", "web inspector"]
+    tags_en: ["developer", "devtools", "console", "debug", "dev", "debugger"]
   },
   {
     id: 34, category: "개발자",
@@ -433,7 +433,7 @@ export const tips = [
     desc_en: "View the full HTML source code of the current page.",
     shortcut: { win: "Ctrl + U", mac: "Cmd + Option + U" },
     tags: ["소스", "HTML", "코드", "뷰소스", "원문", "코딩보기", "원본보기", "프로그래밍"],
-    tags_en: ["source", "HTML", "code", "view source", "source code", "page source", "ctrl u", "programming", "raw data"]
+    tags_en: ["source", "HTML", "code", "view source", "source code", "page source", "ctrl u", "programming"]
   },
   {
     id: 37, category: "개발자",
@@ -458,7 +458,7 @@ export const tips = [
     shortcut: { win: "chrome://settings 입력", mac: "Cmd + , (쉼표)" },
     shortcut_en: { win: "Type chrome://settings", mac: "Cmd + , (comma)" },
     link: "chrome://settings",
-    tags: ["설정", "세팅", "옵션", "환경설정", "구성", "셋팅", "제어판", "관리", "크롬설정", "설정창", "환경"],
+    tags: ["설정", "세팅", "옵션", "환경설정", "구성", "셋팅", "제어판"],
     tags_en: ["settings", "option", "configuration", "config", "chrome settings", "control panel", "manage"]
   },
   {
@@ -484,7 +484,7 @@ export const tips = [
     shortcut: { win: "설정 > 비밀번호", mac: "설정 > 비밀번호" },
     shortcut_en: { win: "Settings > Passwords", mac: "Settings > Passwords" },
     link: "chrome://password-manager",
-    tags: ["비번", "암호", "로그인", "자동완성", "계정", "로그인 정보", "패스워드", "비밀번호", "키체인", "저장된비번"],
+    tags: ["비번", "암호", "로그인", "자동완성", "계정", "로그인 정보", "패스워드", "비밀번호", "키체인"],
     tags_en: ["password", "login", "autocomplete", "account", "manager", "login info", "keychain", "saved password", "pass"]
   },
   {
@@ -507,7 +507,7 @@ export const tips = [
     shortcut: { win: "chrome://extensions 입력", mac: "chrome://extensions 입력" },
     shortcut_en: { win: "Type chrome://extensions", mac: "Type chrome://extensions" },
     link: "chrome://extensions",
-    tags: ["확장", "플러그인", "관리", "앱", "추가기능", "프러그인", "익스텐션", "끄기", "켜기", "삭제"],
+    tags: ["확장", "플러그인", "관리", "앱", "추가기능", "프러그인", "익스텐션", "끄기", "켜기"],
     tags_en: ["extension", "plugin", "manage", "app", "add-on", "addons", "disable", "enable", "remove"]
   },
   {
@@ -517,7 +517,7 @@ export const tips = [
     desc: "현재 웹페이지를 종이로 인쇄하거나 PDF 파일로 변환하여 저장할 수 있습니다.",
     desc_en: "Print the current page or save it as a PDF.",
     shortcut: { win: "Ctrl + P", mac: "Cmd + P" },
-    tags: ["인쇄", "PDF", "저장", "프린트", "뽑기", "종이", "피디에프", "프린터", "출력", "인쇄하기", "내보내기"],
+    tags: ["인쇄", "PDF", "저장", "프린트", "뽑기", "종이", "피디에프", "프린터"],
     tags_en: ["print", "PDF", "save", "paper", "save as pdf", "printer", "output", "export"]
   },
   {
@@ -527,7 +527,7 @@ export const tips = [
     desc: "현재 페이지의 내용을 오프라인에서도 볼 수 있도록 HTML 파일로 저장합니다.",
     desc_en: "Saves the current page as an HTML file on your PC.",
     shortcut: { win: "Ctrl + S", mac: "Cmd + S" },
-    tags: ["저장", "다운로드", "HTML", "파일", "내려받기", "다운", "페이지저장", "문서저장", "백업", "다운받기"],
+    tags: ["저장", "다운로드", "HTML", "파일", "내려받기", "다운", "페이지저장", "문서저장"],
     tags_en: ["save", "download", "HTML", "file", "page save", "ctrl s", "save as", "backup"]
   },
   {
@@ -538,7 +538,7 @@ export const tips = [
     desc_en: "Clear browsing data to resolve errors and protect privacy. (Note: You will be logged out of most sites)",
     shortcut: { win: "Ctrl + Shift + Delete", mac: "Cmd + Shift + Backspace" },
     link: "chrome://settings/clearBrowserData",
-    tags: ["캐시", "쿠키", "삭제", "초기화", "오류", "느려", "지우기", "탈퇴", "삭제하기", "인터넷 기록 삭제", "방문기록 삭제", "클리어", "포맷"],
+    tags: ["캐시", "쿠키", "삭제", "초기화", "오류", "느려", "지우기", "탈퇴", "삭제하기", "인터넷 기록 삭제"],
     tags_en: ["cache", "cookie", "delete", "clear", "error", "slow", "clear cache", "cleaning", "clear browsing data", "format"],
     steps: {
       win: ["단축키 Ctrl + Shift + Delete를 누르세요.", "모든 사이트에서 로그아웃되므로 중요한 작업은 저장 후 진행하세요.", "기간을 '전체 기간'으로 선택하세요.", "'쿠키 및 기타 사이트 데이터', '캐시된 이미지 및 파일'을 체크하고 [데이터 삭제]를 누릅니다."],
@@ -560,7 +560,7 @@ export const tips = [
     shortcut_en: { win: "Type chrome://dino", mac: "Type chrome://dino" },
     link: "chrome://dino",
     tags: ["공룡", "게임", "심심해", "오프라인", "점프", "런닝", "공룡게임", "인터넷끊김", "크롬게임"],
-    tags_en: ["dino", "game", "bored", "offline", "dinosaur", "jump", "running", "t-rex", "chrome game", "run", "jump game"]
+    tags_en: ["dino", "game", "bored", "offline", "dinosaur", "jump", "running", "t-rex", "chrome game"]
   },
   {
     id: 47, category: "이스터에그",
@@ -569,7 +569,7 @@ export const tips = [
     desc: "공룡 게임에서 장애물에 부딪혀도 게임이 끝나지 않도록 설정하여 높은 점수를 얻을 수 있습니다.",
     desc_en: "Makes the dinosaur pass through obstacles. To revert, simply press F5 (Reload).",
     shortcut: { win: "Runner.prototype.gameOver = function(){}", mac: "Runner.prototype.gameOver = function(){}" },
-    tags: ["공룡", "치트", "무적", "해킹", "점수", "짱", "일등", "치트키", "무적모드", "코드", "공룡치트"],
+    tags: ["공룡", "치트", "무적", "해킹", "점수", "짱", "일등", "치트키"],
     tags_en: ["dino", "cheat", "invincible", "hack", "score", "god mode", "code", "console cheat"],
     steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "chrome://dino 접속 후 'Console' 탭에 코드를 입력하세요.", "무적을 해제하고 원래대로 돌리려면 F5키를 눌러 페이지를 새로고침하면 됩니다."],
     steps_en: ["First, open Developer Tools by pressing F12 (or Cmd + Option + I).", "Go to chrome://dino and enter the code in 'Console'.", "To disable the cheat and go back to normal, press F5 to reload the page."]
@@ -582,7 +582,7 @@ export const tips = [
     desc_en: "Type this in the Google search bar and the screen will do a barrel roll.",
     shortcut: { win: "구글 검색창(google.com)에 'do a barrel roll' 검색", mac: "구글 검색창(google.com)에 'do a barrel roll' 검색" },
     shortcut_en: { win: "Search 'do a barrel roll' on Google", mac: "Search 'do a barrel roll' on Google" },
-    tags: ["회전", "돌아", "신기", "배럴롤", "빙글", "360", "구르기", "한바퀴", "돌리기", "빙글빙글"],
+    tags: ["회전", "돌아", "신기", "배럴롤", "빙글", "360", "구르기", "한바퀴"],
     tags_en: ["rotation", "spin", "amazing", "barrel roll", "rotate", "360", "roll", "do a barrel roll"]
   },
   {
@@ -593,7 +593,7 @@ export const tips = [
     desc_en: "The screen will tilt slightly to the right.",
     shortcut: { win: "구글 검색창(google.com)에 'askew' 검색", mac: "구글 검색창(google.com)에 'askew' 검색" },
     shortcut_en: { win: "Search 'askew' on Google", mac: "Search 'askew' on Google" },
-    tags: ["기울기", "삐딱", "이상해", "비뚤", "기우뚱", "사선", "삐딱하게", "기울어짐", "기울"],
+    tags: ["기울기", "삐딱", "이상해", "비뚤", "기우뚱"],
     tags_en: ["tilt", "askew", "slanted", "crooked", "skew"]
   },
   {
@@ -615,7 +615,7 @@ export const tips = [
     desc_en: "See the retro design of Google from when it was first created.",
     shortcut: { win: "구글 검색창(google.com)에 'google in 1998' 검색", mac: "구글 검색창(google.com)에 'google in 1998' 검색" },
     shortcut_en: { win: "Search 'google in 1998' on Google", mac: "Search 'google in 1998' on Google" },
-    tags: ["레트로", "과거", "옛날", "추억", "1998", "구글역사", "처음", "탄생", "초기", "초창기", "레트로구글"],
+    tags: ["레트로", "과거", "옛날", "추억", "1998", "구글역사", "처음"],
     tags_en: ["retro", "past", "old", "memory", "google in 1998", "vintage", "classic"]
   },
   {
@@ -626,7 +626,7 @@ export const tips = [
     desc_en: "Fall into a recursive loop where Google keeps asking the same question.",
     shortcut: { win: "구글 검색창(google.com)에 'recursion' 검색", mac: "구글 검색창(google.com)에 'recursion' 검색" },
     shortcut_en: { win: "Search 'recursion' on Google", mac: "Search 'recursion' on Google" },
-    tags: ["재귀", "반복", "무한", "도돌이표", "무한반복", "되풀이", "구글재귀", "늪", "끝나지않는"],
+    tags: ["재귀", "반복", "무한", "도돌이표", "무한반복", "되풀이"],
     tags_en: ["recursion", "repeat", "infinite", "loop", "endless", "recursion loop"]
   },
   {
@@ -637,7 +637,7 @@ export const tips = [
     desc_en: "Click the Katamari ball icon in the search result's info card, then use the arrow keys to roll up the text!",
     shortcut: { win: "구글 검색창(google.com)에 'katamari' 검색 > 아이콘 클릭", mac: "구글 검색창(google.com)에 'katamari' 검색 > 아이콘 클릭" },
     shortcut_en: { win: "Search 'katamari' on Google > Click icon", mac: "Search 'katamari' on Google > Click icon" },
-    tags: ["괴혼", "뭉치기", "굴리기", "게임", "카타마리", "블록", "굴려", "글자뭉치기", "공굴리기"],
+    tags: ["괴혼", "뭉치기", "굴리기", "게임", "카타마리", "블록", "굴려"],
     tags_en: ["katamari", "roll up", "roll", "game", "ball", "rolling", "katamari damacy"],
     steps: ["구글 검색창(google.com)에서 'katamari'를 검색하세요. (주소창이 아닌 검색창에 입력해야 합니다)", "상단/우측의 정보 카드에 있는 '괴혼 공' 아이콘을 클릭하세요.", "화면에 나타난 공을 키보드 방향키로 움직여 보세요.", "검색 결과에 있는 글자와 이미지들을 공으로 뭉쳐서 굴릴 수 있습니다!"],
     steps_en: ["Search for 'katamari' in the Google search box (not the address bar).", "Click the 'Katamari ball' icon in the info card.", "Use the arrow keys to move the ball on the screen.", "Roll over text and images to stick them to your ball!"]
@@ -650,7 +650,7 @@ export const tips = [
     desc_en: "Press the paw icon in the search result's info card and click on the screen. Cute paw prints will appear.",
     shortcut: { win: "구글 검색창(google.com)에 '강아지' 검색 > 발바닥 클릭", mac: "구글 검색창(google.com)에 '강아지' 검색 > 발바닥 클릭" },
     shortcut_en: { win: "Search 'dog' on Google > Click paw", mac: "Search 'dog' on Google > Click paw" },
-    tags: ["강아지", "개", "발자국", "귀여워", "동물", "멍멍", "개소리", "멍멍이", "댕댕이", "도그", "애견", "왈왈"],
+    tags: ["강아지", "개", "발자국", "귀여워", "동물", "멍멍"],
     tags_en: ["dog", "puppy", "paw print", "cute", "animal", "bark"]
   },
   {
@@ -661,7 +661,7 @@ export const tips = [
     desc_en: "Press the cat paw icon in the info card, and each click will make a meow sound and leave a paw print.",
     shortcut: { win: "구글 검색창(google.com)에 '고양이' 검색 > 발바닥 클릭", mac: "구글 검색창(google.com)에 '고양이' 검색 > 발바닥 클릭" },
     shortcut_en: { win: "Search 'cat' on Google > Click paw", mac: "Search 'cat' on Google > Click paw" },
-    tags: ["고양이", "냥이", "발자국", "귀여워", "야옹", "발바닥", "묘", "냐옹", "미야오", "나비", "애묘", "캣"],
+    tags: ["고양이", "냥이", "발자국", "귀여워", "야옹", "발바닥"],
     tags_en: ["cat", "kitty", "paw print", "cute", "meow", "paw"],
     steps: ["구글 검색창(google.com)에서 '고양이'(또는 'cat')를 검색하세요. (주소창이 아닌 검색창에 입력해야 합니다)", "정보 카드에 있는 주황색 고양이 발바닥 버튼을 클릭하세요.", "이제 화면 어디든 클릭해 보세요. 귀여운 고양이 손이 나타나 발자국을 남깁니다.", "화면 하단의 [X]를 누르거나 ESC 키를 누르면 원래대로 돌아옵니다."],
     steps_en: ["Search for 'cat' in the Google search box (not the address bar).", "Click the orange paw print button in the info card.", "Now click anywhere on the screen for a cute meow and a paw print.", "Press [X] at the bottom or the ESC key to clear the screen."]
@@ -675,7 +675,7 @@ export const tips = [
     shortcut: { win: "구글 검색창(google.com)에 'the answer to life...' 검색", mac: "구글 검색창(google.com)에 'the answer to life...' 검색" },
     shortcut_en: { win: "Search 'the answer to life...' on Google", mac: "Search 'the answer to life...' on Google" },
     tags: ["우주", "답", "42", "계산기", "궁극", "은하수", "더글러스", "히치하이커", "42의비밀"],
-    tags_en: ["universe", "answer", "42", "calculator", "ultimate", "galaxy", "douglas adams", "hitchhiker", "life", "everything"]
+    tags_en: ["universe", "answer", "42", "calculator", "ultimate", "galaxy", "douglas adams", "hitchhiker", "life"]
   },
   {
     id: 57, category: "시스템",
@@ -710,7 +710,7 @@ export const tips = [
     link: "chrome://net-internals",
     shortcut: { win: "chrome://net-internals", mac: "chrome://net-internals" },
     tags: ["네트워크", "통신", "패킷", "캡처", "트래킹"],
-    tags_en: ["network", "communication", "packet", "capture", "tracking", "net", "debug"]
+    tags_en: ["network", "communication", "packet", "capture", "tracking"]
   },
   {
     id: 62, category: "시스템",
@@ -721,7 +721,7 @@ export const tips = [
     link: "chrome://discards",
     shortcut: { win: "chrome://discards", mac: "chrome://discards" },
     tags: ["메모리", "점유율", "램", "확보", "탭중지", "슬립", "최적화"],
-    tags_en: ["memory", "usage", "RAM", "free up", "tab suspend", "sleep", "discard", "optimization"]
+    tags_en: ["memory", "usage", "RAM", "free up", "tab suspend", "sleep", "discard"]
   },
   // ── 주소창 / 검색 (Omnibox) ──────────────────
   {
@@ -733,7 +733,7 @@ export const tips = [
     shortcut: { win: "주소창 명령어 입력", mac: "주소창 명령어 입력" },
     shortcut_en: { win: "Type command in address bar", mac: "Type command in address bar" },
     tags: ["액션", "작업", "주소창", "옴니박스", "비밀번호관리", "쿠키삭제", "설정열기", "명령어", "바로실행"],
-    tags_en: ["chrome actions", "action", "task", "address bar", "omnibox", "manage passwords", "clear cookies", "open settings", "command", "run directly"],
+    tags_en: ["chrome actions", "action", "task", "address bar", "omnibox", "manage passwords", "clear cookies", "open settings", "command"],
     steps: {
       win: ["주소창을 클릭하거나 단축키(Ctrl+L)를 누릅니다.", "'비밀번호', '기록 삭제', '번역' 등 실행하고 싶은 작업을 입력하세요.", "검색어 아래에 나타나는 [비밀번호 관리], [인터넷 사용 기록 삭제] 등의 버튼을 클릭합니다."],
       mac: ["주소창을 클릭하거나 단축키(Cmd+L)를 누릅니다.", "'비밀번호', '기록 삭제', '번역' 등 실행하고 싶은 작업을 입력하세요.", "검색어 아래에 나타나는 [비밀번호 관리], [인터넷 사용 기록 삭제] 등의 버튼을 클릭합니다."]
@@ -751,7 +751,7 @@ export const tips = [
     desc_en: "Type @tabs, @bookmarks, or @history in the address bar to quickly search within that specific area.",
     shortcut: { win: "@탭 [검색어]", mac: "@탭 [검색어]" },
     shortcut_en: { win: "@tabs [keyword]", mac: "@tabs [keyword]" },
-    tags: ["탭검색", "북마크검색", "기록검색", "필터", "@탭", "@북마크", "@기록", "옴니박스", "주소창", "검색필터", "특정검색"],
+    tags: ["탭검색", "북마크검색", "기록검색", "필터", "@탭", "@북마크", "@기록", "옴니박스", "주소창", "검색필터"],
     tags_en: ["tab search", "bookmark search", "history search", "filter", "@tabs", "@bookmarks", "@history", "omnibox", "address bar", "search filter"],
     steps: ["주소창에 @를 입력하거나, @탭, @북마크, @기록 중 하나를 입력합니다.", "Space 키 또는 Tab 키를 누르면 해당 카테고리 검색 모드로 전환됩니다.", "찾고 있는 키워드를 입력해 해당 영역에서만 검색 결과를 확인하세요."],
     steps_en: ["Type @ in the address bar, or type @tabs, @bookmarks, or @history.", "Press Space or Tab to enter the specific search mode.", "Type your keyword to find results only within that category."]
@@ -766,7 +766,7 @@ export const tips = [
     shortcut_en: { win: "[keyword] + Tab", mac: "[keyword] + Tab" },
     link: "chrome://settings/searchEngines",
     tags: ["검색엔진", "단축키", "유튜브검색", "사이트검색", "커스텀", "주소창검색", "빠른검색", "커스텀검색"],
-    tags_en: ["search engine", "shortcut", "youtube search", "site search", "custom", "yt", "so", "omnibox search", "quick search", "custom search"],
+    tags_en: ["search engine", "shortcut", "youtube search", "site search", "custom", "yt", "so", "omnibox search"],
     steps: ["주소창에 chrome://settings/searchEngines를 입력하세요.", "'사이트 검색' 항목에서 [추가] 버튼을 클릭하세요.", "'바로가기' 칸에 @커스텀키워드(예: @n)를 입력하세요.", "'URL' 칸에 검색 페이지 URL(%s 포함)을 입력하세요.", "이제 주소창에 @n 입력 후 탭(Tab)키를 누르면 해당 사이트에서 즉시 검색됩니다."],
     steps_en: ["Type chrome://settings/searchEngines in the address bar.", "Click the [Add] button under 'Site search'.", "Enter a keyword (e.g., @n) in the 'Shortcut' field.", "Enter the search result URL with %s in the 'URL' field.", "Now type @n and press Tab in the address bar to search that site instantly."]
   },
@@ -821,7 +821,7 @@ export const tips = [
     shortcut: { win: "프로필 아이콘 > 게스트", mac: "프로필 아이콘 > 게스트" },
     shortcut_en: { win: "Profile icon > Guest", mac: "Profile icon > Guest" },
     tags: ["게스트", "손님", "임시사용", "보안", "사생활보호", "분리", "다른사람", "빌려주기", "공용"],
-    tags_en: ["guest", "visitor", "guest mode", "temporary use", "security", "privacy", "separate", "other people", "lend", "public"]
+    tags_en: ["guest", "visitor", "guest mode", "temporary use", "security", "privacy", "separate", "other people", "lend"]
   },
   // ── 추가 이스터에그 / 게임 ──────────────────
   {
@@ -832,7 +832,7 @@ export const tips = [
     desc_en: "Enjoy the classic masterpiece Pac-Man instantly from Google search results.",
     shortcut: { win: "구글 검색창(google.com)에 'pac-man' 검색", mac: "구글 검색창(google.com)에 'pac-man' 검색" },
     shortcut_en: { win: "Search 'pac-man' on Google", mac: "Search 'pac-man' on Google" },
-    tags: ["팩맨", "게임", "아케이드", "심심할때", "구글게임", "오락실", "레트로게임", "추억"],
+    tags: ["팩맨", "게임", "아케이드", "심심할때", "구글게임", "오락실", "레트로게임"],
     tags_en: ["pac-man", "game", "arcade", "bored", "google game", "retro game", "classic"]
   },
   {
@@ -843,7 +843,7 @@ export const tips = [
     desc_en: "Start the nostalgic single-player card game, Solitaire, right from the search bar.",
     shortcut: { win: "구글 검색창(google.com)에 'solitaire' 검색", mac: "구글 검색창(google.com)에 'solitaire' 검색" },
     shortcut_en: { win: "Search 'solitaire' on Google", mac: "Search 'solitaire' on Google" },
-    tags: ["솔리테어", "카드게임", "혼자하기", "카드", "심심해", "게임", "구글게임", "트럼프", "클론다이크"],
+    tags: ["솔리테어", "카드게임", "혼자하기", "카드", "심심해", "게임", "구글게임", "트럼프"],
     tags_en: ["solitaire", "card game", "single player", "card", "bored", "game", "google game", "klondike"]
   },
   {
@@ -865,7 +865,7 @@ export const tips = [
     desc_en: "Play the classic 'Snake Game' directly in the search results window.",
     shortcut: { win: "'snake game' 검색", mac: "'snake game' 검색" },
     shortcut_en: { win: "Search 'snake game'", mac: "Search 'snake game'" },
-    tags: ["스네이크", "뱀게임", "게임", "고전게임", "심심할때", "구글게임", "꼬리잡기"],
+    tags: ["스네이크", "뱀게임", "게임", "고전게임", "심심할때", "구글게임"],
     tags_en: ["snake", "snake game", "game", "classic game", "bored", "google game"]
   },
   {
@@ -876,7 +876,7 @@ export const tips = [
     desc_en: "Click the question mark box in the knowledge card to hear a familiar sound along with a coin.",
     shortcut: { win: "'super mario bros' 검색", mac: "'super mario bros' 검색" },
     shortcut_en: { win: "Search 'super mario bros'", mac: "Search 'super mario bros'" },
-    tags: ["슈퍼마리오", "마리오", "닌텐도", "게임", "동전", "코인"],
+    tags: ["슈퍼마리오", "마리오", "닌텐도", "게임", "동전"],
     tags_en: ["super mario", "mario", "nintendo", "game", "coin"]
   },
   {
@@ -888,7 +888,7 @@ export const tips = [
     shortcut: { win: "'marquee html' 검색", mac: "'marquee html' 검색" },
     shortcut_en: { win: "Search 'marquee html'", mac: "Search 'marquee html'" },
     tags: ["흐르는", "html", "옛날", "레트로", "움직이는", "텍스트"],
-    tags_en: ["marquee", "scrolling", "html", "old", "retro", "moving", "text", "scrolling text"]
+    tags_en: ["marquee", "scrolling", "html", "old", "retro", "moving"]
   },
   {
     id: 92, category: "이스터에그",
@@ -921,7 +921,7 @@ export const tips = [
     shortcut: { win: "'roll a die' 또는 'flip a coin' 검색", mac: "'roll a die' 또는 'flip a coin' 검색" },
     shortcut_en: { win: "Search 'roll a die' or 'flip a coin'", mac: "Search 'roll a die' or 'flip a coin'" },
     tags: ["주사위", "동전", "결정", "선택", "운", "도구", "랜덤"],
-    tags_en: ["die", "coin", "decision", "choice", "luck", "roll a die", "flip a coin", "tool", "random"]
+    tags_en: ["die", "coin", "decision", "choice", "luck", "roll a die", "flip a coin"]
   },
   {
     id: 95, category: "이스터에그",
@@ -964,7 +964,7 @@ export const tips = [
     desc_en: "Search for specific idols like IVE or BLACKPINK and click the icon that appears to see a spectacular cheering effect.",
     shortcut: { win: "'아이브' 또는 '블랙핑크' 검색", mac: "'아이브' 또는 '블랙핑크' 검색" },
     shortcut_en: { win: "Search 'ive' or 'blackpink'", mac: "Search 'ive' or 'blackpink'" },
-    tags: ["아이브", "블랙핑크", "kpop", "아이돌", "불꽃놀이", "응원", "팬심", "덕질"],
+    tags: ["아이브", "블랙핑크", "kpop", "아이돌", "불꽃놀이", "응원", "팬심"],
     tags_en: ["ive", "blackpink", "kpop", "idol", "fireworks", "cheer", "fandom"]
   },
   {
@@ -976,7 +976,7 @@ export const tips = [
     shortcut: { win: "'metronome' 검색", mac: "'metronome' 검색" },
     shortcut_en: { win: "Search 'metronome'", mac: "Search 'metronome'" },
     tags: ["메트로놈", "박자", "음악", "도구", "리듬", "템포"],
-    tags_en: ["metronome", "beat", "music", "bpm", "tool", "rhythm", "tempo"]
+    tags_en: ["metronome", "beat", "music", "bpm", "tool", "rhythm"]
   },
   {
     id: 101, category: "이스터에그",
@@ -997,7 +997,7 @@ export const tips = [
     desc_en: "Generates a random number within a specified range.",
     shortcut: { win: "'random number generator' 검색", mac: "'random number generator' 검색" },
     shortcut_en: { win: "Search 'random number generator'", mac: "Search 'random number generator'" },
-    tags: ["난수", "랜덤", "무작위", "숫자", "생성기", "도구", "뽑기"],
+    tags: ["난수", "랜덤", "무작위", "숫자", "생성기", "도구"],
     tags_en: ["random number", "random", "number", "generator", "tool", "draw"]
   },
   {
@@ -1009,7 +1009,7 @@ export const tips = [
     shortcut: { win: "'color picker' 검색", mac: "'color picker' 검색" },
     shortcut_en: { win: "Search 'color picker'", mac: "Search 'color picker'" },
     tags: ["컬러피커", "색상", "코드", "디자인", "도구", "색상선택"],
-    tags_en: ["color picker", "color", "code", "hex", "rgb", "design", "tool", "color selection"]
+    tags_en: ["color picker", "color", "code", "hex", "rgb", "design"]
   },
   {
     id: 104, category: "이스터에그",
@@ -1031,7 +1031,7 @@ export const tips = [
     shortcut: { win: "'aurora borealis' 검색", mac: "'aurora borealis' 검색" },
     shortcut_en: { win: "Search 'aurora borealis'", mac: "Search 'aurora borealis'" },
     tags: ["오로라", "북극광", "애니메이션", "밤하늘", "별똥별", "자연"],
-    tags_en: ["aurora", "aurora borealis", "northern lights", "animation", "night sky", "shooting star", "nature"]
+    tags_en: ["aurora", "aurora borealis", "northern lights", "animation", "night sky", "shooting star"]
   },
   // ── 개발자 고급 ──────────────────────────
   {
@@ -1042,7 +1042,7 @@ export const tips = [
     desc_en: "Quickly find previously entered commands in the console using the up/down arrow keys.",
     shortcut: { win: "↑ / ↓", mac: "↑ / ↓" },
     tags: ["콘솔", "기록", "명령어", "탐색", "화살표", "이전명령어", "다시쓰기"],
-    tags_en: ["console", "history", "command", "navigate", "up", "down", "arrow", "previous command", "rewrite"],
+    tags_en: ["console", "history", "command", "navigate", "up", "down", "arrow"],
     steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "Console 탭을 클릭해 활성화합니다.", "키보드의 위(↑) 또는 아래(↓) 화살표 키를 눌러 이전에 입력했던 명령어를 확인하세요."],
     steps_en: ["Press F12 (or Cmd + Option + I) to open Developer Tools first.", "Click the Console tab to activate it.", "Use the Up (↑) or Down (↓) arrow keys to navigate through previously entered commands."]
   },
@@ -1055,7 +1055,7 @@ export const tips = [
     shortcut: { win: "Ctrl + L (또는 clear())", mac: "Cmd + K (또는 Ctrl + L)" },
     shortcut_en: { win: "Ctrl + L (or clear())", mac: "Cmd + K (or Ctrl + L)" },
     tags: ["콘솔비우기", "삭제", "비우기", "지우기", "로그삭제", "깔끔", "정리"],
-    tags_en: ["clear console", "delete", "clear", "console", "clean", "empty", "erase", "clear log", "tidy"],
+    tags_en: ["clear console", "delete", "clear", "console", "clean", "empty", "erase"],
     steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "Console 탭에서 단축키를 누르거나 clear()를 입력하세요.", "지저분했던 이전 로그들이 모두 사라지고 깨끗해집니다."],
     steps_en: ["Press F12 (or Cmd + Option + I) to open Developer Tools first.", "Press the shortcut in the Console tab or type clear().", "The previous logs will be cleared, leaving the console clean."]
   },
@@ -1067,7 +1067,7 @@ export const tips = [
     desc_en: "Navigate sequentially through the DevTools top tabs without using the mouse.",
     shortcut: { win: "Ctrl + [ / Ctrl + ]", mac: "Cmd + [ / Cmd + ]" },
     tags: ["탭이동", "패널이동", "빠른이동", "탭전환", "콘솔에서네트워크로"],
-    tags_en: ["tab switch", "panel switch", "devtools", "switch panel", "quick move", "next panel", "previous panel"],
+    tags_en: ["tab switch", "panel switch", "devtools", "switch panel", "quick move"],
     steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "개발자 도구가 활성화된 상태에서 단축키를 누르세요.", "Elements, Console, Network 등 상단 패널들이 순서대로 전환됩니다."],
     steps_en: ["Press F12 (or Cmd + Option + I) to open Developer Tools first.", "While the DevTools window is active, press the shortcut.", "The top panels like Elements, Console, and Network will switch in order."]
   },
@@ -1079,7 +1079,7 @@ export const tips = [
     desc_en: "Test in real-time how your site looks on various smartphone and tablet screens in the developer tools.",
     shortcut: { win: "Ctrl + Shift + M", mac: "Cmd + Shift + M" },
     tags: ["모바일", "반응형", "에뮬레이터", "테스트", "스마트폰", "화면크기"],
-    tags_en: ["mobile", "responsive", "emulator", "test", "device", "emulation", "smartphone", "screen size"],
+    tags_en: ["mobile", "responsive", "emulator", "test", "device", "emulation"],
     steps: ["먼저 F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 엽니다.", "개발자 도구 창이 활성화된 상태에서 단축키(Ctrl + Shift + M / Cmd + Shift + M)를 누르세요.", "화면 상단에 기기 선택 메뉴가 나타나면 원하는 모델(iPhone, Pixel 등)을 골라 테스트하세요.", "화면 상단의 'Dimensions' 메뉴를 통해 해상도를 자유롭게 조절할 수도 있습니다."],
     steps_en: ["First, open Developer Tools by pressing F12 (or Cmd + Option + I).", "While the DevTools window is active, press the shortcut (Ctrl + Shift + M / Cmd + Shift + M).", "Select the desired model (iPhone, Pixel, etc.) from the device menu at the top.", "You can also manually adjust the resolution via the 'Dimensions' menu."]
   },
@@ -1118,7 +1118,7 @@ export const tips = [
     desc_en: "Moves focus to the address bar and switches to search mode from anywhere.",
     shortcut: { win: "Ctrl + K 또는 Ctrl + E", mac: "Cmd + K 또는 Cmd + E" },
     shortcut_en: { win: "Ctrl + K or Ctrl + E", mac: "Cmd + K or Cmd + E" },
-    tags: ["검색", "주소창", "빠른검색", "구글검색", "찾기", "입력"],
+    tags: ["검색", "주소창", "빠른검색", "구글검색", "찾기"],
     tags_en: ["search", "address bar", "quick search", "google search", "omnibox"]
   },
   {
@@ -1204,7 +1204,7 @@ export const tips = [
     desc_en: "Latest 2026 Feature: Click the Gemini icon in text fields or type '@' to compose or refine sentences instantly.",
     shortcut: { win: "텍스트 영역 클릭 > Gemini 아이콘 클릭", mac: "텍스트 영역 클릭 > Gemini 아이콘 클릭" },
     shortcut_en: { win: "Click text area > Click Gemini icon", mac: "Click text area > Click Gemini icon" },
-    tags: ["ai", "gemini", "제미나이", "글쓰기", "도움", "작성", "수정", "교정", "인공지능"],
+    tags: ["ai", "gemini", "제미나이", "글쓰기", "도움", "작성", "수정", "교정"],
     tags_en: ["ai", "gemini", "write", "refine", "helper", "compose", "grammar", "artificial intelligence"],
     steps: {
       win: [
@@ -1329,7 +1329,7 @@ export const tips = [
     link: "chrome://settings/performance",
     shortcut: { win: "설정 > 성능 > 에너지 절약", mac: "설정 > 성능 > 에너지 절약" },
     shortcut_en: { win: "Settings > Performance > Energy Saver", mac: "Settings > Performance > Energy Saver" },
-    tags: ["배터리", "절약", "노트북", "에너지", "성능", "최적화", "배터리부족"],
+    tags: ["배터리", "절약", "노트북", "에너지", "성능", "최적화"],
     tags_en: ["battery", "save", "laptop", "energy", "performance", "optimization"]
   },
   {
@@ -1583,7 +1583,7 @@ export const tips = [
     desc_en: "Can't remember the URL? Ask AI something like 'What was that shoe site I saw yesterday?' to find it in your history. (Currently available in select regions and languages)",
     shortcut: { win: "방문 기록(Ctrl+H) > AI 검색창", mac: "방문 기록(Cmd+Y) > AI 검색창" },
     shortcut_en: { win: "History(Ctrl+H) > AI Search", mac: "History(Cmd+Y) > AI Search" },
-    tags: ["ai", "방문기록", "찾기", "검색", "자연어", "히스토리", "어제본거"],
+    tags: ["ai", "방문기록", "찾기", "검색", "자연어", "히스토리"],
     tags_en: ["ai", "history", "find", "search", "natural language", "smart search"]
   },
   {
@@ -1721,7 +1721,7 @@ export const tips = [
     desc: "iPhone의 기본 브라우저를 Chrome으로 설정하고 Dock에 고정하여 편리하게 사용하세요.",
     desc_en: "Set Chrome as your default browser and pin it to the iPhone Dock for quick access.",
     shortcut: { win: "설정 > 기본 앱 > Chrome", mac: "설정 > 기본 앱 > Chrome" },
-    tags: ["mac", "iphone", "ios", "아이폰", "연동", "기본브라우저"],
+    tags: ["mac", "iphone", "ios", "아이폰", "연동"],
     tags_en: ["mac", "iphone", "ios", "sync", "default browser"]
   },
   {
@@ -1732,7 +1732,7 @@ export const tips = [
     desc: "MacBook의 Touch Bar에 Chrome의 '뒤로 가기', '새 탭' 버튼 등을 표시하여 더 빠르게 제어합니다.",
     desc_en: "Use Chrome controls (Back, New Tab, etc.) on your MacBook's Touch Bar for faster navigation.",
     shortcut: { win: "시스템 설정 > 키보드 > Touch Bar", mac: "시스템 설정 > 키보드 > Touch Bar" },
-    tags: ["mac", "맥북", "터치바", "touchbar", "제어", "단축키"],
+    tags: ["mac", "맥북", "터치바", "touchbar", "제어"],
     tags_en: ["mac", "macbook", "touch bar", "control", "shortcut"]
   }
 ];

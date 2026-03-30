@@ -95,7 +95,8 @@
         document.body.appendChild(statusBadge);
       }
 
-      statusBadge.innerHTML = `
+      statusBadge.textContent = "";
+      statusBadge.insertAdjacentHTML('beforeend', `
         <div style="background: rgba(255,255,255,0.25); padding: 6px 12px; border-radius: 12px; font-size: 14px; font-weight: 900;">
           REC
         </div>
@@ -110,7 +111,7 @@
         <button id="stop-record-btn" style="background: white; color: #ef4444; border: none; padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-left: 10px;">
           ${chrome.i18n.getMessage('stopRecording')}
         </button>
-      `;
+      `);
 
       statusBadge.querySelector('#stop-record-btn').onclick = stopRecording;
     }
@@ -299,9 +300,10 @@
 
       if (isError) {
         statusBadge.style.background = 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)';
-        statusBadge.innerHTML = `
+        statusBadge.textContent = "";
+        statusBadge.insertAdjacentHTML('beforeend', `
           <div style="background: rgba(255,255,255,0.25); padding: 4px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <svg xmlns="https://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </div>
           <div style="display: flex; flex-direction: column; gap: 2px;">
             <span style="font-size: 14px; font-weight: 800; letter-spacing: -0.02em;">
@@ -311,7 +313,7 @@
               ${chrome.i18n.getMessage('buttonNotFound')}
             </span>
           </div>
-        `;
+        `);
         return;
       }
 
@@ -327,7 +329,8 @@
         statusBadge.style.background = 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)';
       }
       
-      statusBadge.innerHTML = `
+      statusBadge.textContent = "";
+      statusBadge.insertAdjacentHTML('beforeend', `
         <div style="background: rgba(255,255,255,0.25); padding: 6px 12px; border-radius: 12px; font-size: 14px; font-weight: 900; min-width: 45px; text-align: center;">
           ${displayCurrent}/${total}
         </div>
@@ -339,7 +342,7 @@
             ${isDone ? chrome.i18n.getMessage('closingSoon') : subText}
           </span>
         </div>
-      `;
+      `);
     }
 
     function removeStatusBadge() {
@@ -422,7 +425,6 @@
             const nextType = typeof nextStep === 'string' ? 'click' : nextStep.type;
             
             if (checkElementExists(nextTarget, nextType)) {
-              console.log(`[Shortcut] Skipping step ${currentStepIndex + 1} ("${stepTarget}") because next target "${nextTarget}" is already visible.`);
               cachedTask = { ...cachedTask, currentStepIndex: currentStepIndex + 1 }; // [최적화] 캐시 즉시 업데이트
               await chrome.storage.local.set({ activeShortcutTask: cachedTask });
               retryCount = 0;

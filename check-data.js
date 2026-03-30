@@ -256,7 +256,7 @@ const antiPatterns = [
   { p: /console\.log\(/g, m: '남아있는 console.log 발견 (개발 완료 후 제거 권장)', level: 'warning' },
   { p: /debugger;/g, m: 'debugger 문 발견', level: 'error' },
   { p: /innerHTML\s*=/g, m: 'innerHTML 사용 발견 (XSS 취약점 주의)', level: 'warning' },
-  { p: /http:\/\//g, m: 'HTTP 링크 발견 (HTTPS 권장)', level: 'warning' }
+  { p: /http:\/\/(?!www\.w3\.org)/g, m: 'HTTP 링크 발견 (HTTPS 권장)', level: 'warning' }
 ];
 
 antiPatterns.forEach(ap => {
@@ -296,7 +296,8 @@ if (koCats.length > 0 && typeof tips !== 'undefined') {
     }
   });
   koCats.forEach(cat => {
-    if (!usedCats.has(cat)) {
+    // '전체' 및 '자동화'는 특수 카테고리이므로 팁에 없어도 경고 제외
+    if (!usedCats.has(cat) && cat !== '전체' && cat !== '자동화') {
       reportWarning('데이터', `정의되었으나 사용되지 않는 카테고리: ${cat}`);
     }
   });
