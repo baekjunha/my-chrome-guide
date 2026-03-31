@@ -236,30 +236,34 @@ export async function handleListKeydown(e) {
  * 관련 팁 클릭 핸들러
  */
 export function handleRelatedItemClick(targetId) {
-  const targetEl = $(`.tip-item[data-id="${targetId}"]`);
+  let targetEl = $(`.tip-item[data-id="${targetId}"]`);
   
   if (!targetEl) {
-    // 팁이 현재 화면에 없으면 브라우저 상태 초기화 (전체보기)
+    // 팁이 현재 화면에 없거나 필터링되어 있음 -> 상태 초기화 후 강제 렌더링
     store.update({ 
       currentTab: TABS.ALL, 
       currentCategory: CATEGORY_ALL 
     }, false);
-    $('#search').value = '';
-    switchTab(getRenderCallbacks());
+    
+    const searchInput = $('#search');
+    if (searchInput) searchInput.value = '';
+    
+    // UI 업데이트 시 targetId를 전달하여 페이징 무시하고 렌더링
+    renderTips("", getRenderCallbacks(), false, targetId);
 
-    // 필터 초기화 후 렌더링이 완료될 시간을 벌기 위해 requestAnimationFrame 사용
-    requestAnimationFrame(() => {
-      const targetElAfter = $(`.tip-item[data-id="${targetId}"]`);
-      if (targetElAfter) {
-        targetElAfter.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        targetElAfter.classList.add('highlight');
-        setTimeout(() => targetElAfter.classList.remove('highlight'), 600);
+    // 렌더링 완료 후 강조 표시
+    setTimeout(() => {
+      targetEl = $(`.tip-item[data-id="${targetId}"]`);
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        targetEl.classList.add('highlight-impact');
+        setTimeout(() => targetEl.classList.remove('highlight-impact'), 1200);
       }
-    });
+    }, 150);
   } else {
     targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    targetEl.classList.add('highlight');
-    setTimeout(() => targetEl.classList.remove('highlight'), 600);
+    targetEl.classList.add('highlight-impact');
+    setTimeout(() => targetEl.classList.remove('highlight-impact'), 1200);
   }
 }
 

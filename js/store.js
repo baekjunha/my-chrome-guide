@@ -127,6 +127,25 @@ class AppStore {
             { type: 'click', target: 'Technology' },
             { type: 'click', target: 'Search' }
           ]
+        },
+        {
+          id: 'google-news-ai-search',
+          name: 'Google 뉴스 (AI 복구 예시)',
+          url: 'https://news.google.com/',
+          steps: [
+            { type: 'input', target: 'Search', value: 'Google Chrome Extension' },
+            { type: 'click', target: 'Search' }
+          ]
+        },
+        {
+          id: 'adobe-express-templates',
+          name: 'Adobe Express 템플릿 탐색',
+          url: 'https://www.adobe.com/express/',
+          steps: [
+            { type: 'click', target: 'Templates' },
+            { type: 'click', target: 'Instagram' },
+            { type: 'click', target: 'Post' }
+          ]
         }
       ],
       currentTab: TABS.ALL,
@@ -261,6 +280,66 @@ class AppStore {
 
   get(key) {
     return this.state[key];
+  }
+
+  /**
+   * [UX 확장] 다중 검색 및 가중치 필터링 로직 (Store로 통합)
+   * @param {Array} allTips 전체 팁 데이터 배열 (data.js에서 전달)
+   * @param {String} filter 검색어
+   */
+  getFilteredTips(allTips, filter = "") {
+    const query = (filter || "").toLowerCase().trim();
+    const { currentOS, currentTab, favorites, currentCategory, currentLang } = this.state;
+    
+    // 1. 기본 필터링 (플랫폼, 탭, 카테고리)
+    const baseFiltered = allTips.filter(tip => {
+      if (tip.platform && tip.platform !== currentOS) return false;
+      
+      const matchesTab = (currentTab === TABS.ALL) || 
+                         (currentTab === TABS.FAV && favorites.includes(tip.id));
+      
+      const matchesCat = (currentCategory === CATEGORY_ALL || !currentCategory || tip.category === currentCategory);
+      
+      return matchesTab && matchesCat;
+    });
+
+    if (!query) return baseFiltered;
+
+    const terms = query.split(/\s+/);
+    
+    return baseFiltered
+      .map(tip => {
+        let score = 0;
+        const lang = currentLang;
+        const title = ((lang === LANG.EN && tip.title_en) ? tip.title_en : tip.title || "").toLowerCase();
+        const desc = ((lang === LANG.EN && tip.desc_en) ? tip.desc_en : tip.desc || "").toLowerCase();
+        const tags = [...(tip.tags || []), ...(tip.tags_en || [])];
+
+        let matchedTerms = 0;
+        terms.forEach(term => {
+          let termScore = 0;
+          if (title === term) termScore += 40;
+          else if (title.includes(term)) termScore += 20;
+
+          if (desc.includes(term)) termScore += 10;
+
+          const tagMatch = tags.some(tag => tag.toLowerCase().includes(term));
+          if (tagMatch) termScore += 15;
+
+          if (termScore > 0) {
+            score += termScore;
+            matchedTerms++;
+          }
+        });
+
+        if (matchedTerms === terms.length) score += 30;
+        if (title.includes(query)) score += 20;
+
+        return { tip, score };
+      })
+      .filter(item => item.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(item => item.tip);
   }
 }
 

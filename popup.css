@@ -1474,3 +1474,113 @@ body.dark .toast {
 .load-more-btn:active {
   transform: translateY(-1px);
 }
+/* ── [UX 확장] AI 자동화 매크로 전용 스타일 ── */
+.tip-item.is-auto {
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  background: linear-gradient(to bottom right, var(--surface), rgba(124, 58, 237, 0.02));
+}
+
+.tip-item.is-auto:hover {
+  border-color: #7c3aed;
+  box-shadow: 0 10px 30px -5px rgba(124, 58, 237, 0.15);
+}
+
+.auto-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+  color: white;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 900;
+  margin-left: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+}
+
+.tip-category {
+  display: flex !important;
+  align-items: center;
+}
+
+.step-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.step-row:last-child {
+  border-bottom: none;
+}
+
+.step-icon-wrapper {
+  width: 28px;
+  height: 28px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+body.dark .step-icon-wrapper {
+  background: rgba(124, 58, 237, 0.15);
+  color: #a78bfa;
+}
+
+.step-action-tag {
+  font-size: 10px;
+  background: var(--text-mute);
+  color: white;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 800;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+code {
+  background: var(--bg-high);
+  color: var(--accent-txt);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.9em;
+}
+
+/* [UX] 관련 팁 이동 시 강조 효과 */
+@keyframes highlight-impact-anim {
+  0% { 
+    transform: scale(1); 
+    box-shadow: 0 0 0 rgba(124, 58, 237, 0);
+  }
+  30% { 
+    transform: scale(1.03); 
+    background-color: var(--accent-bg);
+    box-shadow: 0 10px 30px rgba(124, 58, 237, 0.2);
+    border-color: var(--accent);
+  }
+  100% { 
+    transform: scale(1); 
+    background-color: transparent;
+    box-shadow: 0 0 0 rgba(124, 58, 237, 0);
+  }
+}
+
+.highlight-impact {
+  animation: highlight-impact-anim 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  position: relative;
+  z-index: 5;
+  border: 1px solid var(--accent) !important;
+}
+
+body.dark .highlight-impact {
+  background-color: rgba(124, 58, 237, 0.1) !important;
+}

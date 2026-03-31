@@ -462,28 +462,40 @@ export const tips = [
     tags_en: ["settings", "option", "configuration", "config", "chrome settings", "control panel", "manage"]
   },
   {
-    id: 39, category: "설정",
+    id: 39, category: "자동화",
     title: "메모리 절약 모드",
     title_en: "Memory Saver Mode",
     desc: "사용하지 않는 탭의 메모리를 회수하여 브라우저 속도를 높여줍니다.",
     desc_en: "Frees up memory from inactive tabs to improve speed.",
     shortcut: { win: "설정 > 성능 > 메모리 절약", mac: "설정 > 성능 > 메모리 절약" },
     shortcut_en: { win: "Settings > Performance > Memory Saver", mac: "Settings > Performance > Memory Saver" },
-    link: "chrome://settings/performance",
+    url: "chrome://settings/performance",
+    steps: [
+      { type: 'click', target: '메모리 절약' }
+    ],
+    steps_en: [
+      { type: 'click', target: 'Memory Saver' }
+    ],
     tags: ["렉", "느려", "버벅", "무거워", "성능", "최적화", "램", "렉걸려", "빨리", "탭잠자기", "배터리", "메모리부족"],
-    tags_en: ["lag", "slow", "performance", "optimization", "RAM", "speed", "memory", "saver", "fast", "tab sleep", "battery", "low memory"],
-    steps: ["설정 페이지(chrome://settings/performance)로 이동합니다.", "'성능' 카테고리에서 '메모리 절약' 스위치를 켭니다.", "이제 활성 상태가 아닌 탭의 메모리를 확보해 크롬이 더 빨라집니다.", "특정 사이트는 항상 활성 상태로 유지하도록 예외를 설정할 수도 있습니다."],
-    steps_en: ["Go to the Settings page (chrome://settings/performance).", "Toggle on the 'Memory Saver' switch in the 'Performance' category.", "Chrome will now free up memory from inactive tabs to run faster.", "You can also add exception sites to always keep them active."]
+    tags_en: ["lag", "slow", "performance", "optimization", "RAM", "speed", "memory", "saver", "fast", "tab sleep", "battery", "low memory"]
   },
   {
-    id: 40, category: "설정",
+    id: 40, category: "자동화",
     title: "크롬 비밀번호 관리자",
     title_en: "Chrome Password Manager",
     desc: "각 사이트별로 저장된 아이디와 비밀번호를 확인하고 안전하게 관리할 수 있습니다.",
     desc_en: "Manage your saved passwords at a glance.",
     shortcut: { win: "설정 > 비밀번호", mac: "설정 > 비밀번호" },
     shortcut_en: { win: "Settings > Passwords", mac: "Settings > Passwords" },
-    link: "chrome://password-manager",
+    url: "chrome://password-manager",
+    steps: [
+      { type: 'click', target: '비밀번호' },
+      { type: 'input', target: '비밀번호 검색', value: 'google' }
+    ],
+    steps_en: [
+      { type: 'click', target: 'Passwords' },
+      { type: 'input', target: 'Search passwords', value: 'google' }
+    ],
     tags: ["비번", "암호", "로그인", "자동완성", "계정", "로그인 정보", "패스워드", "비밀번호", "키체인"],
     tags_en: ["password", "login", "autocomplete", "account", "manager", "login info", "keychain", "saved password", "pass"]
   },
@@ -499,14 +511,20 @@ export const tips = [
     tags_en: ["manager", "process", "force quit", "not responding", "task", "task manager", "cpu", "usage", "kill", "freeze", "response"]
   },
   {
-    id: 42, category: "설정",
+    id: 42, category: "자동화",
     title: "확장 프로그램 관리",
     title_en: "Manage Extensions",
     desc: "설치된 확장 프로그램들을 확인하고 필요에 따라 켜거나 끌 수 있습니다.",
     desc_en: "Enable, disable, or remove installed extensions.",
     shortcut: { win: "chrome://extensions 입력", mac: "chrome://extensions 입력" },
     shortcut_en: { win: "Type chrome://extensions", mac: "Type chrome://extensions" },
-    link: "chrome://extensions",
+    url: "chrome://extensions",
+    steps: [
+      { type: 'input', target: '확장 프로그램 검색', value: 'my chrome guide' }
+    ],
+    steps_en: [
+      { type: 'input', target: 'Search extensions', value: 'my chrome guide' }
+    ],
     tags: ["확장", "플러그인", "관리", "앱", "추가기능", "프러그인", "익스텐션", "끄기", "켜기"],
     tags_en: ["extension", "plugin", "manage", "app", "add-on", "addons", "disable", "enable", "remove"]
   },
@@ -531,34 +549,33 @@ export const tips = [
     tags_en: ["save", "download", "HTML", "file", "page save", "ctrl s", "save as", "backup"]
   },
   {
-    id: 45, category: "설정",
+    id: 45, category: "자동화",
     title: "크롬 캐시·쿠키 삭제",
     title_en: "Clear Chrome Cache & Cookies",
     desc: "브라우저 오류를 해결하거나 개인정보를 보호하기 위해 방문 기록, 쿠키, 캐시를 삭제합니다.",
     desc_en: "Clear browsing data to resolve errors and protect privacy. (Note: You will be logged out of most sites)",
     shortcut: { win: "Ctrl + Shift + Delete", mac: "Cmd + Shift + Backspace" },
-    link: "chrome://settings/clearBrowserData",
+    url: "chrome://settings/clearBrowserData",
     tags: ["캐시", "쿠키", "삭제", "초기화", "오류", "느려", "지우기", "탈퇴", "삭제하기", "인터넷 기록 삭제"],
     tags_en: ["cache", "cookie", "delete", "clear", "error", "slow", "clear cache", "cleaning", "clear browsing data", "format"],
-    steps: {
-      win: ["단축키 Ctrl + Shift + Delete를 누르세요.", "모든 사이트에서 로그아웃되므로 중요한 작업은 저장 후 진행하세요.", "기간을 '전체 기간'으로 선택하세요.", "'쿠키 및 기타 사이트 데이터', '캐시된 이미지 및 파일'을 체크하고 [데이터 삭제]를 누릅니다."],
-      mac: ["단축키 Cmd + Shift + Backspace를 누르세요.", "모든 사이트에서 로그아웃되므로 중요한 작업은 저장 후 진행하세요.", "기간을 '전체 기간'으로 선택하세요.", "'쿠키 및 기타 사이트 데이터', '캐시된 이미지 및 파일'을 체크하고 [데이터 삭제]를 누릅니다."]
-    },
-    steps_en: {
-      win: ["Press Ctrl + Shift + Delete.", "Be careful: You will be logged out of most websites.", "Select 'All time' as the time range.", "Check 'Cookies' and 'Cache', then click [Clear data]."],
-      mac: ["Press Cmd + Shift + Backspace.", "Be careful: You will be logged out of most websites.", "Select 'All time' as the time range.", "Check 'Cookies' and 'Cache', then click [Clear data]."]
-    }
+    steps: [
+      { type: 'click', target: '데이터 삭제' }
+    ],
+    steps_en: [
+      { type: 'click', target: 'Clear data' }
+    ]
   },
   // ── 이스터에그 ────────────────────────────────
   {
-    id: 46, category: "이스터에그",
+    id: 46, category: "자동화",
     title: "전설의 공룡 게임 (Dino)",
     title_en: "Legendary Dino Game",
     desc: "인터넷 연결이 끊겼을 때나 간단한 게임을 즐기고 싶을 때 실행할 수 있습니다.",
     desc_en: "The game that appears when the internet is down! You can also run it by typing directly in the address bar.",
     shortcut: { win: "chrome://dino 입력", mac: "chrome://dino 입력" },
     shortcut_en: { win: "Type chrome://dino", mac: "Type chrome://dino" },
-    link: "chrome://dino",
+    url: "chrome://dino",
+    steps: [],
     tags: ["공룡", "게임", "심심해", "오프라인", "점프", "런닝", "공룡게임", "인터넷끊김", "크롬게임"],
     tags_en: ["dino", "game", "bored", "offline", "dinosaur", "jump", "running", "t-rex", "chrome game"]
   },
@@ -678,17 +695,21 @@ export const tips = [
     tags_en: ["universe", "answer", "42", "calculator", "ultimate", "galaxy", "douglas adams", "hitchhiker", "life"]
   },
   {
-    id: 57, category: "시스템",
+    id: 57, category: "자동화",
     title: "실험적 기능 설정 (Flags)",
     title_en: "Experimental Features (Flags)",
     desc: "정식 출시 전인 크롬의 최신 실험적 기능들을 미리 활성화하여 사용해 볼 수 있습니다.",
     desc_en: "Try out or adjust Chrome's latest experimental features. (Warning: Incorrect settings may cause instability)",
-    link: "chrome://flags",
+    url: "chrome://flags",
     shortcut: { win: "chrome://flags", mac: "chrome://flags" },
+    steps: [
+      { type: 'click', target: 'Reset all' }
+    ],
+    steps_en: [
+      { type: 'click', target: 'Reset all' }
+    ],
     tags: ["설정", "실험", "테스트", "고급", "기능", "미리보기", "플래그"],
-    tags_en: ["settings", "experimental", "test", "flags", "advanced", "feature", "preview"],
-    steps: ["주소창에 chrome://flags를 입력합니다.", "원하는 기능을 찾아 Enabled로 변경하여 적용하세요.", "문제가 발생하거나 브라우저가 이상해지면 우측 상단의 [Reset all] 버튼을 클릭해 초기화하세요."],
-    steps_en: ["Type chrome://flags in the address bar.", "Find a feature and change it to 'Enabled' to apply.", "If issues occur, click the [Reset all] button at the top right to restore defaults."]
+    tags_en: ["settings", "experimental", "test", "flags", "advanced", "feature", "preview"]
   },
   {
     id: 58, category: "시스템",

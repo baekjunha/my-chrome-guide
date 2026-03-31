@@ -264,98 +264,55 @@
       setTimeout(() => ripple.remove(), 1000);
     }
 
-    function updateStatusBadge(current, total, text, retryCount = 0, isError = false) {
-      if (!statusBadge) {
-        statusBadge = document.createElement('div');
-        statusBadge.id = 'shortcut-status-badge';
-        Object.assign(statusBadge.style, {
-          position: 'fixed',
-          bottom: '24px',
-          right: '24px',
-          background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)',
-          color: 'white',
-          padding: '14px 22px',
-          borderRadius: '20px',
-          zIndex: '9999999',
-          fontSize: '14px',
-          fontWeight: 'bold',
-          boxShadow: '0 8px 30px rgba(0,0,0,0.3)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-          transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-          border: '1px solid rgba(255,255,255,0.25)',
-          backdropFilter: 'blur(12px)'
-        });
-        document.body.appendChild(statusBadge);
-        
-        statusBadge.style.transform = 'translateY(100px) scale(0.8)';
-        statusBadge.style.opacity = '0';
-        requestAnimationFrame(() => {
-          statusBadge.style.transform = 'translateY(0) scale(1)';
-          statusBadge.style.opacity = '1';
-        });
+    function updateStatusBadge(current, total, targetName, retry, complete = false, customMsg = "") {
+      const existing = document.getElementById('macro-status-badge');
+      if (!existing && complete) return;
+
+      const lang = "ko"; 
+      const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+      
+      const badge = existing || document.createElement('div');
+      if (!existing) {
+        badge.id = 'macro-status-badge';
+        document.body.appendChild(badge);
       }
 
-      if (isError) {
-        statusBadge.style.background = 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)';
-        statusBadge.textContent = "";
-        statusBadge.insertAdjacentHTML('beforeend', `
-          <div style="background: rgba(255,255,255,0.25); padding: 4px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-            <svg xmlns="https://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 2px;">
-            <span style="font-size: 14px; font-weight: 800; letter-spacing: -0.02em;">
-              ${chrome.i18n.getMessage('macroStopped')}
-            </span>
-            <span style="font-size: 11px; opacity: 0.9; font-weight: 500;">
-              ${chrome.i18n.getMessage('buttonNotFound')}
-            </span>
-          </div>
-        `);
-        return;
-      }
+      const percent = Math.min((current / total) * 100, 100);
+      const isAI = customMsg && customMsg.includes("AI");
+      const isLogin = customMsg && customMsg.includes("로그인");
+      
+      let statusColor = "linear-gradient(135deg, #2563eb, #1e40af)"; // Default Blue
+      if (isAI) statusColor = "linear-gradient(135deg, #7c3aed, #4f46e5)"; // AI Purple
+      if (isLogin) statusColor = "linear-gradient(135deg, #f59e0b, #d97706)"; // Login Orange
+      if (complete) statusColor = "linear-gradient(135deg, #10b981, #059669)"; // Complete Green
 
-      const isDone = current > total;
-      const displayCurrent = Math.min(current, total);
-      const safeText = text || "";
-      
-      let subText = chrome.i18n.getMessage('stepInProgress', [safeText]);
-      if (retryCount > 0) {
-        subText = chrome.i18n.getMessage('waitingForButton', [retryCount.toString()]);
-        statusBadge.style.background = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
-      } else {
-        statusBadge.style.background = 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)';
-      }
-      
-      statusBadge.textContent = "";
-      statusBadge.insertAdjacentHTML('beforeend', `
-        <div style="background: rgba(255,255,255,0.25); padding: 6px 12px; border-radius: 12px; font-size: 14px; font-weight: 900; min-width: 45px; text-align: center;">
-          ${displayCurrent}/${total}
+      badge.style.cssText = `
+        position: fixed; bottom: 24px; right: 24px; z-index: 9999999;
+        background: ${statusColor}; color: white;
+        padding: 14px 22px; border-radius: 18px; font-family: 'Pretendard', sans-serif;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25); display: flex; flex-direction: column; gap: 8px;
+        min-width: 240px; border: 1px solid rgba(255,255,255,0.1);
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        animation: badge-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      `;
+
+      const title = complete ? "🎉 매크로 완료!" : (isLogin ? "🔐 로그인 대기 중" : (isAI ? "🤖 AI 상호작용 중" : `실행 중 (${current}/${total})`));
+      const subTitle = customMsg || (complete ? "모든 단계가 성공적으로 완료되었습니다." : `타겟: ${targetName} ${retry > 0 ? `(재시도 ${retry})` : ''}`);
+
+      badge.innerHTML = `
+        <div style="display:flex; align-items:center; gap:10px; font-weight:800; font-size:14px;">
+          ${isAI ? `<span style="font-size:18px;">🤖</span>` : (isLogin ? `<span style="font-size:18px;">🔐</span>` : (complete ? '✅' : '🚀'))} <span>${title}</span>
         </div>
-        <div style="display: flex; flex-direction: column; gap: 2px;">
-          <span style="font-size: 14px; font-weight: 800; letter-spacing: -0.02em;">
-            ${isDone ? chrome.i18n.getMessage('allStepsDone') : chrome.i18n.getMessage('macroActive')}
-          </span>
-          <span style="font-size: 11px; opacity: 0.9; font-weight: 500;">
-            ${isDone ? chrome.i18n.getMessage('closingSoon') : subText}
-          </span>
+        <div style="font-size:12px; opacity:0.9; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${subTitle}</div>
+        <div style="width:100%; height:4px; background:rgba(255,255,255,0.2); border-radius:10px; overflow:hidden; margin-top:4px;">
+          <div style="width:${percent}%; height:100%; background:white; transition: width 0.3s ease;"></div>
         </div>
-      `);
+      `;
     }
 
     function removeStatusBadge() {
-      if (statusBadge) {
-        statusBadge.style.opacity = '0';
-        statusBadge.style.transform = 'translateY(20px) scale(0.9)';
-        setTimeout(() => {
-          if (statusBadge && statusBadge.parentNode) {
-            statusBadge.remove();
-            statusBadge = null;
-          }
-        }, 400);
-      }
+      const badge = document.getElementById('macro-status-badge');
+      if (badge) badge.remove();
       removeSpotlight();
     }
 
@@ -364,7 +321,7 @@
     async function runEngine() {
       if (isProcessing) return;
       try {
-        // [최적화] 캐시된 작업이 있으면 우선 사용하고, 없으면 스토리지에서 로드
+        // [최적화] 캐시에서 작업을 가져오고 없으면 스토리지 로드
         if (!cachedTask) {
           const result = await chrome.storage.local.get('activeShortcutTask');
           cachedTask = result.activeShortcutTask;
@@ -377,13 +334,16 @@
         }
 
         startObserver();
-        const { steps, currentStepIndex } = cachedTask;
+        
+        // steps와 currentStepIndex를 명시적으로 let 선언하여 'Assignment to constant' 방지
+        let steps = cachedTask.steps;
+        let currentStepIndex = cachedTask.currentStepIndex || 0;
 
         if (currentStepIndex >= steps.length) {
-          if (window === window.top) updateStatusBadge(steps.length + 1, steps.length, "Complete");
+          if (window === window.top) updateStatusBadge(steps.length, steps.length, "Complete", 0, true, "모든 단계가 성공적으로 완료되었습니다.");
           stopObserver();
           setTimeout(async () => {
-            cachedTask = null; // [최적화] 캐시 초기화
+            cachedTask = null; 
             await chrome.storage.local.remove('activeShortcutTask');
             if (window === window.top) removeStatusBadge();
           }, 2500);
@@ -397,35 +357,31 @@
 
         if (window === window.top) updateStatusBadge(currentStepIndex + 1, steps.length, stepTarget, retryCount);
 
-        const target = (stepType === 'click') ? findAndClick(stepTarget) : findAndFill(stepTarget, stepValue);
+        const target = (stepType === 'click') ? findAndClick(stepTarget) : findAndInput(stepTarget, stepValue);
 
         if (target) {
           isProcessing = true;
           retryCount = 0;
           
-          // [시각적 피드백] 스포트라이트 및 파동 애니메이션
-          showSpotlight(target);
-          if (stepType === 'click') {
-            const rect = target.getBoundingClientRect();
-            triggerRipple(rect.left + rect.width / 2, rect.top + rect.height / 2);
-          }
-          
-          cachedTask = { ...cachedTask, currentStepIndex: currentStepIndex + 1 }; // [최적화] 캐시 즉시 업데이트
+          // 성공 시 인덱스 증가 및 스토리지 업데이트
+          currentStepIndex++;
+          cachedTask = { ...cachedTask, currentStepIndex };
           await chrome.storage.local.set({ activeShortcutTask: cachedTask });
           
           setTimeout(() => { 
             isProcessing = false; 
             runEngine(); 
-          }, 4000); 
+          }, 2000); 
         } else {
-          // [Smart Skip] Check if the NEXT step is already available (to skip login/redundant steps)
+          // [Smart Skip] 다음 단계가 이미 화면에 있는지 확인
           if (currentStepIndex + 1 < steps.length) {
             const nextStep = steps[currentStepIndex + 1];
             const nextTarget = typeof nextStep === 'string' ? nextStep : nextStep.target;
             const nextType = typeof nextStep === 'string' ? 'click' : nextStep.type;
             
             if (checkElementExists(nextTarget, nextType)) {
-              cachedTask = { ...cachedTask, currentStepIndex: currentStepIndex + 1 }; // [최적화] 캐시 즉시 업데이트
+              currentStepIndex++;
+              cachedTask = { ...cachedTask, currentStepIndex };
               await chrome.storage.local.set({ activeShortcutTask: cachedTask });
               retryCount = 0;
               setTimeout(() => runEngine(), 500);
@@ -435,12 +391,52 @@
 
           if (retryCount < 20) {
             retryCount++;
-            if (retryCount === 5 || retryCount === 12) expandHiddenMenus();
+            
+            const isLoginPage = (url) => {
+              const lower = url.toLowerCase();
+              return lower.includes('login') || lower.includes('signin') || lower.includes('auth') || lower.includes('accounts.google.com');
+            };
+
+            if (retryCount === 5 && isLoginPage(window.location.href)) {
+              if (window === window.top) updateStatusBadge(currentStepIndex + 1, steps.length, "Login Required", 0, false, "로그인이 필요해 보입니다. 로그인 후 계속됩니다...");
+              setTimeout(() => runEngine(), 2000); 
+              return;
+            }
+
+            // AI 복구 로직
+            if (retryCount === 5 && typeof MacroAI !== 'undefined' && typeof MacroAI.repairTarget === 'function') {
+              if (window === window.top) updateStatusBadge(currentStepIndex + 1, steps.length, stepTarget, 0, false, "AI가 대체 요소를 찾고 있습니다...");
+              const contextMap = captureContextMap();
+              const recovered = await MacroAI.repairTarget({ target: stepTarget, type: stepType }, contextMap);
+              
+              if (recovered && recovered.index !== undefined) {
+                const items = document.querySelectorAll('a, button, [role="button"], input, textarea, [contenteditable="true"], .btn, .button');
+                const targetEl = items[recovered.index];
+                if (targetEl) {
+                  console.log("[Shortcut] AI Recovered:", recovered.text);
+                  if (stepType === 'click') targetEl.click();
+                  else if (stepType === 'input' && stepValue) {
+                    targetEl.value = stepValue;
+                    targetEl.dispatchEvent(new Event('input', { bubbles: true }));
+                  }
+                  currentStepIndex++;
+                  cachedTask = { ...cachedTask, currentStepIndex }; 
+                  await chrome.storage.local.set({ activeShortcutTask: cachedTask });
+                  retryCount = 0;
+                  setTimeout(() => runEngine(), 500);
+                  return;
+                }
+              }
+            }
+
+            if (retryCount === 8 || retryCount === 15) {
+              expandHiddenMenus();
+            }
             setTimeout(() => runEngine(), 500);
           } else {
-            if (window === window.top) updateStatusBadge(currentStepIndex + 1, steps.length, stepTarget, 0, true);
+            if (window === window.top) updateStatusBadge(currentStepIndex + 1, steps.length, stepTarget, 0, false, "요소를 찾을 수 없습니다.");
             stopObserver();
-            cachedTask = null; // [최적화] 캐시 초기화
+            cachedTask = null;
             await chrome.storage.local.remove('activeShortcutTask');
             if (window === window.top) setTimeout(removeStatusBadge, 4000);
           }
@@ -452,9 +448,33 @@
       }
     }
 
+
+    function captureContextMap() {
+      const interactive = document.querySelectorAll('a, button, [role="button"], input, textarea, [contenteditable="true"], .btn, .button');
+      return Array.from(interactive).map((el, index) => {
+        const rect = el.getBoundingClientRect();
+        const style = window.getComputedStyle(el);
+        const isVisible = rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
+        
+        if (!isVisible) return null;
+
+        return {
+          index: index,
+          tagName: el.tagName,
+          text: (el.innerText || el.value || "").trim().substring(0, 50),
+          id: el.id,
+          name: el.name,
+          ariaLabel: el.getAttribute('aria-label') || el.getAttribute('title'),
+          placeholder: el.getAttribute('placeholder'),
+          type: el.type || (el.contentEditable === 'true' ? 'contenteditable' : 'element')
+        };
+      }).filter(Boolean);
+    }
+
     function checkElementExists(text, type = 'click') {
       if (!text) return false;
       const lowerText = text.toLowerCase().trim();
+      
       const isVisible = (el) => {
         const style = window.getComputedStyle(el);
         return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length) && 
@@ -462,17 +482,17 @@
       };
 
       if (type === 'click') {
-        const clickable = document.querySelectorAll('a, button, [role="button"], input[type="button"], input[type="submit"], .btn, .button');
+        const clickable = document.querySelectorAll('a, button, [role="button"], [tabindex], input[type="button"], input[type="submit"], .btn, .button');
         return Array.from(clickable).some(el => {
           const elText = (el.innerText || el.value || "").trim().toLowerCase();
-          const elAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || "").trim().toLowerCase();
+          const elAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || el.id || el.name || "").trim().toLowerCase();
           return (elText.includes(lowerText) || elAttr.includes(lowerText)) && isVisible(el);
         });
       } else {
         const inputs = document.querySelectorAll('input, textarea, [contenteditable="true"]');
         return Array.from(inputs).some(el => {
           const placeholder = (el.getAttribute('placeholder') || "").toLowerCase();
-          const labelAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || el.name || "").toLowerCase();
+          const labelAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || el.id || el.name || "").toLowerCase();
           return (placeholder.includes(lowerText) || labelAttr.includes(lowerText)) && el.type !== 'hidden' && isVisible(el);
         });
       }
@@ -487,17 +507,20 @@
                style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
       };
 
-      const clickableElements = document.querySelectorAll('a, button, [role="button"], input[type="button"], input[type="submit"], .btn, .button');
+      const clickableElements = document.querySelectorAll('a, button, [role="button"], [tabindex], input[type="button"], input[type="submit"], .btn, .button');
+      
+      // 1. 우선순위 탐색 (정확히 일치)
       let target = Array.from(clickableElements).find(el => {
         const elText = (el.innerText || el.value || "").trim().toLowerCase();
-        const elAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || "").trim().toLowerCase();
+        const elAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || el.id || el.name || "").trim().toLowerCase();
         return (elText === lowerText || elAttr === lowerText) && isVisible(el);
       });
 
+      // 2. 차선책 탐색 (부분 일치)
       if (!target) {
         target = Array.from(clickableElements).find(el => {
           const elText = (el.innerText || el.value || "").trim().toLowerCase();
-          const elAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || "").trim().toLowerCase();
+          const elAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || el.id || el.name || "").trim().toLowerCase();
           return (elText.includes(lowerText) || elAttr.includes(lowerText)) && isVisible(el) && (elText.length < lowerText.length + 30);
         });
       }
@@ -509,46 +532,60 @@
           if (link.target === '_blank') link.target = '_self';
           let currentHref = link.getAttribute('href'); 
           if (currentHref && !currentHref.startsWith('javascript') && !currentHref.startsWith('#')) {
-            try {
-              const url = new URL(currentHref, window.location.href);
-              if (!url.hash.includes('macro-active')) {
-                url.hash = url.hash ? `${url.hash}-macro-active` : 'macro-active';
-                link.href = url.toString();
-              }
-            } catch (e) {
-              if (!currentHref.includes('macro-active')) link.href = currentHref + (currentHref.includes('#') ? '-macro-active' : '#macro-active');
-            }
+            window.location.href = currentHref;
+            return true;
           }
         }
-        ['mousedown', 'mouseup', 'click'].forEach(evt => target.dispatchEvent(new MouseEvent(evt, { view: window, bubbles: true, cancelable: true, buttons: 1 })));
-        if (typeof target.click === 'function') target.click();
-        return target;
+        target.click();
+        return true;
       }
-      return null;
+      return false;
     }
 
-    function findAndFill(targetText, value) {
-      if (!targetText) return null;
-      const lowerTarget = targetText.toLowerCase().trim();
+    function findAndInput(text, value) {
+      if (!text) return false;
+      const lowerText = text.toLowerCase().trim();
+      
+      const isVisible = (el) => {
+        const style = window.getComputedStyle(el);
+        return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length) && 
+               style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
+      };
+
       const inputs = document.querySelectorAll('input, textarea, [contenteditable="true"]');
+      
+      // 1. 정확히 일치 (Placeholder, Label, Name, ID)
       let target = Array.from(inputs).find(el => {
         const placeholder = (el.getAttribute('placeholder') || "").toLowerCase();
-        const labelAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || el.name || "").toLowerCase();
-        return (placeholder.includes(lowerTarget) || labelAttr.includes(lowerTarget)) && el.type !== 'hidden';
+        const labelAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || el.id || el.name || "").toLowerCase();
+        return (placeholder === lowerText || labelAttr === lowerText) && isVisible(el);
       });
 
+      // 2. 부분 일치
+      if (!target) {
+        target = Array.from(inputs).find(el => {
+          const placeholder = (el.getAttribute('placeholder') || "").toLowerCase();
+          const labelAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || el.id || el.name || "").toLowerCase();
+          return (placeholder.includes(lowerText) || labelAttr.includes(lowerText)) && isVisible(el);
+        });
+      }
+
       if (target) {
-        try {
-          target.scrollIntoView({ behavior: 'auto', block: 'center' });
+        try { 
+          target.scrollIntoView({ behavior: 'auto', block: 'center' }); 
           target.focus();
           if (target.contentEditable === 'true') target.innerText = value;
           else target.value = value;
           target.dispatchEvent(new Event('input', { bubbles: true }));
           target.dispatchEvent(new Event('change', { bubbles: true }));
-        } catch (e) {}
-        return target;
+          // [UX 개선] 엔터 키 효과를 위해 폼 제출 시도
+          try { if (target.form) target.form.dispatchEvent(new Event('submit', { bubbles: true })); } catch (e) {}
+          return true;
+        } catch (e) {
+          console.error("[Shortcut] Input Error:", e);
+        }
       }
-      return null;
+      return false;
     }
 
     function expandHiddenMenus() {
