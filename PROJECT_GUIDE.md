@@ -1,6 +1,4 @@
-# 🚀 My Chrome Guide: Extension 프로젝트 상세 가이드 (v3.2)
-
-본 프로젝트는 사용자가 크롬 브라우저를 더욱 스마트하게 사용할 수 있도록 돕는 **학습형 팁 큐레이션 및 웹 자동화 확장 프로그램**입니다. v3.2에서는 **전체화면(Fullscreen) 모드**, **4.0초의 여유로운 페이싱**, 그리고 **몰입형 자동화 경험**을 통해 사용자 가이드를 완성했습니다.
+본 프로젝트는 사용자가 크롬 브라우저를 더욱 스마트하게 사용할 수 있도록 돕는 **학습형 팁 큐레이션 확장 프로그램**입니다. v3.2에서는 **전체화면(Fullscreen) 모드**와 **4.0초의 여유로운 페이싱**을 통해 사용자 가이드를 완성했습니다.
 
 ---
 
@@ -27,7 +25,7 @@ graph TD
     end
 
     subgraph "Data & Engine"
-        STORE --> DATA[js/data.js: 139+ Tips DB]
+        STORE --> DATA[js/data.js: 136 Tips DB]
         STORE --> I18N[js/i18n.js: Multi-lang]
         ACT --> CS[content_script.js: Macro Engine]
     end
@@ -43,20 +41,21 @@ graph TD
 
 ---
 
-## 🌟 핵심 기능 (Core Features)
-
-| 기능 | 설명 | 상태 |
-| :--- | :--- | :---: |
-| **팁 큐레이션** | 15개 카테고리로 분류된 **139가지** 크롬 활용 팁 | ✅ Ver 2.2 |
-| **지능형 검색** | **다중 키워드** 및 **퍼지 매칭(Levenshtein)** 기술로 오타에도 대응하는 검색 구현 | ✅ Advanced |
-| **1클릭 매크로** | 4.0s 슬로우 페이싱 및 **전체화면(Fullscreen)** 실행 지원 | ✅ Ver 3.2 |
+| **1클릭 매크로** | 4.0s| **팁 큐레이션** | 14개 카테고리로 분류된 **136가지** 크롬 활용 팁 | ✅ Ver 2.2 |
 | **스마트 메모** | 각 팁의 선택 위치에 동적으로 나타나는 컨텍스트 기반 메모 | ✅ Improved |
 | **사용자 온보딩** | 4대 핵심 가치를 담은 **리치 콘텐츠 온보딩** 인터페이스 | ✅ v3.1 Refined |
 | **보안 아키텍처** | `innerHTML` 제거 및 `insertAdjacentHTML` 기반의 **XSS 방어** 설계 | ✅ Secure |
+| **AI 자동 복구** | Gemini Nano 기반의 UI 요소 자가 치유 지원 | ✅ New (v3.2) |
 
 ---
 
 ## ⚡ 주요 성능 및 UX 최적화 (Optimization)
+
+### 🚀 Key Features (v3.2.0)
+- **1-Click Engine**: Identifier-based robust instruction execution.
+- **AI Target Repair**: Built-in heuristic and Chrome Gemini Nano support for self-healing UI selectors.
+- **Premium UX Design**: 4px grid system, HSL colors, and smooth animations (FOUC-free).
+- **100% XSS Safe**: Strict architecture with no `innerHTML` or `eval()`.
 
 1.  **Memoized Lazy Loading**: `store.js`에서 데이터 로드 시 초기 부하를 제거하여 팝업 실행 속도를 개선했습니다.
 2.  **Fuzzy Search Engine**: `utils.js`의 편집 거리(Levenshtein) 알고리즘을 활용하여 사용자 검색 의도를 정확히 파악합니다.
@@ -97,7 +96,7 @@ graph TD
 │   ├── actions.js        # 비즈니스 로직 및 이벤트
 │   ├── ui.js             # 렌더링 엔진 (Render Limit 및 검색 UI 포함)
 │   ├── i18n.js           # 다국어 메시지 및 카테고리
-│   ├── data.js           # 139개 팁 데이터베이스
+│   ├── data.js           # 136개 팁 데이터베이스
 │   ├── utils.js          # 공통 유틸리티 (퍼지 검색 알고리즘 포함)
 │   ├── constants.js      # 앱 전역 상수 및 셀렉터 관리
 │   ├── icons.js          # SVG 아이콘 애셋 관리

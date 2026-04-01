@@ -110,15 +110,22 @@ export function runShortcut(sc) {
     steps = sc.steps_en;
   }
 
+  // [고유 실행 ID 생성] 다중 창 동시 실행 시 상태 충돌 방지
+  const executionId = Date.now();
+  const taskKey = `macroTask_${executionId}`;
+
   const task = {
     id: sc.id,
+    executionId: executionId,
     steps: steps,
     currentStepIndex: 0,
     startTime: Date.now()
   };
   
-  chrome.storage.local.set({ activeShortcutTask: task }, () => {
-    const macroUrl = sc.url.includes('#') ? `${sc.url}-macro-active` : `${sc.url}#macro-active`;
+  // 전역 키가 아닌 고유 ID 키에 저장
+  chrome.storage.local.set({ [taskKey]: task }, () => {
+    // 해시 뒤에 고유 ID를 붙여 특정 창이 자신의 태스크를 식별하게 함
+    const macroUrl = sc.url.includes('#') ? `${sc.url}-macro-active-${executionId}` : `${sc.url}#macro-active-${executionId}`;
     
     // 1. 완전히 새로운 창(New Window)을 생성하여 실행합니다.
     chrome.windows.create({ 

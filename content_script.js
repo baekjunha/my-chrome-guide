@@ -3,21 +3,50 @@
  * Optimized for identifier-based single-tab execution (#macro-active).
  */
 (function() {
+  let currentExecutionId = null;
+
   // 1. [식별자 기반 로직] 매크로 전용 탭이 아니면 실행 차단
   const isMacroActive = async () => {
-    // URL 해시 확인
-    if (window.location.hash.includes('macro-active')) return 'active';
-    if (window.location.hash.includes('macro-record')) return 'record';
+    let hash = "";
     
+    // 1-1. 자신의 해시 확인 (가장 안전)
     try {
-      if (window.top.location.hash.includes('macro-active')) return 'active';
-      if (window.top.location.hash.includes('macro-record')) return 'record';
+      hash = window.location.hash;
     } catch (e) {}
 
-    // 해시가 없더라도 실행 중인 작업이 있는지 storage 확인
-    const { activeShortcutTask, isRecording } = await chrome.storage.local.get(['activeShortcutTask', 'isRecording']);
-    if (activeShortcutTask) return 'active';
-    if (isRecording) return 'record';
+    // 1-2. 타 도메인 iframe인 경우 window.top의 해시 확인 시도
+    // window.top 접근 자체가 보안 정책에 따라 차단될 수 있으므로 극도로 보수적으로 접근
+    if (!hash) {
+      try {
+        if (window.top !== window) {
+          // .location 접근만으로도 SecurityError가 발생할 수 있음
+          const topLoc = window.top.location;
+          hash = topLoc.hash;
+        }
+      } catch (e) {
+        // 크로스 도메인 보안 정책으로 접근 불가한 경우 (정상적인 동작)
+      }
+    }
+    
+    // URL 해시 및 실행 ID 추출 (예: #macro-active-12345678)
+    if (hash && typeof hash === 'string') {
+      const activeMatch = hash.match(/#macro-active(?:-(\d+))?/);
+      const recordMatch = hash.match(/#macro-record/);
+
+      if (activeMatch) {
+        if (activeMatch[1]) currentExecutionId = activeMatch[1];
+        return 'active';
+      }
+      if (recordMatch) return 'record';
+    }
+
+    // 해시가 없더라도 전역 작업이 있는지 확인 (하위 호환성)
+    try {
+      const { activeShortcutTask, isRecording } = await chrome.storage.local.get(['activeShortcutTask', 'isRecording']);
+      if (activeShortcutTask) return 'active';
+      if (isRecording) return 'record';
+    } catch (e) {}
+
     return null;
   };
 
@@ -55,6 +84,29 @@
         0% { transform: scale(0); opacity: 0.8; }
         100% { transform: scale(10); opacity: 0; }
       }
+      .macro-status-badge {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-100px);
+        background: rgba(15, 23, 42, 0.9);
+        backdrop-filter: blur(8px);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 100px;
+        font-size: 14px;
+        font-weight: 600;
+        z-index: 9999999;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        border: 1.5px solid rgba(255, 255, 255, 0.15);
+      }
+      .macro-status-badge.show {
+        transform: translateX(-50%) translateY(0);
+      }
     `;
     document.head.appendChild(style);
   }
@@ -63,6 +115,9 @@
   isMacroActive().then(mode => {
     if (mode === 'active') initEngine();
     else if (mode === 'record') initRecorder();
+  }).catch(err => {
+    // 보안 에러 등 예상치 못한 에러가 최상단까지 올라오지 않도록 차단
+    console.debug("[Shortcut] Activation skipped:", err);
   });
 
   function initRecorder() {
@@ -181,16 +236,6 @@
       return "Button";
     }
 
-    async function addStep(step) {
-      const { recordingTask } = await chrome.storage.local.get('recordingTask');
-      if (!recordingTask) return;
-      
-      recordingTask.steps.push(step);
-      recordedStepsCount = recordingTask.steps.length;
-      await chrome.storage.local.set({ recordingTask });
-      updateRecorderBadge();
-    }
-
     document.addEventListener('click', (e) => {
       if (e.target.id === 'stop-record-btn' || e.target.closest('#shortcut-recorder-badge')) return;
       
@@ -299,7 +344,8 @@
       const title = complete ? "🎉 매크로 완료!" : (isLogin ? "🔐 로그인 대기 중" : (isAI ? "🤖 AI 상호작용 중" : `실행 중 (${current}/${total})`));
       const subTitle = customMsg || (complete ? "모든 단계가 성공적으로 완료되었습니다." : `타겟: ${targetName} ${retry > 0 ? `(재시도 ${retry})` : ''}`);
 
-      badge.innerHTML = `
+      badge.textContent = '';
+      badge.insertAdjacentHTML('beforeend', `
         <div style="display:flex; align-items:center; gap:10px; font-weight:800; font-size:14px;">
           ${isAI ? `<span style="font-size:18px;">🤖</span>` : (isLogin ? `<span style="font-size:18px;">🔐</span>` : (complete ? '✅' : '🚀'))} <span>${title}</span>
         </div>
@@ -307,7 +353,7 @@
         <div style="width:100%; height:4px; background:rgba(255,255,255,0.2); border-radius:10px; overflow:hidden; margin-top:4px;">
           <div style="width:${percent}%; height:100%; background:white; transition: width 0.3s ease;"></div>
         </div>
-      `;
+      `);
     }
 
     function removeStatusBadge() {
@@ -320,11 +366,13 @@
 
     async function runEngine() {
       if (isProcessing) return;
+      removeSpotlight(); // 이전 하이라이트 제거
       try {
         // [최적화] 캐시에서 작업을 가져오고 없으면 스토리지 로드
         if (!cachedTask) {
-          const result = await chrome.storage.local.get('activeShortcutTask');
-          cachedTask = result.activeShortcutTask;
+          const taskKey = currentExecutionId ? `macroTask_${currentExecutionId}` : 'activeShortcutTask';
+          const result = await chrome.storage.local.get(taskKey);
+          cachedTask = result[taskKey];
         }
 
         if (!cachedTask) {
@@ -335,6 +383,18 @@
 
         startObserver();
         
+        // [Smart Auth Check] 로그인 페이지 감지 시 대기
+        const isCurrentLoginPage = () => {
+          const authPaths = ['login', 'signin', 'auth', 'accounts.google', 'id.naver', 'membership', 'session/new', 'signup'];
+          const url = window.location.href.toLowerCase();
+          return authPaths.some(p => url.includes(p)) && (document.body.innerText.toLowerCase().includes('로그인') || document.body.innerText.toLowerCase().includes('password'));
+        };
+
+        if (isCurrentLoginPage()) {
+          if (window === window.top) updateStatusBadge(cachedTask.currentStepIndex || 0, cachedTask.steps.length, "Auth Required", 0, false, "로그인 대기 중... 완료 후 자동으로 재개됩니다.");
+          return;
+        }
+
         // steps와 currentStepIndex를 명시적으로 let 선언하여 'Assignment to constant' 방지
         let steps = cachedTask.steps;
         let currentStepIndex = cachedTask.currentStepIndex || 0;
@@ -343,8 +403,9 @@
           if (window === window.top) updateStatusBadge(steps.length, steps.length, "Complete", 0, true, "모든 단계가 성공적으로 완료되었습니다.");
           stopObserver();
           setTimeout(async () => {
+            const taskKey = currentExecutionId ? `macroTask_${currentExecutionId}` : 'activeShortcutTask';
             cachedTask = null; 
-            await chrome.storage.local.remove('activeShortcutTask');
+            await chrome.storage.local.remove(taskKey);
             if (window === window.top) removeStatusBadge();
           }, 2500);
           return;
@@ -366,7 +427,8 @@
           // 성공 시 인덱스 증가 및 스토리지 업데이트
           currentStepIndex++;
           cachedTask = { ...cachedTask, currentStepIndex };
-          await chrome.storage.local.set({ activeShortcutTask: cachedTask });
+          const taskKey = currentExecutionId ? `macroTask_${currentExecutionId}` : 'activeShortcutTask';
+          await chrome.storage.local.set({ [taskKey]: cachedTask });
           
           setTimeout(() => { 
             isProcessing = false; 
@@ -382,7 +444,8 @@
             if (checkElementExists(nextTarget, nextType)) {
               currentStepIndex++;
               cachedTask = { ...cachedTask, currentStepIndex };
-              await chrome.storage.local.set({ activeShortcutTask: cachedTask });
+              const taskKey = currentExecutionId ? `macroTask_${currentExecutionId}` : 'activeShortcutTask';
+              await chrome.storage.local.set({ [taskKey]: cachedTask });
               retryCount = 0;
               setTimeout(() => runEngine(), 500);
               return;
@@ -413,15 +476,16 @@
                 const items = document.querySelectorAll('a, button, [role="button"], input, textarea, [contenteditable="true"], .btn, .button');
                 const targetEl = items[recovered.index];
                 if (targetEl) {
-                  console.log("[Shortcut] AI Recovered:", recovered.text);
+                  console.debug("[Shortcut] AI Recovered:", recovered.text);
                   if (stepType === 'click') targetEl.click();
                   else if (stepType === 'input' && stepValue) {
                     targetEl.value = stepValue;
                     targetEl.dispatchEvent(new Event('input', { bubbles: true }));
                   }
                   currentStepIndex++;
-                  cachedTask = { ...cachedTask, currentStepIndex }; 
-                  await chrome.storage.local.set({ activeShortcutTask: cachedTask });
+                  cachedTask = { ...cachedTask, currentStepIndex };
+                  const taskKey = currentExecutionId ? `macroTask_${currentExecutionId}` : 'activeShortcutTask';
+                  await chrome.storage.local.set({ [taskKey]: cachedTask });
                   retryCount = 0;
                   setTimeout(() => runEngine(), 500);
                   return;
@@ -435,9 +499,10 @@
             setTimeout(() => runEngine(), 500);
           } else {
             if (window === window.top) updateStatusBadge(currentStepIndex + 1, steps.length, stepTarget, 0, false, "요소를 찾을 수 없습니다.");
+          const taskKey = currentExecutionId ? `macroTask_${currentExecutionId}` : 'activeShortcutTask';
             stopObserver();
             cachedTask = null;
-            await chrome.storage.local.remove('activeShortcutTask');
+            await chrome.storage.local.remove(taskKey);
             if (window === window.top) setTimeout(removeStatusBadge, 4000);
           }
         }
@@ -526,6 +591,10 @@
       }
 
       if (target) {
+        showSpotlight(target);
+        const rect = target.getBoundingClientRect();
+        triggerRipple(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        
         try { target.scrollIntoView({ behavior: 'auto', block: 'center' }); } catch (e) {}
         const link = target.tagName === 'A' ? target : target.closest('a');
         if (link) {
@@ -571,6 +640,7 @@
       }
 
       if (target) {
+        showSpotlight(target);
         try { 
           target.scrollIntoView({ behavior: 'auto', block: 'center' }); 
           target.focus();
@@ -626,9 +696,12 @@
 
     runEngine();
     chrome.storage.onChanged.addListener((changes, area) => {
-      if (area === 'local' && changes.activeShortcutTask) {
-        cachedTask = changes.activeShortcutTask.newValue; // [최적화] 외부 변경 시 캐시 동기화
-        runEngine();
+      if (area === 'local') {
+        const taskKey = currentExecutionId ? `macroTask_${currentExecutionId}` : 'activeShortcutTask';
+        if (changes[taskKey]) {
+          cachedTask = changes[taskKey].newValue; // [최적화] 외부 변경 시 캐시 동기화
+          runEngine();
+        }
       }
     });
   }

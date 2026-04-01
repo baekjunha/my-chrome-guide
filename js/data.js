@@ -81,8 +81,6 @@ export const tips = [
     shortcut: { win: "Ctrl + Shift + N", mac: "Cmd + Shift + N" },
     tags: ["몰래", "기록", "비밀", "야동", "선물", "사생활", "보안", "숨기기"],
     tags_en: ["private", "incognito", "security", "hide", "no history", "hidden", "secret", "privacy"],
-    steps: ["단축키를 눌러 새 시크릿 창을 엽니다.", "이제 방문 기록, 쿠키, 사이트 데이터가 기기에 저장되지 않습니다.", "학교, 회사, 인터넷 서비스 제공업체(ISP)는 사용자의 활동을 여전히 볼 수 있으니 주의하세요.", "다운로드한 파일이나 북마크는 유지되니 안심하세요."],
-    steps_en: ["Use the shortcut to open a new Incognito window.", "Browsing history, cookies, and site data won't be saved on this device.", "Note: Your school, employer, or ISP might still see your activity.", "Downloaded files and bookmarks are still kept."]
   },
   {
     id: 9, category: "탭/창",
@@ -94,8 +92,6 @@ export const tips = [
     shortcut_en: { win: "Right-click tab > Add tab to new group", mac: "Right-click tab > Add tab to new group" },
     tags: ["정리", "그룹", "지저분", "복잡", "모으기", "묶기", "정렬", "폴더", "정리정돈"],
     tags_en: ["organize", "group", "messy", "complex", "gather", "clean", "folder", "sort", "tab group"],
-    steps: ["그룹화할 탭 하나 또는 여러 개(Ctrl 누른 채 클릭)를 선택하세요.", "선택한 탭 위에서 마우스 우클릭을 하세요.", "'탭을 새 그룹에 추가'를 클릭하세요.", "그룹의 이름과 색상을 지정하여 관리하세요."],
-    steps_en: ["Select one or more tabs (Ctrl+Click to select multiples).", "Right-click on the selected tab(s).", "Select 'Add tab to new group'.", "Assign a name and color to the group."]
   },
   {
     id: 10, category: "탭/창",
@@ -107,8 +103,6 @@ export const tips = [
     shortcut_en: { win: "Right-click tab > Mute site", mac: "Right-click tab > Mute site" },
     tags: ["소리", "시끄러워", "광고", "음소거", "뮤트", "끄기", "조용히", "소리끄기", "조용", "미디어제어"],
     tags_en: ["sound", "noisy", "ad", "mute", "volume", "off", "quiet", "speaker", "no sound", "silent"],
-    steps: ["소리가 나는 탭을 마우스 우클릭 하세요.", "'사이트 음소거'를 클릭하세요.", "다시 소리를 켜려면 같은 방법으로 '사이트 음소거 해제'를 누르세요."],
-    steps_en: ["Right-click the tab that is making sound.", "Select 'Mute site'.", "To unmute, follow the same steps and select 'Unmute site'."]
   },
   {
     id: 84, category: "탭/창",
@@ -247,8 +241,6 @@ export const tips = [
     shortcut_en: { win: "Right-click twice (YouTube) / Media icon", mac: "Right-click twice (YouTube) / Media icon" },
     tags: ["동영상", "팝업", "멀티태스킹", "작은화면", "영상보기", "유튜브", "도구", "플로팅"],
     tags_en: ["pip", "picture in picture", "video", "popup", "multitasking", "small screen", "watch video", "youtube"],
-    steps: ["유튜브: 영상 위에서 우클릭을 두 번 해서 브라우저 메뉴를 여세요.", "기타 사이트: 주소창 우측의 '미디어 제어(음표 모양)' 아이콘을 눌러 PIP를 켤 수도 있습니다.", "'PIP 모드'를 선택하면 화면 구석에 작은 창이 생깁니다."],
-    steps_en: ["YouTube: Right-click twice on the video to see the browser's context menu.", "Other sites: You can also use the 'Media Control' icon (music note) next to the address bar.", "Select 'Picture in picture' to create a small floating window."]
   },
   // ── 화면 ──────────────────────────────────────
   {
@@ -281,8 +273,6 @@ export const tips = [
     shortcut_en: { win: "More tools > Reading mode", mac: "More tools > Reading mode" },
     tags: ["읽기", "광고제거", "깔끔", "집중", "클린", "리더", "글자만", "포커스", "글보기"],
     tags_en: ["read", "remove ads", "clean", "focus", "reader", "reading mode", "text only", "readability", "side panel"],
-    steps: ["기사나 블로그 등 텍스트가 많은 페이지에서 실행하세요.", "우측 상단 '더보기(⋮)' > '도구 더보기' > '읽기 모드'를 선택하세요.", "사이드바에 본문만 깔끔하게 추출되어 나타납니다.", "글꼴 크기, 배경색, 줄 간격 등을 취향껏 조절해 보세요."],
-    steps_en: ["Open a page with lots of text like an article or blog.", "Go to 'More(⋮)' > 'More Tools' > 'Reading Mode'.", "The text will appear cleanly extracted in the sidebar.", "Adjust font size, background color, and line spacing to your liking."]
   },
   // ── 북마크 ────────────────────────────────────
   {
@@ -410,8 +400,6 @@ export const tips = [
     shortcut: { win: "Ctrl + Shift + C", mac: "Cmd + Shift + C" },
     tags: ["요소", "검사", "HTML", "CSS", "선택", "코드확인", "콕찍기", "피커", "클릭검사"],
     tags_en: ["element", "inspect", "HTML", "CSS", "pick", "select", "check code", "selector", "picker"],
-    steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "단축키를 눌러 요소 선택 모드를 활성화합니다.", "확인하고 싶은 화면 요소를 마우스로 클릭하면 해당 HTML 코드로 즉시 이동합니다."],
-    steps_en: ["Press F12 (or Cmd + Option + I) to open Developer Tools first.", "Press the shortcut to activate element selection mode.", "Click on a screen element to jump directly to its HTML code."]
   },
   {
     id: 35, category: "개발자",
@@ -422,8 +410,6 @@ export const tips = [
     shortcut: { win: "Ctrl + Shift + J", mac: "Cmd + Option + J" },
     tags: ["콘솔", "JS", "자바스크립트", "스크립트", "로그", "명령어", "코딩", "터미널", "자바", "js콘솔"],
     tags_en: ["console", "JS", "javascript", "script", "log", "command", "coding", "terminal", "js console", "console log"],
-    steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "단축키를 눌러 Console 탭으로 즉시 이동합니다.", "입력창에 자바스크립트 코드를 입력하고 엔터를 눌러 실행하세요."],
-    steps_en: ["Press F12 (or Cmd + Option + I) to open Developer Tools first.", "Press the shortcut to jump to the Console tab immediately.", "Type your JavaScript code in the input and press Enter to execute."]
   },
   {
     id: 36, category: "개발자",
@@ -445,8 +431,6 @@ export const tips = [
     shortcut_en: { win: "F12 > Select Network tab", mac: "Cmd + Option + I > Select Network tab" },
     tags: ["네트워크", "요청", "API", "느려", "통신", "트래픽", "패킷", "데이터", "속도", "응답", "api요청"],
     tags_en: ["network", "request", "API", "slow", "communication", "traffic", "packet", "data", "speed", "response", "api request"],
-    steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "상단 탭에서 'Network'를 선택하세요.", "페이지를 새로고침(F5)하면 발생하는 모든 통신 목록을 확인할 수 있습니다."],
-    steps_en: ["Press F12 (or Cmd + Option + I) to open Developer Tools first.", "Select the 'Network' tab from the top.", "Reload the page (F5) to see a list of all network communications."]
   },
   // ── 설정 ──────────────────────────────────────
   {
@@ -462,44 +446,6 @@ export const tips = [
     tags_en: ["settings", "option", "configuration", "config", "chrome settings", "control panel", "manage"]
   },
   {
-    id: 39, category: "자동화",
-    title: "메모리 절약 모드",
-    title_en: "Memory Saver Mode",
-    desc: "사용하지 않는 탭의 메모리를 회수하여 브라우저 속도를 높여줍니다.",
-    desc_en: "Frees up memory from inactive tabs to improve speed.",
-    shortcut: { win: "설정 > 성능 > 메모리 절약", mac: "설정 > 성능 > 메모리 절약" },
-    shortcut_en: { win: "Settings > Performance > Memory Saver", mac: "Settings > Performance > Memory Saver" },
-    url: "chrome://settings/performance",
-    steps: [
-      { type: 'click', target: '메모리 절약' }
-    ],
-    steps_en: [
-      { type: 'click', target: 'Memory Saver' }
-    ],
-    tags: ["렉", "느려", "버벅", "무거워", "성능", "최적화", "램", "렉걸려", "빨리", "탭잠자기", "배터리", "메모리부족"],
-    tags_en: ["lag", "slow", "performance", "optimization", "RAM", "speed", "memory", "saver", "fast", "tab sleep", "battery", "low memory"]
-  },
-  {
-    id: 40, category: "자동화",
-    title: "크롬 비밀번호 관리자",
-    title_en: "Chrome Password Manager",
-    desc: "각 사이트별로 저장된 아이디와 비밀번호를 확인하고 안전하게 관리할 수 있습니다.",
-    desc_en: "Manage your saved passwords at a glance.",
-    shortcut: { win: "설정 > 비밀번호", mac: "설정 > 비밀번호" },
-    shortcut_en: { win: "Settings > Passwords", mac: "Settings > Passwords" },
-    url: "chrome://password-manager",
-    steps: [
-      { type: 'click', target: '비밀번호' },
-      { type: 'input', target: '비밀번호 검색', value: 'google' }
-    ],
-    steps_en: [
-      { type: 'click', target: 'Passwords' },
-      { type: 'input', target: 'Search passwords', value: 'google' }
-    ],
-    tags: ["비번", "암호", "로그인", "자동완성", "계정", "로그인 정보", "패스워드", "비밀번호", "키체인"],
-    tags_en: ["password", "login", "autocomplete", "account", "manager", "login info", "keychain", "saved password", "pass"]
-  },
-  {
     id: 41, category: "설정",
     title: "크롬 작업 관리자",
     title_en: "Chrome Task Manager",
@@ -509,24 +455,6 @@ export const tips = [
     shortcut_en: { win: "Shift + Esc", mac: "Top Menu > Window > Task Manager" },
     tags: ["관리자", "프로세스", "강제종료", "응답없음", "점유율", "종료하기", "작업관리자", "꺼", "멈춤", "응답", "죽이기"],
     tags_en: ["manager", "process", "force quit", "not responding", "task", "task manager", "cpu", "usage", "kill", "freeze", "response"]
-  },
-  {
-    id: 42, category: "자동화",
-    title: "확장 프로그램 관리",
-    title_en: "Manage Extensions",
-    desc: "설치된 확장 프로그램들을 확인하고 필요에 따라 켜거나 끌 수 있습니다.",
-    desc_en: "Enable, disable, or remove installed extensions.",
-    shortcut: { win: "chrome://extensions 입력", mac: "chrome://extensions 입력" },
-    shortcut_en: { win: "Type chrome://extensions", mac: "Type chrome://extensions" },
-    url: "chrome://extensions",
-    steps: [
-      { type: 'input', target: '확장 프로그램 검색', value: 'my chrome guide' }
-    ],
-    steps_en: [
-      { type: 'input', target: 'Search extensions', value: 'my chrome guide' }
-    ],
-    tags: ["확장", "플러그인", "관리", "앱", "추가기능", "프러그인", "익스텐션", "끄기", "켜기"],
-    tags_en: ["extension", "plugin", "manage", "app", "add-on", "addons", "disable", "enable", "remove"]
   },
   {
     id: 43, category: "설정",
@@ -548,49 +476,7 @@ export const tips = [
     tags: ["저장", "다운로드", "HTML", "파일", "내려받기", "다운", "페이지저장", "문서저장"],
     tags_en: ["save", "download", "HTML", "file", "page save", "ctrl s", "save as", "backup"]
   },
-  {
-    id: 45, category: "자동화",
-    title: "크롬 캐시·쿠키 삭제",
-    title_en: "Clear Chrome Cache & Cookies",
-    desc: "브라우저 오류를 해결하거나 개인정보를 보호하기 위해 방문 기록, 쿠키, 캐시를 삭제합니다.",
-    desc_en: "Clear browsing data to resolve errors and protect privacy. (Note: You will be logged out of most sites)",
-    shortcut: { win: "Ctrl + Shift + Delete", mac: "Cmd + Shift + Backspace" },
-    url: "chrome://settings/clearBrowserData",
-    tags: ["캐시", "쿠키", "삭제", "초기화", "오류", "느려", "지우기", "탈퇴", "삭제하기", "인터넷 기록 삭제"],
-    tags_en: ["cache", "cookie", "delete", "clear", "error", "slow", "clear cache", "cleaning", "clear browsing data", "format"],
-    steps: [
-      { type: 'click', target: '데이터 삭제' }
-    ],
-    steps_en: [
-      { type: 'click', target: 'Clear data' }
-    ]
-  },
   // ── 이스터에그 ────────────────────────────────
-  {
-    id: 46, category: "자동화",
-    title: "전설의 공룡 게임 (Dino)",
-    title_en: "Legendary Dino Game",
-    desc: "인터넷 연결이 끊겼을 때나 간단한 게임을 즐기고 싶을 때 실행할 수 있습니다.",
-    desc_en: "The game that appears when the internet is down! You can also run it by typing directly in the address bar.",
-    shortcut: { win: "chrome://dino 입력", mac: "chrome://dino 입력" },
-    shortcut_en: { win: "Type chrome://dino", mac: "Type chrome://dino" },
-    url: "chrome://dino",
-    steps: [],
-    tags: ["공룡", "게임", "심심해", "오프라인", "점프", "런닝", "공룡게임", "인터넷끊김", "크롬게임"],
-    tags_en: ["dino", "game", "bored", "offline", "dinosaur", "jump", "running", "t-rex", "chrome game"]
-  },
-  {
-    id: 47, category: "이스터에그",
-    title: "공룡 게임 무적 치트키",
-    title_en: "Dino Game Invincibility Cheat",
-    desc: "공룡 게임에서 장애물에 부딪혀도 게임이 끝나지 않도록 설정하여 높은 점수를 얻을 수 있습니다.",
-    desc_en: "Makes the dinosaur pass through obstacles. To revert, simply press F5 (Reload).",
-    shortcut: { win: "Runner.prototype.gameOver = function(){}", mac: "Runner.prototype.gameOver = function(){}" },
-    tags: ["공룡", "치트", "무적", "해킹", "점수", "짱", "일등", "치트키"],
-    tags_en: ["dino", "cheat", "invincible", "hack", "score", "god mode", "code", "console cheat"],
-    steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "chrome://dino 접속 후 'Console' 탭에 코드를 입력하세요.", "무적을 해제하고 원래대로 돌리려면 F5키를 눌러 페이지를 새로고침하면 됩니다."],
-    steps_en: ["First, open Developer Tools by pressing F12 (or Cmd + Option + I).", "Go to chrome://dino and enter the code in 'Console'.", "To disable the cheat and go back to normal, press F5 to reload the page."]
-  },
   {
     id: 48, category: "이스터에그",
     title: "구글 화면 360도 회전",
@@ -656,8 +542,6 @@ export const tips = [
     shortcut_en: { win: "Search 'katamari' on Google > Click icon", mac: "Search 'katamari' on Google > Click icon" },
     tags: ["괴혼", "뭉치기", "굴리기", "게임", "카타마리", "블록", "굴려"],
     tags_en: ["katamari", "roll up", "roll", "game", "ball", "rolling", "katamari damacy"],
-    steps: ["구글 검색창(google.com)에서 'katamari'를 검색하세요. (주소창이 아닌 검색창에 입력해야 합니다)", "상단/우측의 정보 카드에 있는 '괴혼 공' 아이콘을 클릭하세요.", "화면에 나타난 공을 키보드 방향키로 움직여 보세요.", "검색 결과에 있는 글자와 이미지들을 공으로 뭉쳐서 굴릴 수 있습니다!"],
-    steps_en: ["Search for 'katamari' in the Google search box (not the address bar).", "Click the 'Katamari ball' icon in the info card.", "Use the arrow keys to move the ball on the screen.", "Roll over text and images to stick them to your ball!"]
   },
   {
     id: 54, category: "이스터에그",
@@ -679,9 +563,7 @@ export const tips = [
     shortcut: { win: "구글 검색창(google.com)에 '고양이' 검색 > 발바닥 클릭", mac: "구글 검색창(google.com)에 '고양이' 검색 > 발바닥 클릭" },
     shortcut_en: { win: "Search 'cat' on Google > Click paw", mac: "Search 'cat' on Google > Click paw" },
     tags: ["고양이", "냥이", "발자국", "귀여워", "야옹", "발바닥"],
-    tags_en: ["cat", "kitty", "paw print", "cute", "meow", "paw"],
-    steps: ["구글 검색창(google.com)에서 '고양이'(또는 'cat')를 검색하세요. (주소창이 아닌 검색창에 입력해야 합니다)", "정보 카드에 있는 주황색 고양이 발바닥 버튼을 클릭하세요.", "이제 화면 어디든 클릭해 보세요. 귀여운 고양이 손이 나타나 발자국을 남깁니다.", "화면 하단의 [X]를 누르거나 ESC 키를 누르면 원래대로 돌아옵니다."],
-    steps_en: ["Search for 'cat' in the Google search box (not the address bar).", "Click the orange paw print button in the info card.", "Now click anywhere on the screen for a cute meow and a paw print.", "Press [X] at the bottom or the ESC key to clear the screen."]
+    tags_en: ["cat", "kitty", "paw print", "cute", "meow", "paw"]
   },
   {
     id: 56, category: "이스터에그",
@@ -693,23 +575,6 @@ export const tips = [
     shortcut_en: { win: "Search 'the answer to life...' on Google", mac: "Search 'the answer to life...' on Google" },
     tags: ["우주", "답", "42", "계산기", "궁극", "은하수", "더글러스", "히치하이커", "42의비밀"],
     tags_en: ["universe", "answer", "42", "calculator", "ultimate", "galaxy", "douglas adams", "hitchhiker", "life"]
-  },
-  {
-    id: 57, category: "자동화",
-    title: "실험적 기능 설정 (Flags)",
-    title_en: "Experimental Features (Flags)",
-    desc: "정식 출시 전인 크롬의 최신 실험적 기능들을 미리 활성화하여 사용해 볼 수 있습니다.",
-    desc_en: "Try out or adjust Chrome's latest experimental features. (Warning: Incorrect settings may cause instability)",
-    url: "chrome://flags",
-    shortcut: { win: "chrome://flags", mac: "chrome://flags" },
-    steps: [
-      { type: 'click', target: 'Reset all' }
-    ],
-    steps_en: [
-      { type: 'click', target: 'Reset all' }
-    ],
-    tags: ["설정", "실험", "테스트", "고급", "기능", "미리보기", "플래그"],
-    tags_en: ["settings", "experimental", "test", "flags", "advanced", "feature", "preview"]
   },
   {
     id: 58, category: "시스템",
@@ -755,14 +620,6 @@ export const tips = [
     shortcut_en: { win: "Type command in address bar", mac: "Type command in address bar" },
     tags: ["액션", "작업", "주소창", "옴니박스", "비밀번호관리", "쿠키삭제", "설정열기", "명령어", "바로실행"],
     tags_en: ["chrome actions", "action", "task", "address bar", "omnibox", "manage passwords", "clear cookies", "open settings", "command"],
-    steps: {
-      win: ["주소창을 클릭하거나 단축키(Ctrl+L)를 누릅니다.", "'비밀번호', '기록 삭제', '번역' 등 실행하고 싶은 작업을 입력하세요.", "검색어 아래에 나타나는 [비밀번호 관리], [인터넷 사용 기록 삭제] 등의 버튼을 클릭합니다."],
-      mac: ["주소창을 클릭하거나 단축키(Cmd+L)를 누릅니다.", "'비밀번호', '기록 삭제', '번역' 등 실행하고 싶은 작업을 입력하세요.", "검색어 아래에 나타나는 [비밀번호 관리], [인터넷 사용 기록 삭제] 등의 버튼을 클릭합니다."]
-    },
-    steps_en: {
-      win: ["Click the address bar or use the shortcut (Ctrl+L).", "Type the action you want to perform, such as 'pass', 'clear', or 'translate'.", "Click the action button that appears below the search bar, such as [Manage passwords] or [Clear browsing data]."],
-      mac: ["Click the address bar or use the shortcut (Cmd+L).", "Type the action you want to perform, such as 'pass', 'clear', or 'translate'.", "Click the action button that appears below the search bar, such as [Manage passwords] or [Clear browsing data]."]
-    }
   },
   {
     id: 66, category: "주소창/검색",
@@ -774,8 +631,6 @@ export const tips = [
     shortcut_en: { win: "@tabs [keyword]", mac: "@tabs [keyword]" },
     tags: ["탭검색", "북마크검색", "기록검색", "필터", "@탭", "@북마크", "@기록", "옴니박스", "주소창", "검색필터"],
     tags_en: ["tab search", "bookmark search", "history search", "filter", "@tabs", "@bookmarks", "@history", "omnibox", "address bar", "search filter"],
-    steps: ["주소창에 @를 입력하거나, @탭, @북마크, @기록 중 하나를 입력합니다.", "Space 키 또는 Tab 키를 누르면 해당 카테고리 검색 모드로 전환됩니다.", "찾고 있는 키워드를 입력해 해당 영역에서만 검색 결과를 확인하세요."],
-    steps_en: ["Type @ in the address bar, or type @tabs, @bookmarks, or @history.", "Press Space or Tab to enter the specific search mode.", "Type your keyword to find results only within that category."]
   },
   {
     id: 67, category: "주소창/검색",
@@ -787,9 +642,7 @@ export const tips = [
     shortcut_en: { win: "[keyword] + Tab", mac: "[keyword] + Tab" },
     link: "chrome://settings/searchEngines",
     tags: ["검색엔진", "단축키", "유튜브검색", "사이트검색", "커스텀", "주소창검색", "빠른검색", "커스텀검색"],
-    tags_en: ["search engine", "shortcut", "youtube search", "site search", "custom", "yt", "so", "omnibox search"],
-    steps: ["주소창에 chrome://settings/searchEngines를 입력하세요.", "'사이트 검색' 항목에서 [추가] 버튼을 클릭하세요.", "'바로가기' 칸에 @커스텀키워드(예: @n)를 입력하세요.", "'URL' 칸에 검색 페이지 URL(%s 포함)을 입력하세요.", "이제 주소창에 @n 입력 후 탭(Tab)키를 누르면 해당 사이트에서 즉시 검색됩니다."],
-    steps_en: ["Type chrome://settings/searchEngines in the address bar.", "Click the [Add] button under 'Site search'.", "Enter a keyword (e.g., @n) in the 'Shortcut' field.", "Enter the search result URL with %s in the 'URL' field.", "Now type @n and press Tab in the address bar to search that site instantly."]
+    tags_en: ["search engine", "shortcut", "youtube search", "site search", "custom", "yt", "so", "omnibox search"]
   },
   {
     id: 86, category: "주소창/검색",
@@ -801,14 +654,6 @@ export const tips = [
     shortcut_en: { win: "Enter formula in address bar", mac: "Enter formula in address bar" },
     tags: ["계산기", "계산", "수식", "주소창", "사칙연산", "빠른계산", "암산"],
     tags_en: ["calculator", "calculate", "formula", "math", "omnibox", "address bar", "quick calculation"],
-    steps: {
-      win: ["주소창(단축키 Ctrl+L)으로 이동합니다.", "수식(예: 125 * 8, 50/2)을 입력합니다.", "엔터를 치지 않아도 검색 제안 영역에 계산 결과가 즉시 나타납니다."],
-      mac: ["주소창(단축키 Cmd+L)으로 이동합니다.", "수식(예: 125 * 8, 50/2)을 입력합니다.", "엔터를 치지 않아도 검색 제안 영역에 계산 결과가 즉시 나타납니다."]
-    },
-    steps_en: {
-      win: ["Go to the address bar (Shortcut Ctrl+L).", "Type a math formula (e.g., 125 * 8, 50/2).", "The result will appear instantly in the search suggestions without pressing Enter."],
-      mac: ["Go to the address bar (Shortcut Cmd+L).", "Type a math formula (e.g., 125 * 8, 50/2).", "The result will appear instantly in the search suggestions without pressing Enter."]
-    }
   },
   // ── 프로필 / 공간 ──────────────────────────
   {
@@ -1064,8 +909,6 @@ export const tips = [
     shortcut: { win: "↑ / ↓", mac: "↑ / ↓" },
     tags: ["콘솔", "기록", "명령어", "탐색", "화살표", "이전명령어", "다시쓰기"],
     tags_en: ["console", "history", "command", "navigate", "up", "down", "arrow"],
-    steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "Console 탭을 클릭해 활성화합니다.", "키보드의 위(↑) 또는 아래(↓) 화살표 키를 눌러 이전에 입력했던 명령어를 확인하세요."],
-    steps_en: ["Press F12 (or Cmd + Option + I) to open Developer Tools first.", "Click the Console tab to activate it.", "Use the Up (↑) or Down (↓) arrow keys to navigate through previously entered commands."]
   },
   {
     id: 75, category: "개발자",
@@ -1077,8 +920,6 @@ export const tips = [
     shortcut_en: { win: "Ctrl + L (or clear())", mac: "Cmd + K (or Ctrl + L)" },
     tags: ["콘솔비우기", "삭제", "비우기", "지우기", "로그삭제", "깔끔", "정리"],
     tags_en: ["clear console", "delete", "clear", "console", "clean", "empty", "erase"],
-    steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "Console 탭에서 단축키를 누르거나 clear()를 입력하세요.", "지저분했던 이전 로그들이 모두 사라지고 깨끗해집니다."],
-    steps_en: ["Press F12 (or Cmd + Option + I) to open Developer Tools first.", "Press the shortcut in the Console tab or type clear().", "The previous logs will be cleared, leaving the console clean."]
   },
   {
     id: 76, category: "개발자",
@@ -1089,8 +930,6 @@ export const tips = [
     shortcut: { win: "Ctrl + [ / Ctrl + ]", mac: "Cmd + [ / Cmd + ]" },
     tags: ["탭이동", "패널이동", "빠른이동", "탭전환", "콘솔에서네트워크로"],
     tags_en: ["tab switch", "panel switch", "devtools", "switch panel", "quick move"],
-    steps: ["F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 먼저 여세요.", "개발자 도구가 활성화된 상태에서 단축키를 누르세요.", "Elements, Console, Network 등 상단 패널들이 순서대로 전환됩니다."],
-    steps_en: ["Press F12 (or Cmd + Option + I) to open Developer Tools first.", "While the DevTools window is active, press the shortcut.", "The top panels like Elements, Console, and Network will switch in order."]
   },
   {
     id: 90, category: "개발자",
@@ -1101,8 +940,6 @@ export const tips = [
     shortcut: { win: "Ctrl + Shift + M", mac: "Cmd + Shift + M" },
     tags: ["모바일", "반응형", "에뮬레이터", "테스트", "스마트폰", "화면크기"],
     tags_en: ["mobile", "responsive", "emulator", "test", "device", "emulation"],
-    steps: ["먼저 F12(또는 Cmd + Option + I)를 눌러 개발자 도구를 엽니다.", "개발자 도구 창이 활성화된 상태에서 단축키(Ctrl + Shift + M / Cmd + Shift + M)를 누르세요.", "화면 상단에 기기 선택 메뉴가 나타나면 원하는 모델(iPhone, Pixel 등)을 골라 테스트하세요.", "화면 상단의 'Dimensions' 메뉴를 통해 해상도를 자유롭게 조절할 수도 있습니다."],
-    steps_en: ["First, open Developer Tools by pressing F12 (or Cmd + Option + I).", "While the DevTools window is active, press the shortcut (Ctrl + Shift + M / Cmd + Shift + M).", "Select the desired model (iPhone, Pixel, etc.) from the device menu at the top.", "You can also manually adjust the resolution via the 'Dimensions' menu."]
   },
   // ── 숨겨진 시스템 / 고급 꿀팁 ──────────────────
   {
@@ -1116,8 +953,6 @@ export const tips = [
     link: "chrome://restart",
     tags: ["재시작", "리스타트", "초기화", "렉", "끄고켜기", "업데이트"],
     tags_en: ["restart", "reboot", "refresh", "lag", "re-open", "chrome restart"],
-    steps: ["주소창에 chrome://restart를 입력하고 엔터를 누르세요.", "현재 열린 모든 탭이 닫혔다가 다시 열립니다.", "중요한 작업이나 작성 중인 글은 반드시 먼저 저장하세요!"],
-    steps_en: ["Type chrome://restart in the address bar and press Enter.", "All open tabs will close and reopen automatically.", "Make sure to save any important work or text before restarting!"]
   },
   {
     id: 111, category: "시스템",
@@ -1196,26 +1031,6 @@ export const tips = [
     shortcut_en: { win: "Open 5+ tabs > Click '▼' icon (top-left)", mac: "Open 5+ tabs > Click '▼' icon (top-left)" },
     tags: ["ai", "탭정리", "그룹", "자동", "정리", "인공지능", "실험적"],
     tags_en: ["ai", "tab organize", "group", "auto", "clean", "artificial intelligence", "experimental"],
-    steps: {
-      win: [
-        "개인 Google 계정(만 18세 이상 성인)으로 로그인했는지 확인하세요. (Workspace/학교 계정 및 미성년자 불가)",
-        "Chrome 설정(chrome://settings/ai)에서 'AI 기능'을 켭니다.",
-        "탭을 5개 이상 열어둔 상태에서 창 왼쪽 상단의 '▼' 아이콘을 누르세요.",
-        "'탭 정리'를 선택하면 AI가 그룹화를 제안합니다."
-      ],
-      mac: [
-        "개인 Google 계정(만 18세 이상 성인)으로 로그인했는지 확인하세요. (Workspace/학교 계정 및 미성년자 불가)",
-        "Chrome 설정(chrome://settings/ai)에서 'AI 기능'을 켭니다.",
-        "탭을 5개 이상 열어둔 상태에서 창 왼쪽 상단의 '▼' 아이콘을 누르세요.",
-        "'탭 정리'를 선택하면 AI가 그룹화를 제안합니다."
-      ]
-    },
-    steps_en: [
-      "Use a personal Google account (18+). Enterprise/Edu accounts are not supported.",
-      "Enable 'AI features' in Chrome settings (chrome://settings/ai).",
-      "Open 5+ tabs and click the '▼' icon in the top-left corner.",
-      "Select 'Organize Tabs' to see AI suggestions."
-    ]
   },
   {
     id: 118, category: "AI 기능",
@@ -1227,26 +1042,6 @@ export const tips = [
     shortcut_en: { win: "Click text area > Click Gemini icon", mac: "Click text area > Click Gemini icon" },
     tags: ["ai", "gemini", "제미나이", "글쓰기", "도움", "작성", "수정", "교정"],
     tags_en: ["ai", "gemini", "write", "refine", "helper", "compose", "grammar", "artificial intelligence"],
-    steps: {
-      win: [
-        "텍스트 입력창(리뷰, 이메일, 게시글 등)에 마우스 커서를 두세요.",
-        "커서 주변에 나타나는 'Gemini(별 모양)' 아이콘을 클릭합니다.",
-        "원하는 글쓰기 주제를 입력하거나 스타일(전문적으로, 간결하게 등)을 선택하세요.",
-        "AI가 제안한 글을 '삽입' 버튼을 눌러 본문에 반영합니다."
-      ],
-      mac: [
-        "텍스트 입력창(리뷰, 이메일, 게시글 등)에 마우스 커서를 두세요.",
-        "커서 주변에 나타나는 'Gemini(별 모양)' 아이콘을 클릭합니다.",
-        "원하는 글쓰기 주제를 입력하거나 스타일(전문적으로, 간결하게 등)을 선택하세요.",
-        "AI가 제안한 글을 '삽입' 버튼을 눌러 본문에 반영합니다."
-      ]
-    },
-    steps_en: [
-      "Place your cursor in a text field (reviews, emails, posts).",
-      "Click the floating 'Gemini (star)' icon near the cursor.",
-      "Enter a topic or select a style (Professional, Concise, etc.).",
-      "Click 'Insert' to add the AI-generated text to your field."
-    ]
   },
   {
     id: 119, category: "AI 기능",
@@ -1258,26 +1053,6 @@ export const tips = [
     shortcut_en: { win: "Type @gemini in address bar", mac: "Type @gemini in address bar" },
     tags: ["ai", "제미나이", "챗봇", "질문", "검색", "인공지능"],
     tags_en: ["ai", "gemini", "chatbot", "ask", "search", "artificial intelligence"],
-    steps: {
-      win: [
-        "개인 Google 계정(만 18세 이상 성인 권장)으로 로그인했는지 확인하세요. (Workspace 계정 불가)",
-        "주소창(Ctrl+L)으로 이동하여 @gemini 를 입력합니다.",
-        "스페이스바(Space)를 한 번 누르면 'Gemini와 대화하기' 모드로 바뀝니다.",
-        "질문을 입력하고 엔터를 누르세요."
-      ],
-      mac: [
-        "개인 Google 계정(만 18세 이상 성인 권장)으로 로그인했는지 확인하세요. (Workspace 계정 불가)",
-        "주소창(Cmd+L)으로 이동하여 @gemini 를 입력합니다.",
-        "스페이스바(Space)를 한 번 누르면 'Gemini와 대화하기' 모드로 바뀝니다.",
-        "질문을 입력하고 엔터를 누르세요."
-      ]
-    },
-    steps_en: [
-      "Requires a personal Google account login.",
-      "Go to the address bar and type @gemini.",
-      "Press Space to enter chat mode.",
-      "Type your question and press Enter."
-    ]
   },
   {
     id: 120, category: "AI 기능",
@@ -1289,26 +1064,6 @@ export const tips = [
     shortcut_en: { win: "New Tab > Customize Chrome > Change theme > Create with AI", mac: "New Tab > Customize Chrome > Change theme > Create with AI" },
     tags: ["ai", "테마", "디자인", "배경", "커스텀", "인공지능"],
     tags_en: ["ai", "theme", "design", "background", "custom", "artificial intelligence"],
-    steps: {
-      win: [
-        "개인 Google 계정(만 18세 이상 성인) 및 영어 언어 설정이 필요합니다.",
-        "새 탭 페이지 오른쪽 하단의 'Chrome 맞춤설정(연필 모양)'을 누르세요.",
-        "'테마 변경' > 'AI로 생성'을 선택합니다.",
-        "주제, 스타일, 분위기를 선택하고 [생성]을 누르세요."
-      ],
-      mac: [
-        "개인 Google 계정(만 18세 이상 성인) 및 영어 언어 설정이 필요합니다.",
-        "새 탭 페이지 오른쪽 하단의 'Chrome 맞춤설정(연필 모양)'을 누르세요.",
-        "'테마 변경' > 'AI로 생성'을 선택합니다.",
-        "주제, 스타일, 분위기를 선택하고 [생성]을 누르세요."
-      ]
-    },
-    steps_en: [
-      "Requires personal Google account (18+) and English language.",
-      "Click 'Customize Chrome' (pencil icon) on a New Tab page.",
-      "Select 'Change theme' > 'Create with AI'.",
-      "Pick a subject, style, and mood, then click 'Create'."
-    ]
   },
   {
     id: 121, category: "AI 기능",
@@ -1320,26 +1075,6 @@ export const tips = [
     shortcut_en: { win: "Ctrl + H > Search with natural language", mac: "Cmd + Y > Search with natural language" },
     tags: ["ai", "기록", "방문기록", "찾기", "검색", "인공지능"],
     tags_en: ["ai", "history", "visit", "find", "search", "artificial intelligence"],
-    steps: {
-      win: [
-        "미국 거주 중이며 만 18세 이상 성인의 개인 Google 계정이 필요합니다.",
-        "Chrome 브라우저 언어를 '영어'로 설정하고 다시 시작하세요.",
-        "고성능 사양의 컴퓨터가 필요하며, 구글 계정에 로그인되어 있어야 합니다.",
-        "방문 기록(Ctrl+H) 페이지 검색창에 질문을 입력해 답변을 확인하세요."
-      ],
-      mac: [
-        "미국 거주 중이며 만 18세 이상 성인의 개인 Google 계정이 필요합니다.",
-        "Chrome 브라우저 언어를 '영어'로 설정하고 다시 시작하세요.",
-        "고성능 사양의 컴퓨터가 필요하며, 구글 계정에 로그인되어 있어야 합니다.",
-        "방문 기록(Cmd+Y) 페이지 검색창에 질문을 입력해 답변을 확인하세요."
-      ]
-    },
-    steps_en: [
-      "Requires personal Google account (18+) and US location.",
-      "Set Chrome language to English and restart.",
-      "Use a high-performance computer and sign in to your Google account.",
-      "Go to History (Ctrl+H/Cmd+Y) and type your question in the search bar."
-    ]
   },
   {
     id: 122, category: "설정",
@@ -1362,19 +1097,7 @@ export const tips = [
     shortcut: { win: "링크 위에서 우클릭 > 미리보기", mac: "링크 위에서 우클릭 > 미리보기" },
     shortcut_en: { win: "Right-click link > Preview", mac: "Right-click link > Preview" },
     tags: ["미리보기", "링크", "팝업", "빠른확인", "탐색"],
-    tags_en: ["preview", "link", "popup", "quick view", "navigation"],
-    steps: [
-      "주소창에 chrome://flags/#link-preview 를 입력해 이동하세요.",
-      "해당 항목을 'Enabled'로 변경하세요.",
-      "화면 하단에 나타나는 [Relaunch] 버튼을 눌러 브라우저를 재시작해야 기능이 활성화됩니다.",
-      "이제 링크 위에서 마우스 우클릭 시 '미리보기' 메뉴가 나타납니다."
-    ],
-    steps_en: [
-      "Go to chrome://flags/#link-preview in the address bar.",
-      "Change the setting to 'Enabled'.",
-      "Click the [Relaunch] button at the bottom to restart Chrome.",
-      "Now, right-click any link to see the 'Preview' option."
-    ]
+    tags_en: ["preview", "link", "popup", "quick view", "navigation"]
   },
   {
     id: 124, category: "탭/창",
@@ -1397,17 +1120,7 @@ export const tips = [
     shortcut: { win: "검색창에 'Parallel' 입력 > Enable로 변경", mac: "검색창에 'Parallel' 입력 > Enable로 변경" },
     shortcut_en: { win: "Search 'Parallel' > Change to 'Enabled'", mac: "Search 'Parallel' > Change to 'Enabled'" },
     tags: ["다운로드", "속도", "가속", "빨리", "플래그"],
-    tags_en: ["download", "speed", "fast", "parallel", "flags"],
-    steps: [
-      "주소창에 chrome://flags/#enable-parallel-downloading 을 입력해 이동하세요.",
-      "'Parallel downloading' 항목을 'Enabled'로 변경하세요.",
-      "화면 하단에 나타나는 [Relaunch] 버튼을 눌러 브라우저를 재시작해야 기능이 활성화됩니다."
-    ],
-    steps_en: [
-      "Go to chrome://flags/#enable-parallel-downloading in the address bar.",
-      "Change the 'Parallel downloading' setting to 'Enabled'.",
-      "Click the [Relaunch] button at the bottom to restart Chrome and activate the feature."
-    ]
+    tags_en: ["download", "speed", "fast", "parallel", "flags"]
   },
   {
     id: 138, category: "주소창/검색",
@@ -1419,8 +1132,6 @@ export const tips = [
     shortcut_en: { win: "Type @ in address bar", mac: "Type @ in address bar" },
     tags: ["검색", "주소창", "유튜브검색", "바로가기", "골뱅이"],
     tags_en: ["search", "address bar", "site search", "shortcut", "at sign"],
-    steps: ["주소창을 클릭하거나 단축키(Ctrl+L / Cmd+L)를 누르세요.", "@ 기호를 입력합니다.", "나타나는 목록에서 유튜브, 드라이브 등 원하는 사이트를 선택(화살표/탭)하세요.", "검색어를 입력하고 엔터를 누르면 해당 사이트 내 결과로 바로 이동합니다."],
-    steps_en: ["Click the address bar or use shortcut (Ctrl+L / Cmd+L).", "Type the '@' symbol.", "Select a site (YouTube, Drive, etc.) from the dropdown using arrow/Tab keys.", "Enter your search term and press Enter to search within that site."]
   },
   {
     id: 127, category: "설정",
@@ -1488,14 +1199,6 @@ export const tips = [
     shortcut_en: { win: "Bookmark Manager > Edit > Keyword", mac: "Bookmark Manager > Edit > Keyword" },
     tags: ["북마크", "키워드", "별칭", "빠른접속", "주소창"],
     tags_en: ["bookmark", "keyword", "alias", "quick access", "omnibox"],
-    steps: {
-      win: ["북마크 관리자(Ctrl+Shift+O)를 엽니다.", "원하는 북마크 우측의 '작업 더보기(⋮)' > '수정'을 누르세요.", "'별칭' 칸에 원하는 짧은 단어(예: n)를 입력하고 저장합니다.", "이제 주소창에 n만 치고 엔터를 누르면 해당 사이트가 열립니다."],
-      mac: ["북마크 관리자(Cmd+Option+B)를 엽니다.", "원하는 북마크 우측의 '작업 더보기(⋮)' > '수정'을 누르세요.", "'별칭' 칸에 원하는 짧은 단어(예: n)를 입력하고 저장합니다.", "이제 주소창에 n만 치고 엔터를 누르면 해당 사이트가 열립니다."]
-    },
-    steps_en: {
-      win: ["Open Bookmark Manager (Ctrl+Shift+O).", "Click 'More actions(⋮)' > 'Edit' on a bookmark.", "Enter a short keyword (e.g., 'n') in the 'Keyword' field and save.", "Now just type 'n' in the address bar and press Enter to open it."],
-      mac: ["Open Bookmark Manager (Cmd+Option+B).", "Click 'More actions(⋮)' > 'Edit' on a bookmark.", "Enter a short keyword (e.g., 'n') in the 'Keyword' field and save.", "Now just type 'n' in the address bar and press Enter to open it."]
-    }
   },
   {
     id: 134, category: "AI 기능",
@@ -1506,9 +1209,7 @@ export const tips = [
     shortcut: { win: "사이드 패널 > 읽기 모드 > '요약하기' 클릭", mac: "사이드 패널 > 읽기 모드 > '요약하기' 클릭" },
     shortcut_en: { win: "Side panel > Reading mode > Click 'Summarize'", mac: "Side panel > Reading mode > Click 'Summarize'" },
     tags: ["ai", "요약", "기사", "읽기모드", "생산성", "인공지능"],
-    tags_en: ["ai", "summarize", "article", "reading mode", "productivity", "summary"],
-    steps: ["기사나 긴 글이 있는 페이지를 엽니다.", "주소창 옆의 '사이드 패널' 아이콘을 누르고 '읽기 모드'를 선택하세요.", "본문 위에 나타나는 [요약하기] 버튼을 클릭합니다.", "AI가 본문을 분석하여 핵심 내용을 3줄 요약해 줍니다."],
-    steps_en: ["Open a page with a long article or text.", "Open the side panel and select 'Reading Mode'.", "Click the [Summarize] button that appears above the text.", "AI will analyze the content and provide a 3-line summary."]
+    tags_en: ["ai", "summarize", "article", "reading mode", "productivity", "summary"]
   },
   {
     id: 135, category: "AI 기능",
@@ -1531,8 +1232,6 @@ export const tips = [
     shortcut_en: { win: "Click 'G' icon in address bar", mac: "Click 'G' icon in address bar" },
     tags: ["검색", "사이드패널", "탐색", "비교", "멀티태스킹"],
     tags_en: ["search", "side panel", "navigation", "compare", "multitasking"],
-    steps: ["Google에서 무언가를 검색하고 검색 결과 중 하나를 클릭해 들어가세요.", "이제 주소창(URL창) 오른쪽 끝에 나타난 작은 'Google' 로고(G) 아이콘을 클릭합니다.", "브라우저 오른쪽에 검색 결과 목록이 고정되어 나타납니다.", "이제 목록을 보면서 여러 페이지를 바로바로 눌러보며 비교할 수 있습니다."],
-    steps_en: ["Search for something on Google and click one of the results.", "Look for a small 'Google' logo (G) icon at the right end of the address bar and click it.", "The search results will now be pinned to a side panel on the right.", "You can now browse and compare multiple sites without going back to the search page."]
   },
   {
     id: 137, category: "설정",
@@ -1565,9 +1264,7 @@ export const tips = [
     shortcut: { win: "Ctrl+Shift+A > '탭 정리'", mac: "Cmd+Shift+A > '탭 정리'" },
     shortcut_en: { win: "Ctrl+Shift+A > 'Organize Tabs'", mac: "Cmd+Shift+A > 'Organize Tabs'" },
     tags: ["ai", "탭정리", "그룹화", "정리", "자동", "수많은탭", "생산성"],
-    tags_en: ["ai", "organize tabs", "grouping", "cleanup", "auto", "many tabs", "productivity"],
-    steps: ["단축키(Ctrl+Shift+A)를 누르거나, 창 위쪽의 '탭 검색' 아이콘(아래 화살표 모양)을 클릭하세요.", "아이콘은 창의 맨 왼쪽 또는 맨 오른쪽 끝에 위치할 수 있습니다.", "팝업창 상단의 '탭 정리' 메뉴를 선택합니다. (열린 탭이 5개 이상일 때 나타납니다)", "[정리] 버튼을 누르고 AI가 제안하는 그룹 이름을 확인하여 [그룹 만들기]를 클릭하세요."],
-    steps_en: ["Press the shortcut (Ctrl+Shift+A) or click the 'Tab Search' icon (down arrow) at the top of the window.", "The icon may be located at the far left or far right of the tab bar.", "Select the 'Organize tabs' menu at the top of the popup. (Requires 5+ open tabs)", "Click [Organize], review the suggested group names, and click [Create group]."]
+    tags_en: ["ai", "organize tabs", "grouping", "cleanup", "auto", "many tabs", "productivity"]
   },
   {
     id: 142, category: "AI 기능",
@@ -1578,9 +1275,7 @@ export const tips = [
     shortcut: { win: "텍스트 입력창 우클릭 > '글쓰기 도움받기'", mac: "텍스트 입력창 우클릭 > '글쓰기 도움받기'" },
     shortcut_en: { win: "Right-click text field > 'Help me write'", mac: "Right-click text field > 'Help me write'" },
     tags: ["ai", "글쓰기", "도우미", "작문", "메일", "초안", "생성형ai"],
-    tags_en: ["ai", "writing", "assistant", "draft", "email", "generative ai", "help me write"],
-    steps: ["웹사이트의 댓글창, 메일 작성창 등 글을 쓸 수 있는 빈 칸을 클릭하세요.", "마우스 우클릭을 한 뒤 메뉴에서 '글쓰기 도움받기'를 선택합니다.", "원하는 주제나 키워드(예: 여행 후기, 정중한 거절)를 입력하세요.", "[생성]을 누르면 AI가 맥락에 맞는 초안을 작성해 줍니다."],
-    steps_en: ["Click inside any empty text field (e.g., email draft, comment box).", "Right-click and select 'Help me write' from the menu.", "Enter a few keywords or the topic you want to write about.", "Click [Create] and AI will generate a draft for you to use."]
+    tags_en: ["ai", "writing", "assistant", "draft", "email", "generative ai", "help me write"]
   },
   {
     id: 143, category: "AI 기능",
@@ -1592,9 +1287,7 @@ export const tips = [
     shortcut_en: { win: "New Tab > Customize Chrome > Create with AI", mac: "New Tab > Customize Chrome > Create with AI" },
     link: "chrome://settings/customize",
     tags: ["ai", "테마", "배경", "맞춤설정", "디자인", "배경화면", "생성"],
-    tags_en: ["ai", "theme", "background", "customize", "design", "wallpaper", "create"],
-    steps: ["크롬에서 새 탭(Ctrl+T)을 여세요.", "화면 오른쪽 맨 아래에 있는 [Chrome 맞춤설정] 버튼(연필 아이콘)을 클릭합니다.", "사이드 패널에서 '테마 변경' > 'AI로 만들기'를 선택하세요.", "주제, 스타일, 분위기를 선택하고 [만들기]를 누르면 나만의 배경이 적용됩니다."],
-    steps_en: ["Open a New Tab (Ctrl+T) in Chrome.", "Click the [Customize Chrome] button (pencil icon) at the very bottom right of the screen.", "In the side panel, select 'Change theme' > 'Create with AI'.", "Choose your subject, style, and mood, then click [Create] to apply your unique background."]
+    tags_en: ["ai", "theme", "background", "customize", "design", "wallpaper", "create"]
   },
   {
     id: 144, category: "AI 기능",
@@ -1735,26 +1428,92 @@ export const tips = [
     tags_en: ["security", "checkup", "update", "extension", "password", "scan", "virus"]
   },
   {
-    id: 156, category: "다른 기기로 Chrome 사용",
-    platform: "mac",
-    title: "iPhone Dock에 Chrome 추가",
-    title_en: "Add Chrome to iPhone Dock",
-    desc: "iPhone의 기본 브라우저를 Chrome으로 설정하고 Dock에 고정하여 편리하게 사용하세요.",
-    desc_en: "Set Chrome as your default browser and pin it to the iPhone Dock for quick access.",
-    shortcut: { win: "설정 > 기본 앱 > Chrome", mac: "설정 > 기본 앱 > Chrome" },
-    tags: ["mac", "iphone", "ios", "아이폰", "연동"],
-    tags_en: ["mac", "iphone", "ios", "sync", "default browser"]
+    id: 1001, category: "1클릭 매크로",
+    title: "Google 검색 자동화",
+    title_en: "Google Search Automation",
+    desc: "구글에서 검색어를 자동으로 입력하고 결과를 바로 확인합니다.",
+    desc_en: "Automatically type search queries on Google and see results instantly.",
+    url: "https://www.google.com",
+    steps: [
+      { type: "click", target: "textarea[name='q']" },
+      { type: "type", target: "textarea[name='q']", value: "Chrome Extension Tips" },
+      { type: "click", target: "input[name='btnK'], button[type='submit']" }
+    ],
+    tags: ["google", "검색", "자동화"],
+    tags_en: ["google", "search", "automation"]
   },
   {
-    id: 157, category: "다른 기기로 Chrome 사용",
-    platform: "mac",
-    title: "Mac Touch Bar 컨트롤 활용",
-    title_en: "Mac Touch Bar Controls",
-    desc: "MacBook의 Touch Bar에 Chrome의 '뒤로 가기', '새 탭' 버튼 등을 표시하여 더 빠르게 제어합니다.",
-    desc_en: "Use Chrome controls (Back, New Tab, etc.) on your MacBook's Touch Bar for faster navigation.",
-    shortcut: { win: "시스템 설정 > 키보드 > Touch Bar", mac: "시스템 설정 > 키보드 > Touch Bar" },
-    tags: ["mac", "맥북", "터치바", "touchbar", "제어"],
-    tags_en: ["mac", "macbook", "touch bar", "control", "shortcut"]
+    id: 1002, category: "1클릭 매크로",
+    title: "YouTube 음악 검색",
+    title_en: "YouTube Music Search",
+    desc: "유튜브에서 좋아하는 음악이나 영상을 1클릭으로 검색합니다.",
+    desc_en: "Search for your favorite music or videos on YouTube with one click.",
+    url: "https://www.youtube.com",
+    steps: [
+      { type: "click", target: "input#search" },
+      { type: "type", target: "input#search", value: "Lofi Hip Hop" },
+      { type: "click", target: "button#search-icon-legacy" }
+    ],
+    tags: ["youtube", "음악", "영상"],
+    tags_en: ["youtube", "music", "video"]
+  },
+  {
+    id: 1003, category: "1클릭 매크로",
+    title: "Instagram 피드 확인",
+    title_en: "Instagram Feed Check",
+    desc: "인스타그램 메인 피드와 최신 소식을 즉시 확인합니다.",
+    desc_en: "Instantly check your Instagram main feed and latest updates.",
+    url: "https://www.instagram.com",
+    steps: [
+      { type: "click", target: "svg[aria-label='홈'], a[href='/']" }
+    ],
+    tags: ["instagram", "sns", "피드"],
+    tags_en: ["instagram", "sns", "feed"]
+  },
+  {
+    id: 1004, category: "1클릭 매크로",
+    title: "ChatGPT 프롬프트 실행",
+    title_en: "ChatGPT Prompt Execution",
+    desc: "ChatGPT에 접속하여 질문을 자동으로 입력하고 대화를 시작합니다.",
+    desc_en: "Connect to ChatGPT, auto-type your question, and start a conversation.",
+    url: "https://chatgpt.com",
+    steps: [
+      { type: "click", target: "#prompt-textarea" },
+      { type: "type", target: "#prompt-textarea", value: "오늘의 주요 뉴스 요약해줘" },
+      { type: "click", target: "button[data-testid='send-button']" }
+    ],
+    tags: ["chatgpt", "ai", "대화"],
+    tags_en: ["chatgpt", "ai", "chat"]
+  },
+  {
+    id: 1005, category: "1클릭 매크로",
+    title: "Gemini AI 도우미",
+    title_en: "Gemini AI Assistant",
+    desc: "구글 제미나이와 즉시 대화를 시작하여 작업을 도움받습니다.",
+    desc_en: "Start a conversation with Google Gemini instantly for task assistance.",
+    url: "https://gemini.google.com",
+    steps: [
+      { type: "click", target: ".ql-editor, textarea" },
+      { type: "type", target: ".ql-editor, textarea", value: "크롬 브라우저 활용 꿀팁 알려줘" },
+      { type: "click", target: "button[aria-label='메시지 보내기']" }
+    ],
+    tags: ["gemini", "ai", "구글"],
+    tags_en: ["gemini", "ai", "google"]
+  },
+  {
+    id: 1006, category: "1클릭 매크로",
+    title: "Wikipedia 지식 검색",
+    title_en: "Wikipedia Knowledge Search",
+    desc: "위키백과에서 필요한 지식을 1클릭으로 검색합니다.",
+    desc_en: "Search for knowledge on Wikipedia with one click.",
+    url: "https://ko.wikipedia.org",
+    steps: [
+      { type: "click", target: "input[name='search']" },
+      { type: "type", target: "input[name='search']", value: "인공지능" },
+      { type: "click", target: "button.cdx-search-input__src-input__search-control__submit, button[type='submit']" }
+    ],
+    tags: ["wikipedia", "백과사전", "검색"],
+    tags_en: ["wikipedia", "wiki", "search"]
   }
 ];
 

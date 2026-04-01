@@ -9,7 +9,7 @@
      */
     async repairTarget(originalIntent, contextMap) {
       const target = typeof originalIntent === 'string' ? originalIntent : (originalIntent?.target || "");
-      console.log('[MacroAI] Repairing target for:', target);
+      console.debug('[MacroAI] Repairing target for:', target);
       
       // 1. Chrome 내장 Gemini Nano 지원 확인 (window.ai)
       if (global.ai && global.ai.canCreateTextSession) {
