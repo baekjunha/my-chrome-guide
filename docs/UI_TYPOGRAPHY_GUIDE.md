@@ -90,5 +90,5 @@
 - **대시보드 헤더**: `font-size: var(--font-lg); font-weight: 900;`
 
 ---
-최종 업데이트: 2026-03-30
+최종 업데이트: 2026-04-01  
 Antigravity UI/UX Design System

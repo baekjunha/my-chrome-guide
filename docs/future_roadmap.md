@@ -54,5 +54,7 @@
 
 ---
 
-> [!TIP]
-> **"누구나 쉽게 만드는 자동화의 미래"** — My Chrome Guide가 꿈꾸는 다음 모습입니다.
+---
+
+최종 업데이트: 2026-04-01  
+Antigravity Strategy Team

@@ -1,5 +1,5 @@
 /**
- * My Chrome Handbook - Live Automation Engine (v3.0)
+ * My Chrome Handbook - Live Automation Engine (v3.2.0)
  * Optimized for identifier-based single-tab execution (#macro-active).
  */
 (function() {
@@ -371,7 +371,7 @@
           setTimeout(() => { 
             isProcessing = false; 
             runEngine(); 
-          }, 2000); 
+          }, 4000); 
         } else {
           // [Smart Skip] 다음 단계가 이미 화면에 있는지 확인
           if (currentStepIndex + 1 < steps.length) {

@@ -99,7 +99,10 @@ graph TD
 │   ├── i18n.js           # 다국어 메시지 및 카테고리
 │   ├── data.js           # 139개 팁 데이터베이스
 │   ├── utils.js          # 공통 유틸리티 (퍼지 검색 알고리즘 포함)
-│   └── constants.js      # 앱 전역 상수 및 ICONS 관리
+│   ├── constants.js      # 앱 전역 상수 및 셀렉터 관리
+│   ├── icons.js          # SVG 아이콘 애셋 관리
+│   ├── ai-repair.js      # AI 기반 요소 복구 엔진 (Content Script 연동)
+│   └── fouc.js           # 테마 전환 시 깜빡임(FOUC) 방지 스크립트
 ├── docs/                 # 프로젝트 문서 및 상업성 분석 보고서
 │   ├── UI_SPACING_GUIDE.md # [Internal] UI 스페이싱 가이드 (4px Grid)
 │   └── UI_TYPOGRAPHY_GUIDE.md # [Internal] UI 타이포그래피 가이드 (Scale & Tokens)
@@ -108,5 +111,5 @@ graph TD
 
 ---
 
-최종 업데이트: 2026-03-30  
+최종 업데이트: 2026-04-01  
 제작: Antigravity Team
