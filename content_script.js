@@ -6,48 +6,51 @@
   let currentExecutionId = null;
 
   // 1. [식별자 기반 로직] 매크로 전용 탭이 아니면 실행 차단
-  const isMacroActive = async () => {
-    let hash = "";
-    
-    // 1-1. 자신의 해시 확인 (가장 안전)
-    try {
-      hash = window.location.hash;
-    } catch (e) {}
+  const isMacroActive = () => {
+    return new Promise((resolve) => {
+      let hash = "";
+      try { hash = window.location.hash; } catch (e) {}
 
-    // 1-2. 타 도메인 iframe인 경우 window.top의 해시 확인 시도
-    // window.top 접근 자체가 보안 정책에 따라 차단될 수 있으므로 극도로 보수적으로 접근
-    if (!hash) {
-      try {
-        if (window.top !== window) {
-          // .location 접근만으로도 SecurityError가 발생할 수 있음
-          const topLoc = window.top.location;
-          hash = topLoc.hash;
+      if (!hash) {
+        try {
+          if (window.top !== window) hash = window.top.location.hash;
+        } catch (e) {}
+      }
+      
+      if (hash && typeof hash === 'string') {
+        const activeMatch = hash.match(/#macro-active(?:-(\d+))?/);
+        const recordMatch = hash.match(/#macro-record/);
+
+        if (activeMatch) {
+          if (activeMatch[1]) currentExecutionId = activeMatch[1];
+          try { chrome.runtime.sendMessage({ action: 'REGISTER_MACRO_TAB', mode: 'active', executionId: currentExecutionId }); } catch(e) {}
+          resolve('active');
+          return;
         }
+        if (recordMatch) {
+          try { chrome.runtime.sendMessage({ action: 'REGISTER_MACRO_TAB', mode: 'record' }); } catch(e) {}
+          resolve('record');
+          return;
+        }
+      }
+
+      try {
+        chrome.runtime.sendMessage({ action: 'CHECK_MACRO_TAB' }, (response) => {
+          if (chrome.runtime.lastError) {
+             resolve(null);
+             return;
+          }
+          if (response && response.mode) {
+             if (response.executionId) currentExecutionId = response.executionId;
+             resolve(response.mode);
+          } else {
+             resolve(null);
+          }
+        });
       } catch (e) {
-        // 크로스 도메인 보안 정책으로 접근 불가한 경우 (정상적인 동작)
+        resolve(null);
       }
-    }
-    
-    // URL 해시 및 실행 ID 추출 (예: #macro-active-12345678)
-    if (hash && typeof hash === 'string') {
-      const activeMatch = hash.match(/#macro-active(?:-(\d+))?/);
-      const recordMatch = hash.match(/#macro-record/);
-
-      if (activeMatch) {
-        if (activeMatch[1]) currentExecutionId = activeMatch[1];
-        return 'active';
-      }
-      if (recordMatch) return 'record';
-    }
-
-    // 해시가 없더라도 전역 작업이 있는지 확인 (하위 호환성)
-    try {
-      const { activeShortcutTask, isRecording } = await chrome.storage.local.get(['activeShortcutTask', 'isRecording']);
-      if (activeShortcutTask) return 'active';
-      if (isRecording) return 'record';
-    } catch (e) {}
-
-    return null;
+    });
   };
 
   // [공용] 매크로 UI 스타일 주입 (initRecorder, initEngine 공통 사용)
@@ -125,6 +128,7 @@
     let recordedStepsCount = 0;
 
     function updateRecorderBadge() {
+      if (window !== window.top) return;
       if (!statusBadge) {
         statusBadge = document.createElement('div');
         statusBadge.id = 'shortcut-recorder-badge';
@@ -198,10 +202,11 @@
         await chrome.storage.local.set({ userShortcuts: shortcuts });
       }
       await chrome.storage.local.remove(['recordingTask', 'isRecording']);
+      try { chrome.runtime.sendMessage({ action: 'UNREGISTER_MACRO_TAB' }); } catch(e) {}
       
       if (statusBadge) statusBadge.remove();
       alert(chrome.i18n.getMessage('allStepsDone'));
-      window.close();
+      chrome.runtime.sendMessage({ action: 'CLOSE_TAB' });
     }
 
     function highlightElement(el) {
@@ -236,6 +241,25 @@
       return "Button";
     }
 
+    async function addStep(step) {
+      const { recordingTask } = await chrome.storage.local.get('recordingTask');
+      if (recordingTask) {
+        if (!recordingTask.steps) recordingTask.steps = [];
+        recordingTask.steps.push(step);
+        await chrome.storage.local.set({ recordingTask });
+        recordedStepsCount = recordingTask.steps.length;
+        updateRecorderBadge();
+      }
+    }
+
+    // 초기 단계 수 동기화
+    chrome.storage.local.get('recordingTask').then(res => {
+      if (res.recordingTask && res.recordingTask.steps) {
+        recordedStepsCount = res.recordingTask.steps.length;
+        updateRecorderBadge();
+      }
+    });
+
     document.addEventListener('click', (e) => {
       if (e.target.id === 'stop-record-btn' || e.target.closest('#shortcut-recorder-badge')) return;
       
@@ -257,15 +281,28 @@
       }
     }, true);
 
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const target = e.target;
+        if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.contentEditable === 'true') {
+          const identifier = extractIdentifier(target);
+          const value = target.value || target.innerText;
+          highlightElement(target);
+          addStep({ type: 'enter', target: identifier, value: value });
+        }
+      }
+    }, true);
+
     updateRecorderBadge();
   }
 
   function initEngine() {
-    let observer = null;
+    let engineInterval = null;
     let statusBadge = null;
     let isProcessing = false;
     let retryCount = 0;
     let retryTimer = null;
+    let lastProcessedIndex = -1;
 
     let spotlightEl = null;
 
@@ -341,8 +378,8 @@
         animation: badge-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
       `;
 
-      const title = complete ? "🎉 매크로 완료!" : (isLogin ? "🔐 로그인 대기 중" : (isAI ? "🤖 AI 상호작용 중" : `실행 중 (${current}/${total})`));
-      const subTitle = customMsg || (complete ? "모든 단계가 성공적으로 완료되었습니다." : `타겟: ${targetName} ${retry > 0 ? `(재시도 ${retry})` : ''}`);
+      const title = complete ? chrome.i18n.getMessage('macroCompleteTitle') : (isLogin ? chrome.i18n.getMessage('macroLoginWaitTitle') : (isAI ? chrome.i18n.getMessage('macroAIWaitTitle') : `${chrome.i18n.getMessage('macroRunningTitle')} (${current}/${total})`));
+      const subTitle = customMsg || (complete ? chrome.i18n.getMessage('macroCompleteDesc') : `${chrome.i18n.getMessage('macroTargetPrefix')}${targetName} ${retry > 0 ? `${chrome.i18n.getMessage('macroRetryPrefix')}${retry})` : ''}`);
 
       badge.textContent = '';
       badge.insertAdjacentHTML('beforeend', `
@@ -391,7 +428,8 @@
         };
 
         if (isCurrentLoginPage()) {
-          if (window === window.top) updateStatusBadge(cachedTask.currentStepIndex || 0, cachedTask.steps.length, "Auth Required", 0, false, "로그인 대기 중... 완료 후 자동으로 재개됩니다.");
+          const totalSteps = (cachedTask.steps && cachedTask.steps.length) || 0;
+          if (window === window.top) updateStatusBadge(cachedTask.currentStepIndex || 0, totalSteps, "Auth Required", 0, false, chrome.i18n.getMessage('macroLoginWaitDesc'));
           return;
         }
 
@@ -399,15 +437,31 @@
         let steps = cachedTask.steps;
         let currentStepIndex = cachedTask.currentStepIndex || 0;
 
-        if (currentStepIndex >= steps.length) {
-          if (window === window.top) updateStatusBadge(steps.length, steps.length, "Complete", 0, true, "모든 단계가 성공적으로 완료되었습니다.");
+        if (lastProcessedIndex !== currentStepIndex) {
+          retryCount = 0;
+          lastProcessedIndex = currentStepIndex;
+        }
+
+        // 💡 안전 코드 추가: steps가 없거나 배열이 아닌 경우 중단
+        if (!Array.isArray(steps)) {
+          console.error("[Shortcut] Invalid Macro Task: steps is not an array");
+          removeStatusBadge();
           stopObserver();
-          setTimeout(async () => {
-            const taskKey = currentExecutionId ? `macroTask_${currentExecutionId}` : 'activeShortcutTask';
-            cachedTask = null; 
-            await chrome.storage.local.remove(taskKey);
-            if (window === window.top) removeStatusBadge();
-          }, 2500);
+          return;
+        }
+
+        if (currentStepIndex >= steps.length) {
+          if (window === window.top) {
+            updateStatusBadge(steps.length, steps.length, "Complete", 0, true, chrome.i18n.getMessage('macroCompleteDesc'));
+            setTimeout(async () => {
+              const taskKey = currentExecutionId ? `macroTask_${currentExecutionId}` : 'activeShortcutTask';
+              cachedTask = null; 
+              await chrome.storage.local.remove(taskKey);
+              try { chrome.runtime.sendMessage({ action: 'UNREGISTER_MACRO_TAB' }); } catch(e) {}
+              removeStatusBadge();
+            }, 2500);
+          }
+          stopObserver();
           return;
         }
 
@@ -418,7 +472,34 @@
 
         if (window === window.top) updateStatusBadge(currentStepIndex + 1, steps.length, stepTarget, retryCount);
 
-        const target = (stepType === 'click') ? findAndClick(stepTarget) : findAndInput(stepTarget, stepValue);
+        let target = null;
+        if (stepType === 'wait') {
+          // Explicit wait step (ms or element presence)
+          const waitTime = parseInt(stepValue) || 1500;
+          if (retryCount === 0) {
+            console.debug(`[Shortcut] Waiting ${waitTime}ms...`);
+            setTimeout(() => {
+              isProcessing = false;
+              retryCount = 0;
+              currentStepIndex++;
+              updateProgress(currentStepIndex);
+            }, waitTime);
+            return;
+          }
+        } else if (stepType === 'click') {
+          target = findAndClick(stepTarget);
+        } else if (stepType === 'input') {
+          target = findAndInput(stepTarget, stepValue);
+        } else if (stepType === 'enter') {
+          target = findAndEnter(stepTarget, stepValue);
+        }
+
+        async function updateProgress(newIndex) {
+          cachedTask = { ...cachedTask, currentStepIndex: newIndex };
+          const taskKey = currentExecutionId ? `macroTask_${currentExecutionId}` : 'activeShortcutTask';
+          await chrome.storage.local.set({ [taskKey]: cachedTask });
+          setTimeout(() => runEngine(), 1000);
+        }
 
         if (target) {
           isProcessing = true;
@@ -461,19 +542,19 @@
             };
 
             if (retryCount === 5 && isLoginPage(window.location.href)) {
-              if (window === window.top) updateStatusBadge(currentStepIndex + 1, steps.length, "Login Required", 0, false, "로그인이 필요해 보입니다. 로그인 후 계속됩니다...");
+              if (window === window.top) updateStatusBadge(currentStepIndex + 1, steps.length, "Login Required", 0, false, chrome.i18n.getMessage('macroLoginWaitDesc'));
               setTimeout(() => runEngine(), 2000); 
               return;
             }
 
             // AI 복구 로직
             if (retryCount === 5 && typeof MacroAI !== 'undefined' && typeof MacroAI.repairTarget === 'function') {
-              if (window === window.top) updateStatusBadge(currentStepIndex + 1, steps.length, stepTarget, 0, false, "AI가 대체 요소를 찾고 있습니다...");
+              if (window === window.top) updateStatusBadge(currentStepIndex + 1, steps.length, stepTarget, 0, false, chrome.i18n.getMessage('macroAIWaitDesc'));
               const contextMap = captureContextMap();
               const recovered = await MacroAI.repairTarget({ target: stepTarget, type: stepType }, contextMap);
               
               if (recovered && recovered.index !== undefined) {
-                const items = document.querySelectorAll('a, button, [role="button"], input, textarea, [contenteditable="true"], .btn, .button');
+                const items = querySelectorAllDeep('a, button, [role="button"], input, textarea, [contenteditable="true"], .btn, .button');
                 const targetEl = items[recovered.index];
                 if (targetEl) {
                   console.debug("[Shortcut] AI Recovered:", recovered.text);
@@ -493,17 +574,26 @@
               }
             }
 
+            if (retryCount % 4 === 0) {
+              if (autoDismissModals()) {
+                 setTimeout(() => runEngine(), 1000);
+                 return;
+              }
+            }
             if (retryCount === 8 || retryCount === 15) {
               expandHiddenMenus();
             }
             setTimeout(() => runEngine(), 500);
           } else {
-            if (window === window.top) updateStatusBadge(currentStepIndex + 1, steps.length, stepTarget, 0, false, "요소를 찾을 수 없습니다.");
-          const taskKey = currentExecutionId ? `macroTask_${currentExecutionId}` : 'activeShortcutTask';
+            if (window === window.top) {
+              updateStatusBadge(currentStepIndex + 1, steps.length, stepTarget, 0, false, chrome.i18n.getMessage('macroTargetNotFound'));
+              const taskKey = currentExecutionId ? `macroTask_${currentExecutionId}` : 'activeShortcutTask';
+              cachedTask = null;
+              await chrome.storage.local.remove(taskKey);
+              try { chrome.runtime.sendMessage({ action: 'UNREGISTER_MACRO_TAB' }); } catch(e) {}
+              setTimeout(removeStatusBadge, 4000);
+            }
             stopObserver();
-            cachedTask = null;
-            await chrome.storage.local.remove(taskKey);
-            if (window === window.top) setTimeout(removeStatusBadge, 4000);
           }
         }
       } catch (err) {
@@ -514,8 +604,93 @@
     }
 
 
+    
+    
+    let cachedShadowRoots = new Set();
+    let shadowObserver = null;
+
+    function initShadowObserver() {
+      if (shadowObserver) return;
+      // Gather initial shadow roots
+      findShadowRoots(document);
+      
+      shadowObserver = new MutationObserver(mutations => {
+        for (const mutation of mutations) {
+          for (const node of mutation.addedNodes) {
+            if (node.nodeType === 1) { // Element
+              findShadowRoots(node);
+            }
+          }
+        }
+      });
+      shadowObserver.observe(document.documentElement, { childList: true, subtree: true });
+    }
+
+    function findShadowRoots(root) {
+      if (root.shadowRoot) cachedShadowRoots.add(root.shadowRoot);
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
+      let node;
+      while ((node = walker.nextNode())) {
+        if (node.shadowRoot) {
+          cachedShadowRoots.add(node.shadowRoot);
+        }
+      }
+    }
+
+    function querySelectorAllDeep(selector, root = document) {
+      const results = Array.from(root.querySelectorAll(selector));
+      for (const shadow of cachedShadowRoots) {
+        if (root.contains(shadow.host)) { // Only query relevant shadow roots
+           results.push(...Array.from(shadow.querySelectorAll(selector)));
+        }
+      }
+      return results;
+    }
+
+    // Initialize the observer
+    initShadowObserver();
+
+
+    function autoDismissModals() {
+      const dismissPatterns = ['닫기', '오늘하루보지않기', '오늘하루열지않기', '건너뛰기', '나중에', 'close', 'dismiss', 'skip', 'remindmelater', 'x', '아니오', 'no'];
+      const clickable = querySelectorAllDeep('button, a, [role="button"], .close-btn, .btn-close');
+      let dismissed = false;
+      
+      const isVisible = (el) => {
+        const style = window.getComputedStyle(el);
+        return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length) && 
+               style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
+      };
+
+      for (const el of clickable) {
+        if (!el) continue;
+        const text = (el.innerText || el.getAttribute('aria-label') || '').toLowerCase().replace(/\s+/g, '');
+        if (dismissPatterns.some(p => text === p || text.includes(p))) {
+           let isModalLike = false;
+           let parent = el.parentElement;
+           let depth = 0;
+           while(parent && depth < 7) {
+             const pStyle = window.getComputedStyle(parent);
+             if (pStyle.position === 'fixed' || pStyle.position === 'absolute' || parseInt(pStyle.zIndex) > 100) {
+               isModalLike = true;
+               break;
+             }
+             parent = parent.parentElement;
+             depth++;
+           }
+           
+           // If z-index is high, we aggressively try to close it.
+           if (isModalLike && isVisible(el)) {
+             console.debug("[Shortcut] Auto-dismissing popup:", text);
+             try { el.click(); dismissed = true; break; } catch(e) {}
+           }
+        }
+      }
+      return dismissed;
+    }
+
     function captureContextMap() {
-      const interactive = document.querySelectorAll('a, button, [role="button"], input, textarea, [contenteditable="true"], .btn, .button');
+      const interactive = querySelectorAllDeep('a, button, [role="button"], input, textarea, [contenteditable="true"], .btn, .button');
       return Array.from(interactive).map((el, index) => {
         const rect = el.getBoundingClientRect();
         const style = window.getComputedStyle(el);
@@ -539,55 +714,75 @@
     function checkElementExists(text, type = 'click') {
       if (!text) return false;
       const lowerText = text.toLowerCase().trim();
-      
-      const isVisible = (el) => {
-        const style = window.getComputedStyle(el);
+      const strippedText = lowerText.replace(/\s+/g, '');
+
+      const isVisible = (el) => {        const style = window.getComputedStyle(el);
         return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length) && 
                style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
       };
 
       if (type === 'click') {
-        const clickable = document.querySelectorAll('a, button, [role="button"], [tabindex], input[type="button"], input[type="submit"], .btn, .button');
+        const clickable = querySelectorAllDeep('a, button, [role="button"], [tabindex], input[type="button"], input[type="submit"], .btn, .button');
         return Array.from(clickable).some(el => {
           const elText = (el.innerText || el.value || "").trim().toLowerCase();
+          const strippedElText = elText.replace(/\s+/g, '');
           const elAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || el.id || el.name || "").trim().toLowerCase();
-          return (elText.includes(lowerText) || elAttr.includes(lowerText)) && isVisible(el);
+          const strippedElAttr = elAttr.replace(/\s+/g, '');
+          return (strippedElText.includes(strippedText) || strippedElAttr.includes(strippedText)) && isVisible(el);
         });
       } else {
-        const inputs = document.querySelectorAll('input, textarea, [contenteditable="true"]');
+        const inputs = querySelectorAllDeep('input, textarea, [contenteditable="true"]');
         return Array.from(inputs).some(el => {
           const placeholder = (el.getAttribute('placeholder') || "").toLowerCase();
+          const strippedPlaceholder = placeholder.replace(/\s+/g, '');
           const labelAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || el.id || el.name || "").toLowerCase();
-          return (placeholder.includes(lowerText) || labelAttr.includes(lowerText)) && el.type !== 'hidden' && isVisible(el);
+          const strippedLabelAttr = labelAttr.replace(/\s+/g, '');
+          return (strippedPlaceholder.includes(strippedText) || strippedLabelAttr.includes(strippedText)) && el.type !== 'hidden' && isVisible(el);
         });
       }
     }
 
     function findAndClick(text) {
       if (!text) return null;
-      const lowerText = text.toLowerCase().trim();
+      
       const isVisible = (el) => {
+        if (!el) return false;
         const style = window.getComputedStyle(el);
         return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length) && 
                style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
       };
 
-      const clickableElements = document.querySelectorAll('a, button, [role="button"], [tabindex], input[type="button"], input[type="submit"], .btn, .button');
-      
-      // 1. 우선순위 탐색 (정확히 일치)
-      let target = Array.from(clickableElements).find(el => {
-        const elText = (el.innerText || el.value || "").trim().toLowerCase();
-        const elAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || el.id || el.name || "").trim().toLowerCase();
-        return (elText === lowerText || elAttr === lowerText) && isVisible(el);
-      });
+      let target = null;
 
-      // 2. 차선책 탐색 (부분 일치)
+      // 💡 1순위: CSS 선택자로 먼저 검색 시도 (data.js 호환)
+      try {
+        const els = querySelectorAllDeep(text);
+        target = Array.from(els).find(isVisible);
+      } catch(e) {}
+
+      // 💡 2순위: 텍스트 및 속성 기반 탐색 (기존 로직)
       if (!target) {
+        const lowerText = text.toLowerCase().trim();
+      const strippedText = lowerText.replace(/\s+/g, '');
+        const clickableElements = querySelectorAllDeep('a, button, [role="button"], [tabindex], input[type="button"], input[type="submit"], .btn, .button');
+        
         target = Array.from(clickableElements).find(el => {
           const elText = (el.innerText || el.value || "").trim().toLowerCase();
+          const strippedElText = elText.replace(/\s+/g, '');
           const elAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || el.id || el.name || "").trim().toLowerCase();
-          return (elText.includes(lowerText) || elAttr.includes(lowerText)) && isVisible(el) && (elText.length < lowerText.length + 30);
+          const strippedElAttr = elAttr.replace(/\s+/g, '');
+          return (strippedElText === strippedText || strippedElAttr === strippedText) && isVisible(el);
         });
+
+        if (!target) {
+          target = Array.from(clickableElements).find(el => {
+            const elText = (el.innerText || el.value || "").trim().toLowerCase();
+          const strippedElText = elText.replace(/\s+/g, '');
+            const elAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || el.id || el.name || "").trim().toLowerCase();
+          const strippedElAttr = elAttr.replace(/\s+/g, '');
+            return (strippedElText.includes(strippedText) || strippedElAttr.includes(strippedText)) && isVisible(el) && (elText.length < lowerText.length + 30);
+          });
+        }
       }
 
       if (target) {
@@ -596,14 +791,10 @@
         triggerRipple(rect.left + rect.width / 2, rect.top + rect.height / 2);
         
         try { target.scrollIntoView({ behavior: 'auto', block: 'center' }); } catch (e) {}
+        
         const link = target.tagName === 'A' ? target : target.closest('a');
         if (link) {
           if (link.target === '_blank') link.target = '_self';
-          let currentHref = link.getAttribute('href'); 
-          if (currentHref && !currentHref.startsWith('javascript') && !currentHref.startsWith('#')) {
-            window.location.href = currentHref;
-            return true;
-          }
         }
         target.click();
         return true;
@@ -613,30 +804,45 @@
 
     function findAndInput(text, value) {
       if (!text) return false;
-      const lowerText = text.toLowerCase().trim();
       
       const isVisible = (el) => {
+        if (!el) return false;
         const style = window.getComputedStyle(el);
         return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length) && 
                style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
       };
 
-      const inputs = document.querySelectorAll('input, textarea, [contenteditable="true"]');
-      
-      // 1. 정확히 일치 (Placeholder, Label, Name, ID)
-      let target = Array.from(inputs).find(el => {
-        const placeholder = (el.getAttribute('placeholder') || "").toLowerCase();
-        const labelAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || el.id || el.name || "").toLowerCase();
-        return (placeholder === lowerText || labelAttr === lowerText) && isVisible(el);
-      });
+      let target = null;
 
-      // 2. 부분 일치
+      // 💡 1순위: CSS 선택자 탐색
+      try {
+        const els = querySelectorAllDeep(text);
+        target = Array.from(els).find(isVisible);
+      } catch(e) {}
+
+      // 💡 2순위: 텍스트 및 Placeholder 탐색
       if (!target) {
+        const lowerText = text.toLowerCase().trim();
+      const strippedText = lowerText.replace(/\s+/g, '');
+        const inputs = querySelectorAllDeep('input, textarea, [contenteditable="true"]');
+        
         target = Array.from(inputs).find(el => {
           const placeholder = (el.getAttribute('placeholder') || "").toLowerCase();
+          const strippedPlaceholder = placeholder.replace(/\s+/g, '');
           const labelAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || el.id || el.name || "").toLowerCase();
-          return (placeholder.includes(lowerText) || labelAttr.includes(lowerText)) && isVisible(el);
+          const strippedLabelAttr = labelAttr.replace(/\s+/g, '');
+          return (strippedPlaceholder === strippedText || strippedLabelAttr === strippedText) && isVisible(el);
         });
+
+        if (!target) {
+          target = Array.from(inputs).find(el => {
+            const placeholder = (el.getAttribute('placeholder') || "").toLowerCase();
+          const strippedPlaceholder = placeholder.replace(/\s+/g, '');
+            const labelAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || el.id || el.name || "").toLowerCase();
+          const strippedLabelAttr = labelAttr.replace(/\s+/g, '');
+            return (strippedPlaceholder.includes(strippedText) || strippedLabelAttr.includes(strippedText)) && isVisible(el);
+          });
+        }
       }
 
       if (target) {
@@ -648,11 +854,73 @@
           else target.value = value;
           target.dispatchEvent(new Event('input', { bubbles: true }));
           target.dispatchEvent(new Event('change', { bubbles: true }));
-          // [UX 개선] 엔터 키 효과를 위해 폼 제출 시도
           try { if (target.form) target.form.dispatchEvent(new Event('submit', { bubbles: true })); } catch (e) {}
           return true;
         } catch (e) {
           console.error("[Shortcut] Input Error:", e);
+        }
+      }
+      return false;
+    }
+
+    function findAndEnter(text, value = '') {
+      if (!text) return false;
+      const lowerText = text.toLowerCase().trim();
+      const strippedText = lowerText.replace(/\s+/g, '');
+      const isVisible = (el) => {
+        const style = window.getComputedStyle(el);
+        return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length) && 
+               style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
+      };
+
+      const inputs = querySelectorAllDeep('input, textarea, [contenteditable="true"], [tabindex="0"]');
+      
+      let target = Array.from(inputs).find(el => {
+        const placeholder = (el.getAttribute('placeholder') || "").toLowerCase();
+          const strippedPlaceholder = placeholder.replace(/\s+/g, '');
+        const labelAttr = (el.getAttribute('aria-label') || el.getAttribute('title') || el.id || el.name || "").toLowerCase();
+          const strippedLabelAttr = labelAttr.replace(/\s+/g, '');
+        const elText = (el.innerText || "").toLowerCase();
+        const strippedElText = elText.replace(/\s+/g, '');
+        return (strippedPlaceholder === strippedText || strippedLabelAttr === strippedText || strippedElText.includes(strippedText)) && isVisible(el);
+      });
+
+      if (target) {
+        showSpotlight(target);
+        try { 
+          target.scrollIntoView({ behavior: 'auto', block: 'center' }); 
+          target.focus();
+          
+          // 입력값 설정 (input 단계가 누락되었을 경우를 대비)
+          if (value !== undefined && value !== null && value !== '') {
+            if (target.contentEditable === 'true') target.innerText = value;
+            else target.value = value;
+            target.dispatchEvent(new Event('input', { bubbles: true }));
+          }
+
+          // Enter 키 이벤트 시뮬레이션 (keydown -> keypress -> keyup)
+          const enterEvent = (type) => new KeyboardEvent(type, {
+            key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true, cancelable: true
+          });
+          
+          target.dispatchEvent(enterEvent('keydown'));
+          target.dispatchEvent(enterEvent('keypress'));
+          target.dispatchEvent(enterEvent('keyup'));
+
+          // [UX 개선] 폼 제출 시도 (일반적인 웹사이트 호환성)
+          try { 
+            if (target.form) {
+               target.form.dispatchEvent(new Event('submit', { bubbles: true }));
+            } else {
+               // 부모 요소 중 form을 찾아 제출 시도 (가장 가까운)
+               const parentForm = target.closest('form');
+               if (parentForm) parentForm.dispatchEvent(new Event('submit', { bubbles: true }));
+            }
+          } catch (e) {}
+          
+          return true;
+        } catch (e) {
+          console.error("[Shortcut] Enter Error:", e);
         }
       }
       return false;
@@ -663,7 +931,7 @@
       for (const pattern of menuPatterns) {
         let menuBtn = document.querySelector(pattern.startsWith('.') ? pattern : `[aria-label*="${pattern}"], [title*="${pattern}"]`);
         if (!menuBtn) {
-          menuBtn = Array.from(document.querySelectorAll('button, a')).find(el => (el.innerText || "").toLowerCase().includes(pattern));
+          menuBtn = Array.from(querySelectorAllDeep('button, a')).find(el => (el.innerText || "").toLowerCase().includes(pattern));
         }
         if (menuBtn && typeof menuBtn.click === 'function') { menuBtn.click(); return true; }
       }
@@ -684,14 +952,14 @@
     }
 
     function startObserver() {
-      if (observer) return;
-      const throttledRunEngine = throttle(() => runEngine(), 500);
-      observer = new MutationObserver(throttledRunEngine);
-      observer.observe(document.body, { childList: true, subtree: true });
+      if (engineInterval) return;
+      engineInterval = setInterval(() => {
+        if (!isProcessing) runEngine();
+      }, 800); // Reduce DOM polling frequency to save battery and CPU
     }
 
     function stopObserver() {
-      if (observer) { observer.disconnect(); observer = null; }
+      if (engineInterval) { clearInterval(engineInterval); engineInterval = null; }
     }
 
     runEngine();

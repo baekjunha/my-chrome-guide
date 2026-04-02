@@ -56,5 +56,35 @@
   "stopRecording": {
     "message": "녹화 종료 및 저장",
     "description": "Stop and save recording button"
+  },
+  "macroCompleteTitle": {
+    "message": "🎉 매크로 완료!"
+  },
+  "macroLoginWaitTitle": {
+    "message": "🔐 로그인 대기 중"
+  },
+  "macroAIWaitTitle": {
+    "message": "🤖 AI 상호작용 중"
+  },
+  "macroRunningTitle": {
+    "message": "실행 중"
+  },
+  "macroCompleteDesc": {
+    "message": "모든 단계가 성공적으로 완료되었습니다."
+  },
+  "macroTargetPrefix": {
+    "message": "타겟: "
+  },
+  "macroRetryPrefix": {
+    "message": "(재시도 "
+  },
+  "macroLoginWaitDesc": {
+    "message": "로그인이 필요해 보입니다. 로그인 후 계속됩니다..."
+  },
+  "macroAIWaitDesc": {
+    "message": "AI가 대체 요소를 찾고 있습니다..."
+  },
+  "macroTargetNotFound": {
+    "message": "요소를 찾을 수 없습니다."
   }
 }

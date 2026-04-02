@@ -74,77 +74,53 @@ class AppStore {
       favorites: [],
       userShortcuts: [
         {
-          id: 'imdb-top-horror',
-          name: 'IMDb 장르별 영화 탐색',
-          url: 'https://www.imdb.com/',
+          id: 'youtube-shorts-auto',
+          name: "유튜브 쇼츠(Shorts) 바로가기",
+          url: 'https://www.youtube.com',
           steps: [
-            { type: 'click', target: 'Menu' },
-            { type: 'click', target: 'Top 250 Movies' },
-            { type: 'click', target: 'Genre' },
-            { type: 'click', target: 'Horror' }
+            { type: 'wait', target: '페이지 로딩', value: '1500' },
+            { type: 'click', target: 'Shorts' }
           ]
         },
         {
-          id: 'nasa-multimedia-search',
-          name: 'NASA 우주 사진 아카이브',
-          url: 'https://www.nasa.gov/',
+          id: 'github-new-repo',
+          name: "GitHub 새 저장소(Repository) 생성",
+          url: 'https://github.com',
           steps: [
-            { type: 'click', target: 'Multimedia' },
-            { type: 'click', target: 'Astronomy Picture of the Day' },
-            { type: 'click', target: 'Archive' },
-            { type: 'input', target: 'Search', value: 'Mars Rover' }
+            { type: 'wait', target: '대시보드 로딩', value: '1000' },
+            { type: 'click', target: 'New' },
+            { type: 'click', target: 'New repository' }
           ]
         },
         {
-          id: 'github-advanced-js',
-          name: 'GitHub JS 오픈소스 탐색',
-          url: 'https://github.com/search',
+          id: 'google-calendar-new',
+          name: "구글 캘린더 새 일정 만들기",
+          url: 'https://calendar.google.com',
           steps: [
-            { type: 'input', target: 'Search or jump to...', value: 'react' },
-            { type: 'click', target: 'Enter' },
-            { type: 'click', target: 'Languages' },
-            { type: 'click', target: 'JavaScript' }
+            { type: 'wait', target: '캘린더 로딩', value: '1500' },
+            { type: 'click', target: '만들기' },
+            { type: 'wait', target: '메뉴 애니메이션', value: '500' },
+            { type: 'click', target: '이벤트' }
           ]
         },
         {
-          id: 'wikipedia-deep-search',
-          name: '위키백과 심화 지식 탐험',
-          url: 'https://www.wikipedia.org/',
+          id: 'naver-mail-me',
+          name: "네이버 메일 - 내게 쓰기",
+          url: 'https://mail.naver.com',
           steps: [
-            { type: 'click', target: 'English' },
-            { type: 'click', target: 'Contents' },
-            { type: 'click', target: 'Current events' },
-            { type: 'input', target: 'Search Wikipedia', value: 'SpaceX' }
+            { type: 'wait', target: '메일함 로딩', value: '1000' },
+            { type: 'click', target: '내게쓰기' }
           ]
         },
         {
-          id: 'bbc-world-tech',
-          name: 'BBC 글로벌 기술 뉴스',
-          url: 'https://www.bbc.com/',
+          id: 'papago-en-ko',
+          name: "파파고 영어 번역기 준비",
+          url: 'https://papago.naver.com',
           steps: [
-            { type: 'click', target: 'News' },
-            { type: 'click', target: 'World' },
-            { type: 'click', target: 'Technology' },
-            { type: 'click', target: 'Search' }
-          ]
-        },
-        {
-          id: 'google-news-ai-search',
-          name: 'Google 뉴스 (AI 복구 예시)',
-          url: 'https://news.google.com/',
-          steps: [
-            { type: 'input', target: 'Search', value: 'Google Chrome Extension' },
-            { type: 'click', target: 'Search' }
-          ]
-        },
-        {
-          id: 'adobe-express-templates',
-          name: 'Adobe Express 템플릿 탐색',
-          url: 'https://www.adobe.com/express/',
-          steps: [
-            { type: 'click', target: 'Templates' },
-            { type: 'click', target: 'Instagram' },
-            { type: 'click', target: 'Post' }
+            { type: 'wait', target: '로딩', value: '1000' },
+            { type: 'click', target: '한국어' },
+            { type: 'wait', target: '언어 교체', value: '300' },
+            { type: 'input', target: 'textarea#txtSource', value: 'Hello! I am ready to translate.' }
           ]
         }
       ],
@@ -154,7 +130,7 @@ class AppStore {
       isDark: false,
       tipNotes: {},
       currentLang: LANG.KO,
-      categoryOrder: ["전체", "탭/창", "탐색", "주소창/검색", "화면", "북마크", "편집", "프로필/공간", "AI 기능", "개발자", "설정", "다른 기기로 Chrome 사용", "이스터에그", "자동화", "시스템"],
+      categoryOrder: ["전체", "탭/창", "탐색", "주소창/검색", "화면", "북마크", "편집", "프로필/공간", "AI 기능", "개발자", "설정", "이스터에그", "시스템"],
       hasSeenOnboarding: false
     };
 

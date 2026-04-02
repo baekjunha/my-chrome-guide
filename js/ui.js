@@ -260,21 +260,32 @@ export function renderTips(filter = "", callbacks = {}, isAppend = false, target
 
   if (!isAppend || targetId) listEl.textContent = "";
 
+  // [Pre-computation & Memoization Optimization]
+  const isMac = currentOS === OS.MAC;
+  const osRegexMac = /Ctrl|Win|Alt/g;
+  const osRegexWin = /Cmd|Option/g;
+  const macMap = { 'Ctrl': 'Cmd', 'Win': 'Cmd', 'Alt': 'Option' };
+  const winMap = { 'Cmd': 'Ctrl', 'Option': 'Alt' };
+  const isLangEn = lang === LANG.EN;
+
   visibleTips.forEach(tip => {
     try {
-      let title = (lang === LANG.EN && tip.title_en) ? tip.title_en : (tip.title || "");
-      let desc = (lang === LANG.EN && tip.desc_en) ? tip.desc_en : (tip.desc || "");
+      // 1. Memoize basic data fetching
+      let title = (isLangEn && tip.title_en) ? tip.title_en : (tip.title || "");
+      let desc = (isLangEn && tip.desc_en) ? tip.desc_en : (tip.desc || "");
       desc = String(desc || "");
 
+      // 2. Highlighting logic
       if (filter) {
         title = highlight(title, filter);
         desc = highlight(desc, filter);
       }
 
-      if (currentOS === OS.MAC) {
-        desc = desc.replace(/Ctrl|Win|Alt/g, m => ({ 'Ctrl': 'Cmd', 'Win': 'Cmd', 'Alt': 'Option' })[m] || m);
+      // 3. Fast Regex Replacement for OS specific keys
+      if (isMac) {
+        desc = desc.replace(osRegexMac, m => macMap[m] || m);
       } else {
-        desc = desc.replace(/Cmd|Option/g, m => ({ 'Cmd': 'Ctrl', 'Option': 'Alt' })[m] || m);
+        desc = desc.replace(osRegexWin, m => winMap[m] || m);
       }
 
       const isFav = store.state.favorites.includes(tip.id);
@@ -282,14 +293,14 @@ export function renderTips(filter = "", callbacks = {}, isAppend = false, target
       
       const div = document.createElement('div');
       div.className = `tip-item ${isAuto ? 'is-auto' : ''}`;
-      div.tabIndex = 0; // [UX 확장] 키보드 포커스 지원
+      div.tabIndex = 0;
       div.dataset.id = tip.id;
       div.dataset.category = tip.category;
 
       div.setAttribute('role', 'button');
       div.setAttribute('aria-label', `${title}, ${desc}`);
 
-      const shortcutObj = (lang === LANG.EN && tip.shortcut_en) ? tip.shortcut_en : tip.shortcut;
+      const shortcutObj = (isLangEn && tip.shortcut_en) ? tip.shortcut_en : tip.shortcut;
       let shortcutText = "";
       if (typeof shortcutObj === 'string') shortcutText = shortcutObj;
       else if (shortcutObj && typeof shortcutObj === 'object') shortcutText = shortcutObj[currentOS] || shortcutObj['win'] || "";
@@ -305,10 +316,9 @@ export function renderTips(filter = "", callbacks = {}, isAppend = false, target
           AI-Ready
         </div>` : "";
 
-      div.textContent = "";
       div.insertAdjacentHTML('beforeend', `
         <div class="tip-category">
-          ${I18N[lang].categories[tip.category] || tip.category}
+          ${strings.categories[tip.category] || tip.category}
           ${autoBadge}
         </div>
         <div class="tip-title">${title}</div>

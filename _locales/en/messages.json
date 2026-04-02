@@ -56,5 +56,35 @@
   "stopRecording": {
     "message": "Stop & Save",
     "description": "Stop and save recording button"
+  },
+  "macroCompleteTitle": {
+    "message": "🎉 Macro Complete!"
+  },
+  "macroLoginWaitTitle": {
+    "message": "🔐 Waiting for Login"
+  },
+  "macroAIWaitTitle": {
+    "message": "🤖 AI Interaction"
+  },
+  "macroRunningTitle": {
+    "message": "Running"
+  },
+  "macroCompleteDesc": {
+    "message": "All steps have been completed successfully."
+  },
+  "macroTargetPrefix": {
+    "message": "Target: "
+  },
+  "macroRetryPrefix": {
+    "message": "(Retry "
+  },
+  "macroLoginWaitDesc": {
+    "message": "Login required. Will resume after login..."
+  },
+  "macroAIWaitDesc": {
+    "message": "AI is finding alternative elements..."
+  },
+  "macroTargetNotFound": {
+    "message": "Element not found."
   }
 }
