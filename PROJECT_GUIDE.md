@@ -25,7 +25,7 @@ graph TD
     end
 
     subgraph "Data & Engine"
-        STORE --> DATA[js/data.js: 136 Tips DB]
+        STORE --> DATA[js/data.js: 130 Tips DB]
         STORE --> I18N[js/i18n.js: Multi-lang]
         ACT --> CS[content_script.js: Macro Engine]
     end
@@ -41,7 +41,7 @@ graph TD
 
 ---
 
-| **1클릭 매크로** | 4.0s| **팁 큐레이션** | 14개 카테고리로 분류된 **136가지** 크롬 활용 팁 | ✅ Ver 2.2 |
+| **1클릭 매크로** | 4.0s| **팁 큐레이션** | 14개 카테고리로 분류된 **130가지** 크롬 활용 팁 | ✅ Ver 2.2 |
 | **스마트 메모** | 각 팁의 선택 위치에 동적으로 나타나는 컨텍스트 기반 메모 | ✅ Improved |
 | **사용자 온보딩** | 4대 핵심 가치를 담은 **리치 콘텐츠 온보딩** 인터페이스 | ✅ v3.1 Refined |
 | **보안 아키텍처** | `innerHTML` 제거 및 `insertAdjacentHTML` 기반의 **XSS 방어** 설계 | ✅ Secure |
@@ -96,7 +96,7 @@ graph TD
 │   ├── actions.js        # 비즈니스 로직 및 이벤트
 │   ├── ui.js             # 렌더링 엔진 (Render Limit 및 검색 UI 포함)
 │   ├── i18n.js           # 다국어 메시지 및 카테고리
-│   ├── data.js           # 136개 팁 데이터베이스
+│   ├── data.js           # 130개 팁 데이터베이스
 │   ├── utils.js          # 공통 유틸리티 (퍼지 검색 알고리즘 포함)
 │   ├── constants.js      # 앱 전역 상수 및 셀렉터 관리
 │   ├── icons.js          # SVG 아이콘 애셋 관리

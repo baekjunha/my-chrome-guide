@@ -5,21 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0095799b-476d-45ac-81f9-b50a39bacec0" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/my-chrome-guide.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/background.js" beforeDir="false" afterPath="$PROJECT_DIR$/background.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/content_script.js" beforeDir="false" afterPath="$PROJECT_DIR$/content_script.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/actions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PROJECT_GUIDE.md" beforeDir="false" afterPath="$PROJECT_DIR$/PROJECT_GUIDE.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/commercial_analysis.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/commercial_analysis.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/future_roadmap.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/future_roadmap.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/ai-repair.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/ai-repair.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/constants.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/constants.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/store.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/store.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/ui.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/ui.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/popup.css" beforeDir="false" afterPath="$PROJECT_DIR$/popup.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landing/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/landing/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landing/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/landing/style.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/popup.html" beforeDir="false" afterPath="$PROJECT_DIR$/popup.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/popup.js" beforeDir="false" afterPath="$PROJECT_DIR$/popup.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/refactor-ui.js" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/refactor-ui.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

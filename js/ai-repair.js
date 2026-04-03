@@ -12,26 +12,34 @@
       console.debug('[MacroAI] Repairing target for:', target);
       
       // 1. Chrome 내장 Gemini Nano 지원 확인 (window.ai)
-      if (global.ai && global.ai.canCreateTextSession) {
-        try {
+      // 1. Chrome 내장 Gemini Nano 지원 확인 (window.ai.languageModel 또는 구버전 ai)
+      try {
+        if (global.ai && global.ai.languageModel && global.ai.languageModel.capabilities) {
+          const capabilities = await global.ai.languageModel.capabilities();
+          if (capabilities.available === 'readily') {
+            return await this._repairWithLocalAI(originalIntent, contextMap, 'modern');
+          }
+        } else if (global.ai && global.ai.canCreateTextSession) {
           const status = await global.ai.canCreateTextSession();
           if (status === 'readily') {
-            return await this._repairWithLocalAI(originalIntent, contextMap);
+            return await this._repairWithLocalAI(originalIntent, contextMap, 'legacy');
           }
-        } catch (e) {
-          console.warn('[MacroAI] Local AI check failed, falling back...');
         }
+      } catch (e) {
+        console.warn('[MacroAI] Local AI check failed, falling back to heuristics...', e);
       }
 
-      // 2. Fallback: Mock 처리 (향후 서버 API 연동 지점)
+      // 2. Fallback: 정밀 휴리스틱 알고리즘 매칭 (AI API 미지원 브라우저 환경 대비)
       return await this._repairWithHeuristics(originalIntent, contextMap);
     },
 
     /**
      * Chrome Built-in AI (Gemini Nano)를 활용한 복구
      */
-    async _repairWithLocalAI(intent, context) {
-      const session = await global.ai.createTextSession();
+    async _repairWithLocalAI(intent, context, apiVersion) {
+      const session = apiVersion === 'modern' 
+        ? await global.ai.languageModel.create() 
+        : await global.ai.createTextSession();
       const prompt = this._buildPrompt(intent, context);
       
       try {

@@ -122,7 +122,7 @@ html = html.replace(
       <h2 class="onboarding-title">환영합니다! 🎉</h2>
       
       <p class="onboarding-desc">
-        크롬 전문가들이 선별한 <strong>139개 이상의 꿀팁</strong>과,<br>
+        크롬 전문가들이 선별한 <strong>130여 개의 꿀팁</strong>과,<br>
         귀찮은 작업을 자동화하는 <strong>1클릭 매크로</strong>가 준비되었습니다.<br>
         이제 더 빠르고 똑똑한 브라우징을 시작하세요.
       </p>
