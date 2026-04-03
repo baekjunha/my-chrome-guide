@@ -77,6 +77,7 @@ class AppStore {
           id: 'youtube-shorts-auto',
           name: "유튜브 쇼츠(Shorts) 바로가기",
           url: 'https://www.youtube.com',
+          workspace: 'personal',
           steps: [
             { type: 'wait', target: '페이지 로딩', value: '1500' },
             { type: 'click', target: 'Shorts' }
@@ -86,6 +87,7 @@ class AppStore {
           id: 'github-new-repo',
           name: "GitHub 새 저장소(Repository) 생성",
           url: 'https://github.com',
+          workspace: 'personal',
           steps: [
             { type: 'wait', target: '대시보드 로딩', value: '1000' },
             { type: 'click', target: 'New' },
@@ -96,6 +98,7 @@ class AppStore {
           id: 'google-calendar-new',
           name: "구글 캘린더 새 일정 만들기",
           url: 'https://calendar.google.com',
+          workspace: 'personal',
           steps: [
             { type: 'wait', target: '캘린더 로딩', value: '1500' },
             { type: 'click', target: '만들기' },
@@ -107,6 +110,7 @@ class AppStore {
           id: 'naver-mail-me',
           name: "네이버 메일 - 내게 쓰기",
           url: 'https://mail.naver.com',
+          workspace: 'personal',
           steps: [
             { type: 'wait', target: '메일함 로딩', value: '1000' },
             { type: 'click', target: '내게쓰기' }
@@ -116,6 +120,7 @@ class AppStore {
           id: 'papago-en-ko',
           name: "파파고 영어 번역기 준비",
           url: 'https://papago.naver.com',
+          workspace: 'personal',
           steps: [
             { type: 'wait', target: '로딩', value: '1000' },
             { type: 'click', target: '한국어' },
@@ -131,7 +136,10 @@ class AppStore {
       tipNotes: {},
       currentLang: LANG.KO,
       categoryOrder: ["전체", "탭/창", "탐색", "주소창/검색", "화면", "북마크", "편집", "프로필/공간", "AI 기능", "개발자", "설정", "이스터에그", "시스템"],
-      hasSeenOnboarding: false
+      hasSeenOnboarding: false,
+      macroAnalytics: {},
+      currentWorkspace: 'personal',
+      userRole: 'admin'
     };
 
     // 상태 초기화
@@ -154,7 +162,10 @@ class AppStore {
       'notes': { stateKey: 'tipNotes', defaultValue: this.defaults.tipNotes, type: 'object' },
       'lang': { stateKey: 'currentLang', defaultValue: this.defaults.currentLang, type: 'string' },
       'categoryOrder': { stateKey: 'categoryOrder', defaultValue: this.defaults.categoryOrder, type: 'array' },
-      'onboarding': { stateKey: 'hasSeenOnboarding', defaultValue: this.defaults.hasSeenOnboarding, type: 'boolean' }
+      'onboarding': { stateKey: 'hasSeenOnboarding', defaultValue: this.defaults.hasSeenOnboarding, type: 'boolean' },
+      'macroAnalytics': { stateKey: 'macroAnalytics', defaultValue: this.defaults.macroAnalytics, type: 'object' },
+      'currentWorkspace': { stateKey: 'currentWorkspace', defaultValue: this.defaults.currentWorkspace, type: 'string' },
+      'userRole': { stateKey: 'userRole', defaultValue: this.defaults.userRole, type: 'string' }
     };
 
     // State 키 -> Storage 키 역매핑 사전 계산
@@ -186,13 +197,28 @@ class AppStore {
       newState[stateKey] = value;
     }
 
-    // [기능 추가] 누락된 기본 매크로 자동 동기화
+    // [기능 추가] 누락된 기본 매크로 자동 동기화 및 워크스페이스 마이그레이션
     if (Array.isArray(newState.userShortcuts)) {
+      let needsSave = false;
+
+      // 마이그레이션: workspace 속성이 없는 기존 매크로에 'personal' 부여
+      newState.userShortcuts = newState.userShortcuts.map(s => {
+        if (!s.workspace) {
+          needsSave = true;
+          return { ...s, workspace: 'personal' };
+        }
+        return s;
+      });
+
       const existingIds = newState.userShortcuts.map(s => s.id);
       const missingDefaults = this.defaults.userShortcuts.filter(s => !existingIds.includes(s.id));
       
       if (missingDefaults.length > 0) {
         newState.userShortcuts = [...newState.userShortcuts, ...missingDefaults];
+        needsSave = true;
+      }
+
+      if (needsSave) {
         // 저장소에도 즉시 반영
         await chrome.storage.local.set({ userShortcuts: newState.userShortcuts });
       }

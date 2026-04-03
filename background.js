@@ -30,6 +30,23 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       delete activeMacroTabs[sender.tab.id];
     }
     sendResponse({ success: true });
+  } else if (message.action === 'LOG_ANALYTICS') {
+    chrome.storage.local.get('macroAnalytics', (res) => {
+      const analytics = res.macroAnalytics || {};
+      const id = message.id;
+      if (id) {
+        if (!analytics[id]) {
+          analytics[id] = { totalRuns: 0, successRuns: 0, lastRunAt: 0 };
+        }
+        analytics[id].totalRuns++;
+        if (message.status === 'success') {
+          analytics[id].successRuns++;
+        }
+        analytics[id].lastRunAt = Date.now();
+        chrome.storage.local.set({ macroAnalytics: analytics });
+      }
+    });
+    sendResponse({ success: true });
   }
   return true; // Enable async response
 });

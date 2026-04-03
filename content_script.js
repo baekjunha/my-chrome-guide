@@ -110,14 +110,43 @@
       .macro-status-badge.show {
         transform: translateX(-50%) translateY(0);
       }
+      .macro-tooltip {
+        position: fixed;
+        background: #2563eb;
+        color: white;
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        z-index: 9999999;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        max-width: 250px;
+        word-break: keep-all;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        pointer-events: none;
+      }
+      .macro-tooltip.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
     `;
     document.head.appendChild(style);
   }
 
   // 비동기 체크를 위해 로직 변경
   isMacroActive().then(mode => {
-    if (mode === 'active') initEngine();
-    else if (mode === 'record') initRecorder();
+    const start = () => {
+      if (mode === 'active') initEngine();
+      else if (mode === 'record') initRecorder();
+    };
+    
+    if (document.body && document.head) {
+      start();
+    } else {
+      document.addEventListener('DOMContentLoaded', start);
+    }
   }).catch(err => {
     // 보안 에러 등 예상치 못한 에러가 최상단까지 올라오지 않도록 차단
     console.debug("[Shortcut] Activation skipped:", err);
@@ -185,6 +214,7 @@
           id: isEditing ? recordingTask.id : Date.now(),
           name: recordingTask.name || "Recorded Macro",
           url: recordingTask.url,
+          workspace: recordingTask.workspace || 'personal',
           steps: recordingTask.steps
         };
 
@@ -241,6 +271,20 @@
       return "Button";
     }
 
+    function extractMetadata(el) {
+      if (!el) return {};
+      return {
+        tagName: el.tagName || '',
+        id: el.id || '',
+        className: typeof el.className === 'string' ? el.className : '',
+        innerText: (el.innerText || '').trim().substring(0, 50),
+        value: (el.value || '').trim().substring(0, 50),
+        name: el.name || '',
+        placeholder: el.getAttribute('placeholder') || '',
+        ariaLabel: el.getAttribute('aria-label') || el.getAttribute('title') || ''
+      };
+    }
+
     async function addStep(step) {
       const { recordingTask } = await chrome.storage.local.get('recordingTask');
       if (recordingTask) {
@@ -267,7 +311,7 @@
       if (target) {
         const identifier = extractIdentifier(target);
         highlightElement(target);
-        addStep({ type: 'click', target: identifier, value: '' });
+        addStep({ type: 'click', target: identifier, value: '', tooltip: '', meta: extractMetadata(target) });
       }
     }, true);
 
@@ -277,7 +321,7 @@
         const identifier = extractIdentifier(target);
         const value = target.value || target.innerText;
         highlightElement(target);
-        addStep({ type: 'input', target: identifier, value: value });
+        addStep({ type: 'input', target: identifier, value: value, tooltip: '', meta: extractMetadata(target) });
       }
     }, true);
 
@@ -288,7 +332,7 @@
           const identifier = extractIdentifier(target);
           const value = target.value || target.innerText;
           highlightElement(target);
-          addStep({ type: 'enter', target: identifier, value: value });
+          addStep({ type: 'enter', target: identifier, value: value, tooltip: '', meta: extractMetadata(target) });
         }
       }
     }, true);
@@ -305,13 +349,19 @@
     let lastProcessedIndex = -1;
 
     let spotlightEl = null;
+    let tooltipEl = null;
 
-    function showSpotlight(el) {
+    function showSpotlight(el, tooltipText = '') {
       injectStyles();
       if (!spotlightEl) {
         spotlightEl = document.createElement('div');
         spotlightEl.className = 'macro-spotlight';
         document.body.appendChild(spotlightEl);
+      }
+      if (!tooltipEl) {
+        tooltipEl = document.createElement('div');
+        tooltipEl.className = 'macro-tooltip';
+        document.body.appendChild(tooltipEl);
       }
 
       const rect = el.getBoundingClientRect();
@@ -324,6 +374,17 @@
       });
       
       spotlightEl.classList.add('show');
+
+      if (tooltipText) {
+        tooltipEl.textContent = tooltipText;
+        Object.assign(tooltipEl.style, {
+          top: `${rect.bottom + padding + 10}px`,
+          left: `${Math.max(10, rect.left)}px`
+        });
+        tooltipEl.classList.add('show');
+      } else {
+        tooltipEl.classList.remove('show');
+      }
     }
 
     function removeSpotlight() {
@@ -332,6 +393,13 @@
         setTimeout(() => {
           if (spotlightEl && spotlightEl.parentNode) spotlightEl.remove();
           spotlightEl = null;
+        }, 500);
+      }
+      if (tooltipEl) {
+        tooltipEl.classList.remove('show');
+        setTimeout(() => {
+          if (tooltipEl && tooltipEl.parentNode) tooltipEl.remove();
+          tooltipEl = null;
         }, 500);
       }
     }
@@ -452,6 +520,7 @@
 
         if (currentStepIndex >= steps.length) {
           if (window === window.top) {
+            try { chrome.runtime.sendMessage({ action: 'LOG_ANALYTICS', status: 'success', id: cachedTask.id }); } catch(e) {}
             updateStatusBadge(steps.length, steps.length, "Complete", 0, true, chrome.i18n.getMessage('macroCompleteDesc'));
             setTimeout(async () => {
               const taskKey = currentExecutionId ? `macroTask_${currentExecutionId}` : 'activeShortcutTask';
@@ -551,7 +620,7 @@
             if (retryCount === 5 && typeof MacroAI !== 'undefined' && typeof MacroAI.repairTarget === 'function') {
               if (window === window.top) updateStatusBadge(currentStepIndex + 1, steps.length, stepTarget, 0, false, chrome.i18n.getMessage('macroAIWaitDesc'));
               const contextMap = captureContextMap();
-              const recovered = await MacroAI.repairTarget({ target: stepTarget, type: stepType }, contextMap);
+              const recovered = await MacroAI.repairTarget(step, contextMap);
               
               if (recovered && recovered.index !== undefined) {
                 const items = querySelectorAllDeep('a, button, [role="button"], input, textarea, [contenteditable="true"], .btn, .button');
@@ -586,6 +655,7 @@
             setTimeout(() => runEngine(), 500);
           } else {
             if (window === window.top) {
+              try { chrome.runtime.sendMessage({ action: 'LOG_ANALYTICS', status: 'fail', id: cachedTask.id }); } catch(e) {}
               updateStatusBadge(currentStepIndex + 1, steps.length, stepTarget, 0, false, chrome.i18n.getMessage('macroTargetNotFound'));
               const taskKey = currentExecutionId ? `macroTask_${currentExecutionId}` : 'activeShortcutTask';
               cachedTask = null;
@@ -742,7 +812,7 @@
       }
     }
 
-    function findAndClick(text) {
+    function findAndClick(text, tooltip = '') {
       if (!text) return null;
       
       const isVisible = (el) => {
@@ -786,7 +856,7 @@
       }
 
       if (target) {
-        showSpotlight(target);
+        showSpotlight(target, tooltip);
         const rect = target.getBoundingClientRect();
         triggerRipple(rect.left + rect.width / 2, rect.top + rect.height / 2);
         
@@ -863,7 +933,7 @@
       return false;
     }
 
-    function findAndEnter(text, value = '') {
+    function findAndEnter(text, value = '', tooltip = '') {
       if (!text) return false;
       const lowerText = text.toLowerCase().trim();
       const strippedText = lowerText.replace(/\s+/g, '');
@@ -886,7 +956,7 @@
       });
 
       if (target) {
-        showSpotlight(target);
+        showSpotlight(target, tooltip);
         try { 
           target.scrollIntoView({ behavior: 'auto', block: 'center' }); 
           target.focus();
@@ -972,5 +1042,5 @@
         }
       }
     });
-  }
-})();
+    }
+    })();

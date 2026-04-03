@@ -22,7 +22,9 @@ import {
   getRenderCallbacks,
   closeModal,
   handleListClick,
-  handleListKeydown
+  handleListKeydown,
+  addManualStep,
+  saveShortcut
 } from './js/actions.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -42,6 +44,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       buildCategoryNav((cat, btn) => handleCategoryClick(cat, btn));
       showDailyTip();
       setRandomPlaceholder();
+      initRBACUI();
       
       // [UX 확장] 초기 로딩 시 스켈레톤 노출
       renderSkeletons(3);
@@ -68,6 +71,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 5. 이벤트 리스너 통합 등록
   initEventListeners();
 });
+
+/**
+ * RBAC 및 워크스페이스 UI 초기화
+ */
+function initRBACUI() {
+  const workspaceSelect = $('#workspace-select');
+  const roleSelect = $('#role-select');
+  if (workspaceSelect) workspaceSelect.value = store.state.currentWorkspace;
+  if (roleSelect) roleSelect.value = store.state.userRole;
+}
 
 /**
  * 신규 사용자 온보딩 경험 (UX) 제어 함수
@@ -135,9 +148,23 @@ function initEventListeners() {
     store.update({ currentTab: TABS.FAV }, false); 
     switchTab(callbacks); 
   });
-  $('#tab-shortcuts').addEventListener('click', () => { 
-    store.update({ currentTab: TABS.SHORTCUTS }, false); 
-    switchTab(callbacks); 
+  $('#tab-shortcuts').addEventListener('click', () => {
+    store.update({ currentTab: TABS.SHORTCUTS }, false);
+    switchTab(callbacks);
+  });
+  $('#tab-analytics').addEventListener('click', () => {
+    store.update({ currentTab: TABS.ANALYTICS }, false);
+    switchTab(callbacks);
+  });
+
+  // RBAC 및 워크스페이스 변경 리스너
+  $('#workspace-select')?.addEventListener('change', (e) => {
+    store.update({ currentWorkspace: e.target.value });
+    switchTab(callbacks);
+  });
+  $('#role-select')?.addEventListener('change', (e) => {
+    store.update({ userRole: e.target.value });
+    switchTab(callbacks);
   });
 
   // 모달 관리
@@ -147,6 +174,8 @@ function initEventListeners() {
   // 매크로(지름길) 관리
   $('#add-shortcut-btn').addEventListener('click', () => openShortcutModal());
   $('#record-shortcut-btn').addEventListener('click', startRecording);
+  $('#add-step-item-btn').addEventListener('click', addManualStep);
+  $('#save-shortcut-btn').addEventListener('click', saveShortcut);
 
   // 매크로 백업/복구 기능 (Export / Import)
   const exportBtn = $('#macro-export-btn');

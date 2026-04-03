@@ -311,6 +311,8 @@ export function openNoteModal(id, triggerEl = null) {
   openModal(modal);
 }
 
+let currentEditingSteps = [];
+
 export function openShortcutModal(sc = null) {
   const isKo = store.state.currentLang === LANG.KO;
   const strings = I18N[store.state.currentLang];
@@ -332,13 +334,146 @@ export function openShortcutModal(sc = null) {
     $('#shortcut-modal-title').textContent = isKo ? '매크로 수정하기' : 'Edit Macro';
     $('#sc-name').value = sc.name || '';
     $('#sc-url').value = sc.url || '';
+    currentEditingSteps = sc.steps ? JSON.parse(JSON.stringify(sc.steps)) : [];
   } else {
     store.update({ editingShortcutId: null }, false);
     $('#shortcut-modal-title').textContent = isKo ? '1클릭 매크로 설계' : 'Create 1-Click Macro';
     $('#sc-name').value = '';
     $('#sc-url').value = '';
+    currentEditingSteps = [];
   }
+  
+  renderStepsEditor();
   openModal($('#shortcut-modal'));
+}
+
+export function renderStepsEditor() {
+  const container = $('#sc-steps-container');
+  if (!container) return;
+  container.textContent = '';
+  
+  if (currentEditingSteps.length === 0) {
+    container.insertAdjacentHTML('beforeend', `<div style="font-size:12px; color:var(--text-sub); text-align:center; padding: 20px 0;">녹화된 스텝이 없습니다.<br>녹화를 시작하거나 수동으로 추가하세요.</div>`);
+    return;
+  }
+
+  currentEditingSteps.forEach((step, index) => {
+    // For string-based steps from older versions
+    if (typeof step === 'string') {
+      step = { type: 'click', target: step };
+      currentEditingSteps[index] = step;
+    }
+
+    const stepEl = document.createElement('div');
+    stepEl.style.cssText = 'background: var(--accent-bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; position: relative;';
+    
+    const headerEl = document.createElement('div');
+    headerEl.style.cssText = 'display: flex; justify-content: space-between; align-items: center;';
+    headerEl.insertAdjacentHTML('beforeend', `
+      <span style="font-size: 12px; font-weight: 800; color: var(--accent);">Step ${index + 1}</span>
+      <button class="delete-step-btn" data-index="${index}" style="background: none; border: none; color: #ef4444; font-size: 14px; cursor: pointer;">✕</button>
+    `);
+
+    const typeRow = document.createElement('div');
+    typeRow.style.cssText = 'display: flex; gap: 8px; align-items: center;';
+    typeRow.insertAdjacentHTML('beforeend', `
+      <select class="step-type-sel" data-index="${index}" style="padding: 6px; border-radius: 6px; border: 1px solid var(--border); font-size: 11px; background: var(--bg); color: var(--text-main);">
+        <option value="click" ${step.type === 'click' ? 'selected' : ''}>Click</option>
+        <option value="input" ${step.type === 'input' ? 'selected' : ''}>Input</option>
+        <option value="enter" ${step.type === 'enter' ? 'selected' : ''}>Enter</option>
+        <option value="wait" ${step.type === 'wait' ? 'selected' : ''}>Wait</option>
+      </select>
+      <input type="text" class="step-target-in" data-index="${index}" value="${step.target || ''}" placeholder="대상 요소 식별자" style="flex: 1; padding: 6px; border-radius: 6px; border: 1px solid var(--border); font-size: 11px; background: var(--bg); color: var(--text-main);">
+    `);
+
+    const valueRow = document.createElement('div');
+    if (step.type === 'input' || step.type === 'enter' || step.type === 'wait') {
+      valueRow.style.cssText = 'display: flex; gap: 8px; align-items: center;';
+      valueRow.insertAdjacentHTML('beforeend', `
+        <input type="text" class="step-value-in" data-index="${index}" value="${step.value || ''}" placeholder="${step.type === 'wait' ? '대기 시간 (ms)' : '입력할 값'}" style="flex: 1; padding: 6px; border-radius: 6px; border: 1px solid var(--border); font-size: 11px; background: var(--bg); color: var(--text-main);">
+      `);
+    }
+
+    const tooltipRow = document.createElement('div');
+    tooltipRow.style.cssText = 'display: flex; gap: 8px; align-items: center;';
+    tooltipRow.insertAdjacentHTML('beforeend', `
+      <input type="text" class="step-tooltip-in" data-index="${index}" value="${step.tooltip || ''}" placeholder="가이드 툴팁 텍스트 (옵션)" style="flex: 1; padding: 6px; border-radius: 6px; border: 1px dashed var(--accent); font-size: 11px; background: var(--bg); color: var(--text-main);">
+    `);
+
+    stepEl.appendChild(headerEl);
+    stepEl.appendChild(typeRow);
+    if (valueRow.hasChildNodes()) stepEl.appendChild(valueRow);
+    stepEl.appendChild(tooltipRow);
+    container.appendChild(stepEl);
+  });
+
+  // Bind events
+  $$('.delete-step-btn', container).forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const idx = parseInt(e.currentTarget.dataset.index);
+      currentEditingSteps.splice(idx, 1);
+      renderStepsEditor();
+    });
+  });
+
+  const updateStep = (e, field) => {
+    const idx = parseInt(e.currentTarget.dataset.index);
+    currentEditingSteps[idx][field] = e.currentTarget.value;
+    if (field === 'type') renderStepsEditor();
+  };
+
+  $$('.step-type-sel', container).forEach(el => el.addEventListener('change', e => updateStep(e, 'type')));
+  $$('.step-target-in', container).forEach(el => el.addEventListener('input', e => updateStep(e, 'target')));
+  $$('.step-value-in', container).forEach(el => el.addEventListener('input', e => updateStep(e, 'value')));
+  $$('.step-tooltip-in', container).forEach(el => el.addEventListener('input', e => updateStep(e, 'tooltip')));
+}
+
+export function addManualStep() {
+  currentEditingSteps.push({ type: 'click', target: '', value: '', tooltip: '' });
+  renderStepsEditor();
+  
+  // Scroll to bottom
+  setTimeout(() => {
+    const container = $('#sc-steps-container');
+    if (container) container.scrollTop = container.scrollHeight;
+  }, 50);
+}
+
+export async function saveShortcut() {
+  const name = $('#sc-name').value.trim();
+  const url = $('#sc-url').value.trim();
+  
+  if (!name || !url) {
+    showToast('이름과 URL을 모두 입력해주세요.');
+    return;
+  }
+
+  const isEditing = store.state.editingShortcutId !== null;
+  const newId = isEditing ? store.state.editingShortcutId : Date.now();
+  
+  const sc = {
+    id: newId,
+    name,
+    url,
+    workspace: store.state.currentWorkspace,
+    steps: currentEditingSteps
+  };
+
+  let shortcuts = [...store.state.userShortcuts];
+  if (isEditing) {
+    const idx = shortcuts.findIndex(s => s.id === newId);
+    if (idx !== -1) shortcuts[idx] = sc;
+    else shortcuts.push(sc);
+  } else {
+    shortcuts.push(sc);
+  }
+
+  await store.update({ userShortcuts: shortcuts });
+  showToast('저장되었습니다.');
+  closeShortcutModal();
+  
+  // Refresh UI
+  renderTips($('#search').value, getRenderCallbacks());
 }
 
 export function openModal(modal) {
@@ -371,6 +506,7 @@ export function startRecording() {
     id: store.state.editingShortcutId, // Use existing ID if editing
     name: name || "Recorded Macro",
     url,
+    workspace: store.state.currentWorkspace,
     steps: [],
     startTime: Date.now()
   };

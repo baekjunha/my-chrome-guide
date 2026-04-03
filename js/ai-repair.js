@@ -88,6 +88,13 @@
       const targetText = (typeof intent === 'string' ? intent : (intent?.target || "")).toLowerCase().trim();
       if (!targetText) return { success: false };
       
+      const meta = intent.meta || {};
+      const metaTag = (meta.tagName || "").toLowerCase();
+      const metaId = (meta.id || "").toLowerCase();
+      const metaClass = (meta.className || "").toLowerCase();
+      const metaText = (meta.innerText || "").toLowerCase();
+      const metaPlaceholder = (meta.placeholder || "").toLowerCase();
+      
       // 가중치 기반 정밀 매칭 (Weight-based Heuristic)
       const scored = context.map((el, index) => {
         let score = 0;
@@ -96,6 +103,7 @@
         const elPlaceholder = (el.placeholder || "").toLowerCase().trim();
         const elId = (el.id || "").toLowerCase().trim();
         const elName = (el.name || "").toLowerCase().trim();
+        const elTag = (el.tagName || "").toLowerCase();
         
         // 1. 완전 일치 (Exact Match)
         if (elText === targetText || elLabel === targetText) score += 100;
@@ -108,7 +116,13 @@
         if (elPlaceholder.includes(targetText)) score += 40;
         if (elId.includes(targetText) || elName.includes(targetText)) score += 30;
 
-        // 4. 의미론적 유사성 보정 (Semantic Boost)
+        // 4. 메타데이터 매칭 (Metadata Match - New!)
+        if (meta.tagName && elTag === metaTag) score += 10;
+        if (meta.id && elId === metaId) score += 30;
+        if (meta.innerText && (elText.includes(metaText) || metaText.includes(elText))) score += 20;
+        if (meta.placeholder && (elPlaceholder.includes(metaPlaceholder) || metaPlaceholder.includes(elPlaceholder))) score += 20;
+        
+        // 5. 의미론적 유사성 보정 (Semantic Boost)
         // 'Login' -> 'Signin', 'Join' -> 'Signup' 등
         const semantics = [
           ['login', 'signin', 'sign in', '로그인', '접속', '시트'],
@@ -119,7 +133,7 @@
         ];
 
         semantics.forEach(group => {
-          if (group.some(word => targetText.includes(word))) {
+          if (group.some(word => targetText.includes(word) || metaText.includes(word))) {
             if (group.some(word => elText.includes(word) || elLabel.includes(word))) {
               score += 40;
             }

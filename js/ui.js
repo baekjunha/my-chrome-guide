@@ -130,6 +130,7 @@ export function applyLanguage() {
 
 export function buildCategoryNav(onCategoryClick) {
   const nav = $('#cat-nav');
+  if (!nav) return;
   nav.textContent = "";
   const lang = store.state.currentLang;
   const categoryStrings = I18N[lang].categories;
@@ -197,6 +198,7 @@ function highlight(text, search) {
   const regex = new RegExp(`(${search.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
   return text.replace(regex, '<mark class="highlight">$1</mark>');
 }
+
 /**
  * [UX 확장] 프리미엄 스켈레톤 로딩 렌더링
  */
@@ -219,7 +221,6 @@ export function renderSkeletons(count = 3) {
   }
   listEl.appendChild(fragment);
 }
-
 
 export function renderTips(filter = "", callbacks = {}, isAppend = false, targetId = null) {
   const { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut, onShareShortcut } = callbacks;
@@ -260,7 +261,6 @@ export function renderTips(filter = "", callbacks = {}, isAppend = false, target
 
   if (!isAppend || targetId) listEl.textContent = "";
 
-  // [Pre-computation & Memoization Optimization]
   const isMac = currentOS === OS.MAC;
   const osRegexMac = /Ctrl|Win|Alt/g;
   const osRegexWin = /Cmd|Option/g;
@@ -270,18 +270,15 @@ export function renderTips(filter = "", callbacks = {}, isAppend = false, target
 
   visibleTips.forEach(tip => {
     try {
-      // 1. Memoize basic data fetching
       let title = (isLangEn && tip.title_en) ? tip.title_en : (tip.title || "");
       let desc = (isLangEn && tip.desc_en) ? tip.desc_en : (tip.desc || "");
       desc = String(desc || "");
 
-      // 2. Highlighting logic
       if (filter) {
         title = highlight(title, filter);
         desc = highlight(desc, filter);
       }
 
-      // 3. Fast Regex Replacement for OS specific keys
       if (isMac) {
         desc = desc.replace(osRegexMac, m => macMap[m] || m);
       } else {
@@ -362,7 +359,6 @@ export function renderTips(filter = "", callbacks = {}, isAppend = false, target
         </button>
       `);
 
-      // 이벤트 위임 또는 개별 등록
       setTimeout(() => {
         $('#empty-clear-btn')?.addEventListener('click', () => {
           const searchInput = $('#search');
@@ -391,7 +387,6 @@ export function renderTips(filter = "", callbacks = {}, isAppend = false, target
   } else {
     listEl.appendChild(fragment);
 
-    // [최적화] 더보기 버튼 및 진행 표시 추가
     if (visibleCount < totalCount) {
       const moreWrapper = document.createElement('div');
       moreWrapper.className = 'load-more-wrapper';
@@ -408,11 +403,7 @@ export function renderTips(filter = "", callbacks = {}, isAppend = false, target
   }
 }
 
-/**
- * [Architecture] 상세 정보(단계 가이드, 관련 팁) 렌더링 분리
- */
 function renderDetails(tip, div, lang, currentOS, strings) {
-  // 1. 단계별 가이드 생성
   let rawSteps = lang === LANG.KO ? tip.steps : (tip.steps_en || tip.steps);
   let steps = [];
   if (rawSteps) {
@@ -435,11 +426,11 @@ function renderDetails(tip, div, lang, currentOS, strings) {
       <div class="step-content">
         ${steps.map((step, idx) => {
           let p = "";
-          let icon = ICONS.pencil; // 기본 아이콘: 연필
+          let icon = ICONS.pencil;
           
           if (typeof step === 'object' && step !== null) {
             const isClick = step.type === 'click';
-            icon = isClick ? ICONS.globe : ICONS.pencil; // 클릭은 지구본(상호작용), 입력은 연필
+            icon = isClick ? ICONS.globe : ICONS.pencil;
             const actionName = isClick ? (lang === LANG.KO ? '클릭' : 'Click') : (lang === LANG.KO ? '입력' : 'Input');
             p = `<span class="step-action-tag">${actionName}</span> <strong>${step.target}</strong>${step.value ? ' &rarr; <code>' + step.value + '</code>' : ''}`;
           } else {
@@ -462,7 +453,6 @@ function renderDetails(tip, div, lang, currentOS, strings) {
     div.appendChild(stepGuide);
   }
 
-  // 2. 관련 팁 (Lazy Loading 사용)
   const related = store.getRelatedTips(tip.id);
   if (related && related.length > 0) {
     const relDiv = document.createElement('div');
@@ -496,7 +486,11 @@ function renderDetails(tip, div, lang, currentOS, strings) {
 
 export function renderShortcuts(onRun, onEdit, onDelete, onShare) {
   const listEl = $('#list');
-  const scs = store.state.userShortcuts;
+  const currentWorkspace = store.state.currentWorkspace;
+  const userRole = store.state.userRole;
+  const isViewer = userRole === 'viewer';
+  
+  const scs = store.state.userShortcuts.filter(sc => sc.workspace === currentWorkspace);
   const strings = I18N[store.state.currentLang];
 
   if (scs.length === 0) {
@@ -522,7 +516,7 @@ export function renderShortcuts(onRun, onEdit, onDelete, onShare) {
       <div class="widget-icon">${ICONS.rocket}</div>
       <div class="widget-title">${name}</div>
       <div class="widget-steps-count">${stepsCount} STEPS</div>
-      <div class="widget-actions">
+      <div class="widget-actions" style="${isViewer ? 'display: none;' : ''}">
         <button class="widget-action-btn share-sc" title="내보내기/공유"><span class="svg-icon">${ICONS.download}</span></button>
         <button class="widget-action-btn edit-sc" title="수정"><span class="svg-icon">${ICONS.edit}</span></button>
         <button class="widget-action-btn delete-sc" title="삭제"><span class="svg-icon">${ICONS.trash}</span></button>
@@ -549,7 +543,6 @@ function createActionButtons(tip, div, callbacks = {}) {
   const shortcutText = (shortcutObj && shortcutObj[store.state.currentOS]) || "";
   const strings = I18N[store.state.currentLang];
 
-  // 1. 내장 매크로(자동화) 처리
   if (tip.url && tip.steps && tip.category === '자동화') {
     const btn = document.createElement('button');
     btn.className = 'go-btn';
@@ -563,7 +556,7 @@ function createActionButtons(tip, div, callbacks = {}) {
       }
     };
     div.appendChild(btn);
-    return; // 매크로 버튼이 있으면 다른 버튼은 생략하거나 추가 로직 결정
+    return;
   }
 
   const chromeUrlMatch = shortcutText && shortcutText.match(/chrome:\/\/[^\s]+/);
@@ -600,26 +593,113 @@ export function setRandomPlaceholder() {
 }
 
 export function switchTab(callbacks) {
-  // 실제 탭 버튼들만 클래스 정리 (통계 버튼 제외)
   $$('.nav button[id^="tab-"]').forEach(b => b.classList.remove('active'));
 
   const isAllTab = store.state.currentTab === TABS.ALL;
   $('#tab-all')?.classList.toggle('active', isAllTab);
   $('#tab-fav')?.classList.toggle('active', store.state.currentTab === TABS.FAV);
   $('#tab-shortcuts')?.classList.toggle('active', store.state.currentTab === TABS.SHORTCUTS);
+  $('#tab-analytics')?.classList.toggle('active', store.state.currentTab === TABS.ANALYTICS);
 
-  // [Smart Fix] 상단 "전체 팁" 탭을 눌렀을 때, 하단 카테고리 필터도 "전체"로 초기화
   if (isAllTab) {
     store.update({ currentCategory: CATEGORY_ALL }, false);
-    // 하단 모든 카테고리 버튼의 활성 상태 제거 (필터 없음 표시)
     $$('#cat-nav button').forEach(b => b.classList.remove('active'));
   }
 
   const isShortcuts = store.state.currentTab === TABS.SHORTCUTS;
-  if ($('#cat-nav')) $('#cat-nav').style.display = isShortcuts ? 'none' : 'flex';
+  const isAnalytics = store.state.currentTab === TABS.ANALYTICS;
+  const isViewer = store.state.userRole === 'viewer';
+  
+  if ($('#cat-nav')) $('#cat-nav').style.display = (isShortcuts || isAnalytics) ? 'none' : 'flex';
   if ($('#shortcut-controls')) $('#shortcut-controls').style.display = isShortcuts ? 'block' : 'none';
+  if ($('#add-shortcut-btn')) $('#add-shortcut-btn').style.display = isViewer ? 'none' : 'block';
+  if ($('#list')) $('#list').style.display = isAnalytics ? 'none' : 'block';
+  if ($('#analytics-container')) $('#analytics-container').style.display = isAnalytics ? 'block' : 'none';
+  if ($('.search-wrapper')) $('.search-wrapper').style.display = isAnalytics ? 'none' : 'flex';
 
-  renderTips($('#search')?.value || "", callbacks);
+  if (isAnalytics) {
+    renderAnalytics();
+  } else {
+    renderTips($('#search')?.value || "", callbacks);
+  }
+}
+
+export function renderAnalytics() {
+  const container = $('#analytics-container');
+  if (!container) return;
+
+  const analytics = store.state.macroAnalytics || {};
+  const currentWorkspace = store.state.currentWorkspace;
+  const shortcuts = (store.state.userShortcuts || []).filter(sc => sc.workspace === currentWorkspace);
+  const isKo = store.state.currentLang === LANG.KO;
+
+  if (shortcuts.length === 0) {
+    container.textContent = "";
+    container.insertAdjacentHTML('beforeend', `
+      <div class="empty-state">
+        <div class="empty-icon"><span class="svg-icon" style="font-size:32px;">${ICONS.rocket}</span></div>
+        <p>${isKo ? '생성된 매크로가 없습니다.' : 'No macros created yet.'}</p>
+        <span class="empty-desc">${isKo ? '매크로를 먼저 만들어 보세요.' : 'Create a macro to see analytics.'}</span>
+      </div>
+    `);
+    return;
+  }
+
+  let totalAllRuns = 0;
+  let totalAllSuccess = 0;
+  let macrosHTML = "";
+
+  shortcuts.forEach(sc => {
+    const data = analytics[sc.id] || { totalRuns: 0, successRuns: 0, lastRunAt: 0 };
+    totalAllRuns += data.totalRuns;
+    totalAllSuccess += data.successRuns;
+
+    const rate = data.totalRuns > 0 ? Math.round((data.successRuns / data.totalRuns) * 100) : 0;
+    const lastRunStr = data.lastRunAt > 0 ? new Date(data.lastRunAt).toLocaleDateString() : '-';
+
+    macrosHTML += `
+      <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+          <div style="font-weight: 700; font-size: 13px; color: var(--text-main);">${sc.name}</div>
+          <div style="font-size: 11px; color: var(--text-sub);">Last: ${lastRunStr}</div>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; color: var(--text-sub);">
+          <span>${isKo ? '성공률' : 'Success Rate'}</span>
+          <span style="font-weight: 800; color: ${rate > 80 ? '#10b981' : (rate > 50 ? '#f59e0b' : '#ef4444')};">${rate}%</span>
+        </div>
+        
+        <div style="width: 100%; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 10px;">
+          <div style="width: ${rate}%; height: 100%; background: ${rate > 80 ? '#10b981' : (rate > 50 ? '#f59e0b' : '#ef4444')}; transition: width 0.5s ease;"></div>
+        </div>
+        
+        <div style="display: flex; gap: 12px; font-size: 11px; color: var(--text-sub);">
+          <div><span style="font-weight: 600; color: var(--text-main);">${data.totalRuns}</span> ${isKo ? '실행' : 'Runs'}</div>
+          <div><span style="font-weight: 600; color: var(--text-main);">${data.successRuns}</span> ${isKo ? '성공' : 'Success'}</div>
+        </div>
+      </div>
+    `;
+  });
+
+  const avgRate = totalAllRuns > 0 ? Math.round((totalAllSuccess / totalAllRuns) * 100) : 0;
+  
+  container.textContent = "";
+  container.insertAdjacentHTML('beforeend', `
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <div style="display: flex; gap: 10px; margin-bottom: 4px;">
+        <div style="flex: 1; background: var(--accent-bg); border: 1px solid var(--accent); border-radius: 12px; padding: 16px; text-align: center;">
+          <div style="font-size: 11px; color: var(--accent-txt); font-weight: 700; margin-bottom: 4px;">${isKo ? '총 실행 횟수' : 'Total Runs'}</div>
+          <div style="font-size: 24px; font-weight: 900; color: var(--accent);">${totalAllRuns}</div>
+        </div>
+        <div style="flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center;">
+          <div style="font-size: 11px; color: var(--text-sub); font-weight: 700; margin-bottom: 4px;">${isKo ? '평균 성공률' : 'Avg Success'}</div>
+          <div style="font-size: 24px; font-weight: 900; color: ${avgRate > 80 ? '#10b981' : (avgRate > 50 ? '#f59e0b' : '#ef4444')};">${avgRate}%</div>
+        </div>
+      </div>
+      <h3 style="font-size: 14px; font-weight: 800; margin: 0; color: var(--text-main); display: flex; align-items: center; gap: 6px;"><span class="svg-icon" style="color:var(--accent);">${ICONS.chart || ''}</span> ${isKo ? '매크로 실행 통계' : 'Macro Execution Analytics'}</h3>
+      ${macrosHTML}
+    </div>
+  `);
 }
 
 export function addDragDropHandlers(container, onDrop) {
@@ -631,7 +711,6 @@ export function addDragDropHandlers(container, onDrop) {
     draggedItem = btn;
     btn.classList.add('dragging');
     e.dataTransfer.effectAllowed = 'move';
-    // 드래그 이미지 설정 (필요시)
     e.dataTransfer.setData('text/plain', btn.dataset.cat);
   });
 
@@ -648,7 +727,6 @@ export function addDragDropHandlers(container, onDrop) {
       const rect = target.getBoundingClientRect();
       const midX = rect.left + rect.width / 2;
 
-      // 마우스가 타겟의 중간 지점을 넘어갔을 때만 DOM을 옮겨서 "비집고 들어가는" 효과 구현
       if (e.clientX < midX) {
         container.insertBefore(draggedItem, target);
       } else {

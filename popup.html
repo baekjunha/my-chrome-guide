@@ -27,6 +27,24 @@
     </div>
   </div>
 
+  <!-- RBAC 및 워크스페이스 제어 바 (시뮬레이션) -->
+  <div class="rbac-bar">
+    <div class="rbac-group">
+      <span class="rbac-label">Workspace:</span>
+      <select id="workspace-select" class="rbac-select">
+        <option value="personal">🏠 개인용 (Personal)</option>
+        <option value="company">🏢 회사용 (Antigravity)</option>
+      </select>
+    </div>
+    <div class="rbac-group">
+      <span class="rbac-label">Role:</span>
+      <select id="role-select" class="rbac-select">
+        <option value="admin">👑 관리자 (Admin)</option>
+        <option value="viewer">👀 뷰어 (Viewer)</option>
+      </select>
+    </div>
+  </div>
+
   <div id="daily-card">
     <div id="daily-label" class="label"></div>
     <div id="daily-content">
@@ -41,88 +59,95 @@
     <button id="clear-btn">✕</button>
   </div>
 
-  <!-- 전체 / 보관함 / 지름길 탭 -->
+  <!-- 전체 / 보관함 / 지름길 / 통계 탭 -->
   <div class="nav">
     <button type="button" id="tab-all" class="active">전체 팁</button>
     <button type="button" id="tab-fav">보관함</button>
     <button type="button" id="tab-shortcuts">1클릭 매크로</button>
+    <button type="button" id="tab-analytics">학습 통계</button>
   </div>
 
   <!-- 카테고리 필터 (JS로 생성) -->
   <div id="cat-nav"></div>
 
   <!-- 매크로 전용 컨트롤 영역 (지름길 탭에서만 보임) -->
-  <div id="shortcut-controls" style="display: none; margin-bottom: 16px;">
+  <div id="shortcut-controls" class="shortcut-controls">
     <!-- 작고 미니멀한 우측 정렬 공유 버튼들 -->
-    <div style="display: flex; justify-content: flex-end; gap: 6px; margin-bottom: 8px;">
-      <button id="macro-export-btn" class="icon-btn" style="width: 24px; height: 24px; background: transparent; border: none; box-shadow: none; opacity: 0.5; transition: opacity 0.2s;" title="매크로 내보내기"><span class="svg-icon" style="pointer-events:none;"></span></button>
-      <button id="macro-import-btn" class="icon-btn" style="width: 24px; height: 24px; background: transparent; border: none; box-shadow: none; opacity: 0.5; transition: opacity 0.2s;" title="매크로 불러오기"><span class="svg-icon" style="pointer-events:none;"></span></button>
+    <div class="macro-share-actions">
+      <button id="macro-export-btn" class="icon-btn macro-share-btn" title="매크로 내보내기"><span class="svg-icon" style="pointer-events:none;"></span></button>
+      <button id="macro-import-btn" class="icon-btn macro-share-btn" title="매크로 불러오기"><span class="svg-icon" style="pointer-events:none;"></span></button>
       <input type="file" id="macro-import-file" accept=".json" style="display: none;">
     </div>
-    
+
     <!-- 메인 생성 버튼 (방해받지 않음) -->
-    <button id="add-shortcut-btn" class="go-btn" style="margin-top: 0; box-shadow: 0 4px 12px rgba(30, 64, 175, 0.15);">+ 새 매크로 만들기</button>
+    <button id="add-shortcut-btn" class="go-btn add-shortcut-btn">+ 새 매크로 만들기</button>
   </div>
+
+  <!-- 통계 전용 영역 (통계 탭에서만 보임) -->
+  <div id="analytics-container" class="analytics-container"></div>
 
   <!-- 꿀팁 목록 -->
   <div id="list"></div>
-
   <!-- 토스트 알림 (JS로 제어) -->
   <div id="toast-notification" class="toast"></div>
 
   <canvas id="effect-canvas"></canvas>
 
   <!-- 지름길 모달 -->
-  <div id="shortcut-modal" class="modal" style="display: none;">
-    <div class="modal-content" style="width: 95%; max-width: 380px;">
+  <div id="shortcut-modal" class="modal">
+    <div class="modal-content shortcut-modal-content">
       <div class="modal-header">
-        <h3 id="shortcut-modal-title"><span class="svg-icon sc-rocket-icon" style="color:var(--accent); margin-right:4px;"></span> 1클릭 매크로 설계</h3>
+        <h3 id="shortcut-modal-title"><span class="svg-icon sc-rocket-icon modal-title-icon"></span> 1클릭 매크로 설계</h3>
         <button class="modal-close shortcut-close" aria-label="닫기">✕</button>
       </div>
       
       <!-- 안내 섹션 -->
-      <div style="background: var(--accent-bg); padding: 12px 16px; margin: 10px 20px 0; border-radius: 12px; border: 1px dashed var(--accent);">
-        <p style="margin: 0; font-size: 11px; color: var(--accent-txt); line-height: 1.5;">
-          <strong><span class="svg-icon sc-lightbulb-icon" style="color:var(--accent); margin-right:2px; vertical-align:middle;"></span> 매크로란?</strong><br>
+      <div class="shortcut-info-box">
+        <p class="shortcut-info-text">
+          <strong><span class="svg-icon sc-lightbulb-icon shortcut-info-icon"></span> 매크로란?</strong><br>
           복잡한 메뉴 깊숙이 숨겨진 페이지를 버튼 하나로 찾아가는 '자율주행 북마크'입니다.
         </p>
       </div>
 
-      <div style="padding: 20px; display: flex; flex-direction: column; gap: 20px;">
+      <div class="shortcut-form-container">
         <!-- 1. 이름 -->
-        <div>
-          <label style="font-size: 13px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">
-            <span class="svg-icon sc-tag-icon" style="color:var(--accent);"></span> 매크로 이름
+        <div class="form-group">
+          <label class="form-label">
+            <span class="svg-icon sc-tag-icon form-label-icon"></span> 매크로 이름
           </label>
           <input type="text" id="sc-name" placeholder="예: 네이버 메일 수신확인, 학사행정">
         </div>
 
         <!-- 2. 시작 주소 -->
-        <div>
-          <label style="font-size: 13px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">
-            <span class="svg-icon sc-globe-icon" style="color:var(--accent);"></span> 시작 URL
+        <div class="form-group">
+          <label class="form-label">
+            <span class="svg-icon sc-globe-icon form-label-icon"></span> 시작 URL
           </label>
           <input type="text" id="sc-url" placeholder="https://...">
         </div>
 
         <!-- 3. 여정 설계 (녹화 중심) -->
-        <div style="background: var(--bg); padding: 20px; border-radius: 16px; border: 1px solid var(--border); text-align: center;">
-          <label style="font-size: 13px; font-weight: 800; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 5px;">
-            <span class="svg-icon sc-bot-icon" style="color:var(--accent);"></span> 매크로 동작 정의
+        <div class="shortcut-steps-box">
+          <label class="form-label center-label">
+            <span class="svg-icon sc-bot-icon form-label-icon"></span> 매크로 동작 정의
           </label>
           
-          <p style="font-size: 11px; color: var(--text-sub); margin-bottom: 16px; line-height: 1.5;">
-            '녹화 시작' 버튼을 누르면 새 창이 열립니다.<br>
-            그 창에서 클릭하거나 입력하는 모든 동작이<br>
-            자동으로 기록되어 매크로가 생성됩니다.
-          </p>
+          <div class="shortcut-actions-row">
+            <button id="record-shortcut-btn" class="btn-record">
+              <span class="svg-icon record-indicator">●</span> <span id="record-btn-text">녹화 시작</span>
+            </button>
+            <button id="add-step-item-btn" class="btn-add-step">
+              + 수동 스텝 추가
+            </button>
+          </div>
 
-          <button id="record-shortcut-btn" style="width: 100%; padding: 14px; background: var(--accent); border: none; border-radius: 12px; color: white; font-size: 14px; cursor: pointer; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <span class="svg-icon" style="color: #fff; font-size: 18px;">●</span> <span id="record-btn-text">매크로 녹화 시작</span>
+          <div id="sc-steps-container" class="steps-container">
+            <!-- Steps will be dynamically injected here -->
+          </div>
+          
+          <button id="save-shortcut-btn" class="btn-save-macro">
+            <span class="svg-icon sc-check-icon">✓</span> <span>변경사항 저장</span>
           </button>
-
-          <div id="sc-steps-container" style="display: none;"></div>
-          <button id="add-step-item-btn" style="display: none;"></button>
         </div>
       </div>
     </div>
@@ -147,40 +172,40 @@
   </div>
 
   <!-- 온보딩 모달 -->
-  <div id="onboarding-modal" class="modal" style="display: none; z-index: 1000;">
-    <div class="modal-content" style="max-width: 420px; text-align: center; padding: 48px 24px; display: flex; flex-direction: column; align-items: center;">
-      <div id="onboarding-icon" style="background: var(--accent-gold-light); width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; box-shadow: 0 8px 20px rgba(245, 158, 11, 0.15);">
-        <span class="svg-icon sc-rocket-icon" style="color: var(--accent-gold); width: 36px; height: 36px;"></span>
+  <div id="onboarding-modal" class="modal">
+    <div class="modal-content onboarding-content">
+      <div id="onboarding-icon" class="onboarding-icon-wrapper">
+        <span class="svg-icon sc-rocket-icon onboarding-icon"></span>
       </div>
       
-      <h2 style="margin: 0 0 12px; font-size: 24px; letter-spacing: -0.5px; color: var(--text); font-weight: 900;">환영합니다! 🎉</h2>
+      <h2 class="onboarding-title">환영합니다! 🎉</h2>
       
-      <p style="margin: 0 0 32px; color: var(--text-sub); line-height: 1.7; font-size: 14.5px; font-weight: 500;">
+      <p class="onboarding-desc">
         크롬 전문가들이 선별한 <strong>139개 이상의 꿀팁</strong>과,<br>
         귀찮은 작업을 자동화하는 <strong>1클릭 매크로</strong>가 준비되었습니다.<br>
         이제 더 빠르고 똑똑한 브라우징을 시작하세요.
       </p>
 
-      <div style="width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 32px;">
-        <div style="background: var(--bg-light); padding: 16px; border-radius: 16px; border: 1px solid var(--border);">
-          <div style="font-size: 18px; margin-bottom: 6px;">📚</div>
-          <div style="font-size: 12px; font-weight: 800; color: var(--text);">139+ 팁 뱅크</div>
+      <div class="onboarding-features-grid">
+        <div class="feature-card">
+          <div class="feature-emoji">📚</div>
+          <div class="feature-title">139+ 팁 뱅크</div>
         </div>
-        <div style="background: var(--bg-light); padding: 16px; border-radius: 16px; border: 1px solid var(--border);">
-          <div style="font-size: 18px; margin-bottom: 6px;">⚡</div>
-          <div style="font-size: 12px; font-weight: 800; color: var(--text);">1클릭 매크로</div>
+        <div class="feature-card">
+          <div class="feature-emoji">⚡</div>
+          <div class="feature-title">1클릭 매크로</div>
         </div>
-        <div style="background: var(--bg-light); padding: 16px; border-radius: 16px; border: 1px solid var(--border);">
-          <div style="font-size: 18px; margin-bottom: 6px;">✍️</div>
-          <div style="font-size: 12px; font-weight: 800; color: var(--text);">개인 메모</div>
+        <div class="feature-card">
+          <div class="feature-emoji">✍️</div>
+          <div class="feature-title">개인 메모</div>
         </div>
-        <div style="background: var(--bg-light); padding: 16px; border-radius: 16px; border: 1px solid var(--border);">
-          <div style="font-size: 18px; margin-bottom: 6px;">🔒</div>
-          <div style="font-size: 12px; font-weight: 800; color: var(--text);">100% 보안 준수</div>
+        <div class="feature-card">
+          <div class="feature-emoji">🔒</div>
+          <div class="feature-title">100% 보안 준수</div>
         </div>
       </div>
 
-      <button id="start-onboarding-btn" style="width: 100%; padding: 16px; background: var(--accent); border: none; border-radius: 14px; color: white; font-weight: 900; font-size: 16px; cursor: pointer; box-shadow: 0 8px 16px rgba(37, 99, 235, 0.2); transition: transform 0.2s;">
+      <button id="start-onboarding-btn" class="btn-start-onboarding">
         네, 완벽해요! 시작하기
       </button>
     </div>
