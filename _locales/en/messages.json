@@ -46,7 +46,7 @@
     }
   },
   "recordingTitle": {
-    "message": "🔴 Recording Macro...",
+    "message": "Recording Macro...",
     "description": "Macro recording title"
   },
   "recordingDesc": {
@@ -58,13 +58,13 @@
     "description": "Stop and save recording button"
   },
   "macroCompleteTitle": {
-    "message": "🎉 Macro Complete!"
+    "message": "Macro Complete!"
   },
   "macroLoginWaitTitle": {
-    "message": "🔐 Waiting for Login"
+    "message": "Waiting for Login"
   },
   "macroAIWaitTitle": {
-    "message": "🤖 AI Interaction"
+    "message": "AI Interaction"
   },
   "macroRunningTitle": {
     "message": "Running"

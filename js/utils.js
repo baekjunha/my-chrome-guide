@@ -112,20 +112,21 @@ function updateParticles() {
   animatingParticles = true;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
-  particles.forEach((p, i) => {
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
     p.x += p.vx;
     p.y += p.vy;
     p.vy += 0.1; // gravity
     p.life -= 0.02;
     
-    ctx.globalAlpha = p.life;
+    ctx.globalAlpha = Math.max(0, p.life);
     ctx.fillStyle = p.color;
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
     ctx.fill();
     
     if (p.life <= 0) particles.splice(i, 1);
-  });
+  }
   
   requestAnimationFrame(updateParticles);
 }

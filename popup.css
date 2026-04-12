@@ -103,7 +103,9 @@ body.os-mac .card,
 body.os-mac .modal-content,
 body.os-mac input[type="text"],
 body.os-mac .nav button,
-body.os-mac #cat-nav button {
+body.os-mac #cat-nav button,
+body.os-mac .rbac-bar,
+body.os-mac .rbac-select {
   border-radius: var(--radius);
 }
 
@@ -129,7 +131,9 @@ body.os-win .card,
 body.os-win .modal-content,
 body.os-win input[type="text"],
 body.os-win .nav button,
-body.os-win #cat-nav button {
+body.os-win #cat-nav button,
+body.os-win .rbac-bar,
+body.os-win .rbac-select {
   border-radius: var(--radius);
 }
 
@@ -1587,10 +1591,12 @@ body.dark .highlight-impact {
 .rbac-bar {
   display: flex;
   justify-content: space-between;
-  padding: var(--space-sm) var(--space-lg);
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
+  padding: var(--space-md) var(--space-xl);
+  background: var(--surface);
+  border: 1px solid var(--border);
   align-items: center;
+  box-shadow: var(--shadow);
+  margin-bottom: var(--space-xs);
 }
 .rbac-group {
   display: flex;
@@ -1600,15 +1606,35 @@ body.dark .highlight-impact {
 .rbac-label {
   font-weight: var(--weight-bold);
   color: var(--text-sub);
-  font-size: var(--font-base);
+  font-size: var(--font-sm);
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
 }
 .rbac-select {
-  background: var(--accent-bg);
+  background: var(--bg);
   border: 1px solid var(--border);
   color: var(--text);
-  border-radius: var(--space-xs);
-  padding: var(--space-xs) var(--space-sm);
+  padding: 6px 12px;
   font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+  max-width: 130px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  flex-shrink: 1;
+}
+.rbac-select:hover {
+  border-color: var(--accent);
+  background: var(--surface-opaque);
+}
+.rbac-select:focus {
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
 }
 
 /* Shortcut Controls */
@@ -1847,3 +1873,4 @@ body.dark .highlight-impact {
 .btn-start-onboarding:hover {
   transform: translateY(-2px);
 }
+

@@ -226,13 +226,16 @@ class AppStore {
 
     Object.assign(this.state, newState);
 
-    // [최적화] 모듈을 즉시 로드하여 findRelatedTips 함수를 메모리에 확보
+    // [최적화] 모듈을 즉시 로드하여 findRelatedTips 함수를 메모리에 확보하고 JSON 팁 데이터를 로드
     // (for lazy loading later)
     try {
       const dataModule = await import('./data.js');
       this._findRelatedTips = dataModule.findRelatedTips;
+      if (typeof dataModule.loadTips === 'function') {
+        await dataModule.loadTips();
+      }
     } catch (e) {
-      console.warn('[AppStore] Failed to import data.js for related tips');
+      console.warn('[AppStore] Failed to import data.js for related tips or data load', e);
     }
 
     return this.state;

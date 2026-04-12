@@ -94,7 +94,7 @@ export function applyLanguage() {
   const addShortcutBtn = $('#add-shortcut-btn');
   if (addShortcutBtn) {
     addShortcutBtn.textContent = "";
-    addShortcutBtn.insertAdjacentHTML('beforeend', `<span>${strings.addShortcut || '🔴 매크로 녹화하기'}</span>`);
+    addShortcutBtn.insertAdjacentHTML('beforeend', `<span class="svg-icon" style="color:white; margin-right:6px; vertical-align:middle;">${ICONS.circle}</span><span style="vertical-align:middle;">${strings.addShortcut || '매크로 녹화하기'}</span>`);
     addShortcutBtn.style.background = 'var(--accent)';
     addShortcutBtn.style.color = 'white';
     addShortcutBtn.style.border = 'none';
@@ -126,6 +126,79 @@ export function applyLanguage() {
   if (noteDelBtn) noteDelBtn.textContent = strings.noteDelete;
   const noteSaveBtn = $('#note-save-btn');
   if (noteSaveBtn) noteSaveBtn.textContent = strings.noteSave;
+
+  // Macro Modal Translations
+  const macroModalTitle = $('#shortcut-modal-title');
+  if (macroModalTitle) {
+    macroModalTitle.textContent = "";
+    macroModalTitle.insertAdjacentHTML('beforeend', `<span class="svg-icon sc-rocket-icon modal-title-icon">${ICONS.rocket}</span> ${strings.macroModalTitle}`);
+  }
+  
+  const macroInfoText = $('.shortcut-info-text');
+  if (macroInfoText) {
+    macroInfoText.innerHTML = `<strong><span class="svg-icon sc-lightbulb-icon shortcut-info-icon">${ICONS.lightbulb}</span> ${strings.categories['AI 기능'] || 'AI'}</strong><br>${strings.macroModalDesc}`;
+  }
+
+  const scNameLabel = $('#sc-name')?.previousElementSibling;
+  if (scNameLabel) scNameLabel.innerHTML = `<span class="svg-icon sc-tag-icon form-label-icon">${ICONS.tag}</span> ${strings.macroNameLabel}`;
+  if ($('#sc-name')) $('#sc-name').placeholder = strings.macroNamePlaceholder;
+
+  const scUrlLabel = $('#sc-url')?.previousElementSibling;
+  if (scUrlLabel) scUrlLabel.innerHTML = `<span class="svg-icon sc-globe-icon form-label-icon">${ICONS.globe}</span> ${strings.macroUrlLabel}`;
+  if ($('#sc-url')) $('#sc-url').placeholder = strings.macroUrlPlaceholder;
+
+  const scStepsLabel = $('.shortcut-steps-box .form-label');
+  if (scStepsLabel) scStepsLabel.innerHTML = `<span class="svg-icon sc-bot-icon form-label-icon">${ICONS.bot}</span> ${strings.macroStepsLabel}`;
+
+  const recordBtnText = $('#record-btn-text');
+  if (recordBtnText) recordBtnText.textContent = strings.startRecording;
+  
+  const recordIndicator = $('.record-indicator');
+  if (recordIndicator) {
+    recordIndicator.innerHTML = `<span style="color:white; vertical-align:middle; width:14px; height:14px; display:inline-block;">${ICONS.circle}</span>`;
+  }
+
+  const addManualBtn = $('#add-step-item-btn');
+  if (addManualBtn) addManualBtn.textContent = strings.macroAddManual;
+
+  const saveMacroBtn = $('#save-shortcut-btn');
+  if (saveMacroBtn) {
+    saveMacroBtn.innerHTML = `<span class="svg-icon sc-check-icon" style="vertical-align:middle; width:18px; height:18px;">${ICONS.check}</span> <span style="vertical-align:middle;">${strings.macroSave}</span>`;
+  }
+
+  // Onboarding Translations
+  if ($('.onboarding-title')) {
+    $('.onboarding-title').innerHTML = `${strings.onboardingTitle} <span class="svg-icon" style="color:#f59e0b; vertical-align:middle; width:28px; height:28px;">${ICONS.tada}</span>`;
+  }
+  if ($('.onboarding-desc')) $('.onboarding-desc').innerHTML = strings.onboardingDesc;
+  
+  const featureTitles = $$('.feature-title');
+  const featureEmojis = $$('.feature-emoji');
+  if (featureTitles.length >= 4 && featureEmojis.length >= 4) {
+    featureTitles[0].textContent = strings.onboardingFeature1;
+    featureEmojis[0].innerHTML = ICONS.book;
+    featureTitles[1].textContent = strings.onboardingFeature2;
+    featureEmojis[1].innerHTML = ICONS.bolt;
+    featureTitles[2].textContent = strings.onboardingFeature3;
+    featureEmojis[2].innerHTML = ICONS.pencil;
+    featureTitles[3].textContent = strings.onboardingFeature4;
+    featureEmojis[3].innerHTML = ICONS.lock;
+  }
+  
+  if ($('#start-onboarding-btn')) $('#start-onboarding-btn').textContent = strings.onboardingStart;
+
+  // RBAC Selectors Translations
+  const workspaceSelect = $('#workspace-select');
+  if (workspaceSelect && workspaceSelect.options.length >= 2) {
+    workspaceSelect.options[0].textContent = strings.workspacePersonal;
+    workspaceSelect.options[1].textContent = strings.workspaceCompany;
+  }
+
+  const roleSelect = $('#role-select');
+  if (roleSelect && roleSelect.options.length >= 2) {
+    roleSelect.options[0].textContent = strings.roleAdmin;
+    roleSelect.options[1].textContent = strings.roleViewer;
+  }
 }
 
 export function buildCategoryNav(onCategoryClick) {
@@ -226,6 +299,11 @@ export function renderTips(filter = "", callbacks = {}, isAppend = false, target
   const { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut, onShareShortcut } = callbacks;
   const listEl = $('#list');
   if (!listEl) return;
+
+  if (tips.length === 0 && store.state.currentTab !== TABS.SHORTCUTS) {
+    listEl.innerHTML = `<div style="padding: 20px; color: red;">DEBUG: Tips array is empty! Current filter: ${filter}</div>`;
+    return;
+  }
 
   if (!isAppend && !targetId) {
     listEl.textContent = "";
@@ -360,20 +438,23 @@ export function renderTips(filter = "", callbacks = {}, isAppend = false, target
       `);
 
       setTimeout(() => {
-        $('#empty-clear-btn')?.addEventListener('click', () => {
-          const searchInput = $('#search');
-          if (searchInput) searchInput.value = "";
-          renderTips("", { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut });
-        });
+        const clearBtn = $('#empty-clear-btn');
+        if (clearBtn) {
+          clearBtn.onclick = () => {
+            const searchInput = $('#search');
+            if (searchInput) searchInput.value = "";
+            renderTips("", { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut, onShareShortcut });
+          };
+        }
 
         empty.querySelectorAll('.suggestion-chip').forEach(chip => {
-          chip.addEventListener('click', () => {
+          chip.onclick = () => {
             const searchInput = $('#search');
             if (searchInput) {
               searchInput.value = chip.textContent;
-              renderTips(chip.textContent, { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut });
+              renderTips(chip.textContent, { onFavClick, onNoteClick, onShortcutRun, onEditShortcut, onDeleteShortcut, onShareShortcut });
             }
-          });
+          };
         });
       }, 0);
     } else {
@@ -613,7 +694,7 @@ export function switchTab(callbacks) {
   if ($('#cat-nav')) $('#cat-nav').style.display = (isShortcuts || isAnalytics) ? 'none' : 'flex';
   if ($('#shortcut-controls')) $('#shortcut-controls').style.display = isShortcuts ? 'block' : 'none';
   if ($('#add-shortcut-btn')) $('#add-shortcut-btn').style.display = isViewer ? 'none' : 'block';
-  if ($('#list')) $('#list').style.display = isAnalytics ? 'none' : 'block';
+  if ($('#list')) $('#list').style.display = isAnalytics ? 'none' : 'flex';
   if ($('#analytics-container')) $('#analytics-container').style.display = isAnalytics ? 'block' : 'none';
   if ($('.search-wrapper')) $('.search-wrapper').style.display = isAnalytics ? 'none' : 'flex';
 

@@ -3,6 +3,9 @@
  * Optimized for identifier-based single-tab execution (#macro-active).
  */
 (function() {
+  if (window.__macroInjected) return;
+  window.__macroInjected = true;
+
   let currentExecutionId = null;
 
   // 1. [식별자 기반 로직] 매크로 전용 탭이 아니면 실행 차단
@@ -449,10 +452,15 @@
       const title = complete ? chrome.i18n.getMessage('macroCompleteTitle') : (isLogin ? chrome.i18n.getMessage('macroLoginWaitTitle') : (isAI ? chrome.i18n.getMessage('macroAIWaitTitle') : `${chrome.i18n.getMessage('macroRunningTitle')} (${current}/${total})`));
       const subTitle = customMsg || (complete ? chrome.i18n.getMessage('macroCompleteDesc') : `${chrome.i18n.getMessage('macroTargetPrefix')}${targetName} ${retry > 0 ? `${chrome.i18n.getMessage('macroRetryPrefix')}${retry})` : ''}`);
 
+      const svgBot = `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>`;
+      const svgLock = `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
+      const svgCheck = `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><polyline points="20 6 9 17 4 12"/></svg>`;
+      const svgRocket = `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.71-2.13.71-2.13l-1.58-1.58s-1.29 0-2.13.71Z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2Z"/><path d="M9 12H4s.5-1 1-4c2 0 3 0 3 0"/><path d="M15 9s1 .5 4 1c0 2-2 3-2 3h-5"/></svg>`;
+
       badge.textContent = '';
       badge.insertAdjacentHTML('beforeend', `
         <div style="display:flex; align-items:center; gap:10px; font-weight:800; font-size:14px;">
-          ${isAI ? `<span style="font-size:18px;">🤖</span>` : (isLogin ? `<span style="font-size:18px;">🔐</span>` : (complete ? '✅' : '🚀'))} <span>${title}</span>
+          ${isAI ? svgBot : (isLogin ? svgLock : (complete ? svgCheck : svgRocket))} <span>${title}</span>
         </div>
         <div style="font-size:12px; opacity:0.9; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${subTitle}</div>
         <div style="width:100%; height:4px; background:rgba(255,255,255,0.2); border-radius:10px; overflow:hidden; margin-top:4px;">
@@ -710,6 +718,10 @@
     function querySelectorAllDeep(selector, root = document) {
       const results = Array.from(root.querySelectorAll(selector));
       for (const shadow of cachedShadowRoots) {
+        if (!shadow.host || !shadow.host.isConnected) {
+          cachedShadowRoots.delete(shadow);
+          continue;
+        }
         if (root.contains(shadow.host)) { // Only query relevant shadow roots
            results.push(...Array.from(shadow.querySelectorAll(selector)));
         }
@@ -824,13 +836,13 @@
 
       let target = null;
 
-      // 💡 1순위: CSS 선택자로 먼저 검색 시도 (data.js 호환)
+      // [추가] 1순위: CSS 선택자로 먼저 검색 시도 (data.js 호환)
       try {
         const els = querySelectorAllDeep(text);
         target = Array.from(els).find(isVisible);
       } catch(e) {}
 
-      // 💡 2순위: 텍스트 및 속성 기반 탐색 (기존 로직)
+      // [추가] 2순위: 텍스트 및 속성 기반 탐색 (기존 로직)
       if (!target) {
         const lowerText = text.toLowerCase().trim();
       const strippedText = lowerText.replace(/\s+/g, '');
@@ -890,7 +902,7 @@
         target = Array.from(els).find(isVisible);
       } catch(e) {}
 
-      // 💡 2순위: 텍스트 및 Placeholder 탐색
+      // [추가] 2순위: 텍스트 및 Placeholder 탐색
       if (!target) {
         const lowerText = text.toLowerCase().trim();
       const strippedText = lowerText.replace(/\s+/g, '');
@@ -1021,15 +1033,34 @@
       }
     }
 
+    let engineMutationObserver = null;
+
     function startObserver() {
-      if (engineInterval) return;
-      engineInterval = setInterval(() => {
+      if (engineMutationObserver) return;
+      
+      const throttledRunEngine = throttle(() => {
         if (!isProcessing) runEngine();
-      }, 800); // Reduce DOM polling frequency to save battery and CPU
+      }, 800);
+
+      engineMutationObserver = new MutationObserver((mutations) => {
+        throttledRunEngine();
+      });
+
+      engineMutationObserver.observe(document.documentElement, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['style', 'class']
+      });
+
+      if (!isProcessing) runEngine();
     }
 
     function stopObserver() {
-      if (engineInterval) { clearInterval(engineInterval); engineInterval = null; }
+      if (engineMutationObserver) {
+        engineMutationObserver.disconnect();
+        engineMutationObserver = null;
+      }
     }
 
     runEngine();

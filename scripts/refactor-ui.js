@@ -152,7 +152,7 @@ html = html.replace(
     </div>
   </div>
 
-  <script`
+  <script type="module" src="popup.js"></script>\`
 );
 fs.writeFileSync('popup.html', html);
 
@@ -192,10 +192,12 @@ const newClasses = `
 .rbac-bar {
   display: flex;
   justify-content: space-between;
-  padding: var(--space-sm) var(--space-lg);
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--surface);
+  border: 1px solid var(--border);
   align-items: center;
+  box-shadow: var(--shadow);
+  margin-bottom: var(--space-xs);
 }
 .rbac-group {
   display: flex;
@@ -205,15 +207,29 @@ const newClasses = `
 .rbac-label {
   font-weight: var(--weight-bold);
   color: var(--text-sub);
-  font-size: var(--font-base);
+  font-size: var(--font-sm);
+  letter-spacing: 0.3px;
 }
 .rbac-select {
-  background: var(--accent-bg);
+  background: var(--bg);
   border: 1px solid var(--border);
   color: var(--text);
-  border-radius: var(--space-xs);
-  padding: var(--space-xs) var(--space-sm);
+  padding: 7px 12px;
   font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+.rbac-select:hover {
+  border-color: var(--accent);
+  background: var(--surface-opaque);
+}
+.rbac-select:focus {
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
 }
 
 /* Shortcut Controls */

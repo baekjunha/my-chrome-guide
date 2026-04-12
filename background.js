@@ -4,14 +4,12 @@
  */
 
 const activeMacroTabs = {};
-const injectedTabs = new Set(); // To prevent double injection
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'CLOSE_TAB') {
     if (sender.tab) {
       chrome.tabs.remove(sender.tab.id);
       delete activeMacroTabs[sender.tab.id];
-      injectedTabs.delete(sender.tab.id);
     }
     sendResponse({ success: true });
   } else if (message.action === 'REGISTER_MACRO_TAB') {
@@ -60,12 +58,12 @@ chrome.tabs.onRemoved.addListener((tabId) => {
     }
     delete activeMacroTabs[tabId];
   }
-  injectedTabs.delete(tabId);
 });
 
 // Watch for navigations and inject script if it's a macro tab
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.status === 'loading' || changeInfo.url) {
+  // Soft-navigation 방지: 'complete' 상태나 실제 url이 변경된 경우에만 주입 체크
+  if (changeInfo.status === 'complete' || changeInfo.url) {
     let mode = null;
     let executionId = null;
 
@@ -84,6 +82,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
     if (activeMacroTabs[tabId]) {
       // Use chrome.scripting.executeScript to dynamically inject
+      // Injection happens only once per frame due to window.__macroInjected check in content_script.js
       chrome.scripting.executeScript({
         target: { tabId: tabId, allFrames: true },
         files: ['js/ai-repair.js', 'content_script.js'],

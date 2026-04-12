@@ -46,7 +46,7 @@
     }
   },
   "recordingTitle": {
-    "message": "🔴 매크로 녹화 중...",
+    "message": "매크로 녹화 중...",
     "description": "Macro recording title"
   },
   "recordingDesc": {
@@ -58,13 +58,13 @@
     "description": "Stop and save recording button"
   },
   "macroCompleteTitle": {
-    "message": "🎉 매크로 완료!"
+    "message": "매크로 완료!"
   },
   "macroLoginWaitTitle": {
-    "message": "🔐 로그인 대기 중"
+    "message": "로그인 대기 중"
   },
   "macroAIWaitTitle": {
-    "message": "🤖 AI 상호작용 중"
+    "message": "AI 상호작용 중"
   },
   "macroRunningTitle": {
     "message": "실행 중"
